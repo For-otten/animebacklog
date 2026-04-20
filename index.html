@@ -762,15 +762,24 @@
 
     <div class="form-row">
       <div class="form-group">
+        <label class="form-label">Temporada</label>
+        <input type="number" class="form-input" id="inputSeason" placeholder="Opcional" min="1">
+        <div class="form-hint">Deixe vazio p/ animes sem temporada (ex: One Piece).</div>
+      </div>
+      <div class="form-group">
         <label class="form-label">Episódio atual</label>
         <input type="number" class="form-input" id="inputEpisode" placeholder="1" min="0">
         <div class="form-hint">Padrão: 1</div>
       </div>
+    </div>
+
+    <div class="form-row">
       <div class="form-group">
         <label class="form-label">Capítulo (manga)</label>
         <input type="number" class="form-input" id="inputChapter" placeholder="Opcional" min="0">
         <div class="form-hint">Deixe vazio se não ler.</div>
       </div>
+      <div class="form-group"></div>
     </div>
 
     <div class="form-group">
@@ -873,6 +882,7 @@ function buildCard(anime) {
 
   const statusInfo = STATUS_MAP[anime.status];
   const hasManga = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
+  const hasSeason = anime.season !== null && anime.season !== undefined && anime.season !== '';
 
   const coverHTML = anime.image
     ? `<img src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
@@ -883,11 +893,22 @@ function buildCard(anime) {
     ? `<div class="concluded-overlay">✅ Concluído em ${formatDate(anime.concludedAt)}</div>`
     : '';
 
+  const seasonRow = hasSeason
+    ? `<div class="counter-row">
+        <span class="counter-label">Temp</span>
+        <button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button>
+        <input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season"
+          onchange="updateField('${anime.id}','season',this.value)"
+          oninput="updateField('${anime.id}','season',this.value)">
+        <button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button>
+      </div>`
+    : '';
+
   const chapterRow = hasManga
     ? `<div class="counter-row">
         <span class="counter-label">Chp</span>
         <button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button>
-        <input class="counter-input" type="number" value="${anime.chapter}" min="0"
+        <input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter"
           onchange="updateField('${anime.id}','chapter',this.value)"
           oninput="updateField('${anime.id}','chapter',this.value)">
         <button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button>
@@ -907,10 +928,11 @@ function buildCard(anime) {
     <div class="card-body">
       <div class="card-title" title="${escHtml(anime.title)}">${escHtml(anime.title)}</div>
       <div class="card-counters">
+        ${seasonRow}
         <div class="counter-row">
           <span class="counter-label">Ep</span>
           <button class="counter-btn" onclick="changeValue('${anime.id}','episode',-1)">−</button>
-          <input class="counter-input" type="number" value="${anime.episode}" min="0"
+          <input class="counter-input" type="number" value="${anime.episode}" min="0" data-field="episode"
             onchange="updateField('${anime.id}','episode',this.value)"
             oninput="updateField('${anime.id}','episode',this.value)">
           <button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button>
@@ -945,6 +967,7 @@ function addAnime() {
 
   const epVal = document.getElementById('inputEpisode').value;
   const chVal = document.getElementById('inputChapter').value;
+  const seVal = document.getElementById('inputSeason').value;
   const status = document.getElementById('inputStatus').value;
   const imageUrl = document.getElementById('inputImage').value.trim() || fetchedImageUrl || '';
 
@@ -952,6 +975,7 @@ function addAnime() {
     id: genId(),
     title: name,
     image: imageUrl,
+    season: seVal !== '' ? parseInt(seVal) : null,
     episode: epVal !== '' ? parseInt(epVal) : 1,
     chapter: chVal !== '' ? parseInt(chVal) : null,
     status: status,
@@ -981,29 +1005,27 @@ function updateField(id, field, val) {
   const anime = animes.find(a => a.id === id);
   if (!anime) return;
   const num = parseInt(val);
-  anime[field] = isNaN(num) ? 0 : Math.max(0, num);
+  const min = field === 'season' ? 1 : 0;
+  anime[field] = isNaN(num) ? min : Math.max(min, num);
   saveData();
-  // Update input in DOM to reflect clamped value
   const card = document.getElementById('card-' + id);
   if (card) {
-    const inputs = card.querySelectorAll('.counter-input');
-    if (field === 'episode' && inputs[0]) inputs[0].value = anime.episode;
-    if (field === 'chapter' && inputs[1]) inputs[1].value = anime.chapter;
+    const input = card.querySelector(`[data-field="${field}"]`);
+    if (input) input.value = anime[field];
   }
 }
 
 function changeValue(id, field, delta) {
   const anime = animes.find(a => a.id === id);
   if (!anime) return;
-  const cur = parseInt(anime[field]) || 0;
-  anime[field] = Math.max(0, cur + delta);
+  const min = field === 'season' ? 1 : 0;
+  const cur = parseInt(anime[field]) || min;
+  anime[field] = Math.max(min, cur + delta);
   saveData();
-  // Update DOM
   const card = document.getElementById('card-' + id);
   if (card) {
-    const inputs = card.querySelectorAll('.counter-input');
-    if (field === 'episode' && inputs[0]) inputs[0].value = anime.episode;
-    if (field === 'chapter' && inputs[1]) inputs[1].value = anime.chapter;
+    const input = card.querySelector(`[data-field="${field}"]`);
+    if (input) input.value = anime[field];
   }
 }
 
@@ -1028,6 +1050,7 @@ function updateStatus(id, newStatus) {
 function openModal() {
   document.getElementById('modalBackdrop').classList.add('open');
   document.getElementById('inputName').value = '';
+  document.getElementById('inputSeason').value = '';
   document.getElementById('inputEpisode').value = '';
   document.getElementById('inputChapter').value = '';
   document.getElementById('inputImage').value = '';
