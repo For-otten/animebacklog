@@ -340,6 +340,25 @@
   .anime-card:hover .card-delete { opacity: 1; }
   .card-delete:hover { background: var(--red); color: #fff; border-color: var(--red); }
 
+  .card-edit {
+    position: absolute;
+    top: 42px;
+    left: 10px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+    backdrop-filter: blur(4px);
+  }
+  .anime-card:hover .card-edit { opacity: 1; }
+  .card-edit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
   /* Concluded overlay */
   .concluded-overlay {
     position: absolute;
@@ -742,8 +761,8 @@
 <div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">Novo Anime</div>
-    <div class="modal-subtitle">Vou buscar a capa automaticamente pelo nome ✨</div>
+    <div class="modal-title" id="modalTitle">Novo Anime</div>
+    <div class="modal-subtitle" id="modalSubtitle">Vou buscar a capa automaticamente pelo nome ✨</div>
 
     <div class="form-group">
       <label class="form-label">Nome do anime *</label>
@@ -795,7 +814,7 @@
 
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="addAnime()">Adicionar</button>
+      <button class="btn btn-primary" id="modalConfirmBtn" onclick="saveAnime()">Adicionar</button>
     </div>
   </div>
 </div>
@@ -810,6 +829,7 @@ let animes = [];
 let nameInputTimer = null;
 let fetchedImageUrl = '';
 let activeTab = 'acompanhando';
+let editingId = null;
 
 const STATUS_MAP = {
   acompanhando: { label: 'Acompanhando', emoji: '🟢', badge: 'badge-acompanhando' },
@@ -923,6 +943,7 @@ function buildCard(anime) {
       </div>
       <div class="status-badge ${statusInfo.badge}">${statusInfo.emoji} ${statusInfo.label}</div>
       <button class="card-delete" onclick="deleteAnime('${anime.id}')" title="Remover">✕</button>
+      <button class="card-edit" onclick="openModal('${anime.id}')" title="Editar">✎</button>
       ${concludedBar}
     </div>
     <div class="card-body">
@@ -961,7 +982,7 @@ function formatDate(iso) {
 }
 
 // ── CRUD ──────────────────────────────────────────────
-function addAnime() {
+function saveAnime() {
   const name = document.getElementById('inputName').value.trim();
   if (!name) { showToast('⚠️ Digite o nome do anime!', 'warning'); return; }
 
@@ -971,24 +992,48 @@ function addAnime() {
   const status = document.getElementById('inputStatus').value;
   const imageUrl = document.getElementById('inputImage').value.trim() || fetchedImageUrl || '';
 
-  const anime = {
-    id: genId(),
-    title: name,
-    image: imageUrl,
-    season: seVal !== '' ? parseInt(seVal) : null,
-    episode: epVal !== '' ? parseInt(epVal) : 1,
-    chapter: chVal !== '' ? parseInt(chVal) : null,
-    status: status,
-    concludedAt: status === 'concluido' ? new Date().toISOString() : null,
-    addedAt: new Date().toISOString(),
-  };
+  if (editingId) {
+    // ── EDIT MODE ──
+    const anime = animes.find(a => a.id === editingId);
+    if (!anime) return;
+    const oldStatus = anime.status;
 
-  animes.push(anime);
-  saveData();
-  renderAll();
-  closeModal();
-  switchTab(status, document.querySelector(`[data-tab="${status}"]`));
-  showToast(`✨ ${name} adicionado!`);
+    anime.title  = name;
+    anime.image  = imageUrl;
+    anime.season  = seVal !== '' ? parseInt(seVal) : null;
+    anime.episode = epVal !== '' ? parseInt(epVal) : 1;
+    anime.chapter = chVal !== '' ? parseInt(chVal) : null;
+
+    // Handle concluded date on status change
+    if (status === 'concluido' && !anime.concludedAt) anime.concludedAt = new Date().toISOString();
+    if (status !== 'concluido') anime.concludedAt = null;
+    anime.status = status;
+
+    saveData();
+    renderAll();
+    closeModal();
+    switchTab(status, document.querySelector(`[data-tab="${status}"]`));
+    showToast(`✏️ ${name} atualizado!`);
+  } else {
+    // ── ADD MODE ──
+    const anime = {
+      id: genId(),
+      title: name,
+      image: imageUrl,
+      season: seVal !== '' ? parseInt(seVal) : null,
+      episode: epVal !== '' ? parseInt(epVal) : 1,
+      chapter: chVal !== '' ? parseInt(chVal) : null,
+      status: status,
+      concludedAt: status === 'concluido' ? new Date().toISOString() : null,
+      addedAt: new Date().toISOString(),
+    };
+    animes.push(anime);
+    saveData();
+    renderAll();
+    closeModal();
+    switchTab(status, document.querySelector(`[data-tab="${status}"]`));
+    showToast(`✨ ${name} adicionado!`);
+  }
 }
 
 function deleteAnime(id) {
@@ -1047,23 +1092,44 @@ function updateStatus(id, newStatus) {
 }
 
 // ── MODAL ─────────────────────────────────────────────
-function openModal() {
-  document.getElementById('modalBackdrop').classList.add('open');
-  document.getElementById('inputName').value = '';
-  document.getElementById('inputSeason').value = '';
-  document.getElementById('inputEpisode').value = '';
-  document.getElementById('inputChapter').value = '';
-  document.getElementById('inputImage').value = '';
-  document.getElementById('inputStatus').value = 'assistir';
-  document.getElementById('imgPreview').classList.remove('visible');
-  document.getElementById('imgPreview').src = '';
-  setFetchStatus('hidden', '');
+function openModal(id = null) {
+  editingId = id;
+  const isEdit = !!id;
+  const anime = isEdit ? animes.find(a => a.id === id) : null;
+
+  document.getElementById('modalTitle').textContent = isEdit ? 'Editar Anime' : 'Novo Anime';
+  document.getElementById('modalSubtitle').textContent = isEdit
+    ? 'Limpe um campo para removê-lo do card.'
+    : 'Vou buscar a capa automaticamente pelo nome ✨';
+  document.getElementById('modalConfirmBtn').textContent = isEdit ? 'Salvar' : 'Adicionar';
+
+  document.getElementById('inputName').value = anime?.title ?? '';
+  document.getElementById('inputSeason').value = anime?.season ?? '';
+  document.getElementById('inputEpisode').value = anime?.episode ?? '';
+  document.getElementById('inputChapter').value = anime?.chapter ?? '';
+  document.getElementById('inputImage').value = anime?.image ?? '';
+  document.getElementById('inputStatus').value = anime?.status ?? 'assistir';
+
   fetchedImageUrl = '';
+  setFetchStatus('hidden', '');
+
+  const preview = document.getElementById('imgPreview');
+  if (anime?.image) {
+    preview.src = anime.image;
+    preview.classList.add('visible');
+  } else {
+    preview.src = '';
+    preview.classList.remove('visible');
+  }
+
+  // In edit mode, disable auto-search on name input (don't overwrite existing image)
+  document.getElementById('modalBackdrop').classList.add('open');
   setTimeout(() => document.getElementById('inputName').focus(), 100);
 }
 
 function closeModal() {
   document.getElementById('modalBackdrop').classList.remove('open');
+  editingId = null;
 }
 
 function handleBackdropClick(e) {
@@ -1085,8 +1151,9 @@ async function searchAnimeImage() {
   const name = document.getElementById('inputName').value.trim();
   if (!name) return;
 
-  // Don't override manually entered URL
+  // Don't override manually entered URL or when in edit mode
   if (document.getElementById('inputImage').value.trim()) return;
+  if (editingId) return;
 
   setFetchStatus('loading', 'Buscando na base do MyAnimeList...');
 
