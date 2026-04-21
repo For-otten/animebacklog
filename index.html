@@ -983,11 +983,6 @@
         <input type="password" class="form-input" id="inputToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
         <div class="form-hint">Fica salvo só no seu navegador, nunca sai daqui.</div>
       </div>
-      <div class="form-group" id="gistIdGroup">
-        <label class="form-label">Gist ID <span style="font-weight:400;text-transform:none;letter-spacing:0">(preenchido automático — ou cole um existente)</span></label>
-        <input type="text" class="form-input" id="inputGistId" placeholder="Deixe vazio para criar novo">
-        <div class="form-hint">Se já tem um Gist de backup anterior, cole o ID aqui para reaproveitar.</div>
-      </div>
       <div class="fetch-status hidden" id="gistFetchStatus"></div>
     </div>
 
@@ -1127,8 +1122,6 @@ async function pullFromGist(token, gistId) {
 
 async function connectGist() {
   const token = document.getElementById('inputToken').value.trim();
-  const manualGistId = document.getElementById('inputGistId').value.trim();
-
   if (!token) { setGistFetchStatus('error', '⚠ Cole o token do GitHub primeiro.'); return; }
 
   setGistFetchStatus('loading', 'Verificando token…');
@@ -1143,34 +1136,43 @@ async function connectGist() {
 
     localStorage.setItem(GIST_TOKEN_KEY, token);
 
-    if (manualGistId) {
-      // User provided existing gist ID — pull from it
-      setGistFetchStatus('loading', 'Buscando dados do Gist existente…');
-      localStorage.setItem(GIST_ID_KEY, manualGistId);
-      const remote = await pullFromGist(token, manualGistId);
+    // Search for existing anime-backlog gist
+    setGistFetchStatus('loading', 'Procurando Gist existente…');
+    let foundGistId = null;
+    let page = 1;
+    outer: while (page <= 5) {
+      const listRes = await fetch(`https://api.github.com/gists?per_page=100&page=${page}`, {
+        headers: { Authorization: `token ${token}` }
+      });
+      if (!listRes.ok) break;
+      const gists = await listRes.json();
+      if (!gists.length) break;
+      for (const g of gists) {
+        if (g.files?.[GIST_FILENAME]) { foundGistId = g.id; break outer; }
+      }
+      page++;
+    }
+
+    if (foundGistId) {
+      // Pull from existing gist and merge
+      localStorage.setItem(GIST_ID_KEY, foundGistId);
+      setGistFetchStatus('loading', 'Gist encontrado! Importando dados…');
+      const remote = await pullFromGist(token, foundGistId);
       if (Array.isArray(remote.animes)) {
-        // Merge: remote wins for existing IDs, local-only items are kept
         const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a]));
         const localOnly = animes.filter(a => !remoteMap[a.id]);
         animes = [...remote.animes, ...localOnly];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
         renderAll();
       }
-      setGistFetchStatus('success', `✓ Conectado como @${me.login} — dados importados do Gist!`);
+      setGistFetchStatus('success', `✓ Conectado como @${me.login} — Gist existente encontrado e sincronizado!`);
       showToast(`☁ Gist conectado! ${animes.length} animes carregados.`);
     } else {
-      // Check if a gist already exists for this token
-      const existingId = getGistId();
-      if (existingId) {
-        // Try to push current data
-        localStorage.setItem(GIST_ID_KEY, existingId);
-      }
-      // Push current local data to create/update gist
-      setGistFetchStatus('loading', 'Criando Gist e enviando dados…');
+      // Create new gist with current local data
+      setGistFetchStatus('loading', 'Nenhum Gist encontrado. Criando novo…');
       await pushToGist(true);
-      const newId = getGistId();
-      setGistFetchStatus('success', `✓ Conectado como @${me.login} — Gist ${newId ? 'criado' : 'atualizado'}!`);
-      showToast(`☁ Sync ativo! Seus dados estão salvos no GitHub.`);
+      setGistFetchStatus('success', `✓ Conectado como @${me.login} — novo Gist criado com seus dados!`);
+      showToast(`☁ Sync ativo! Dados salvos no GitHub.`);
     }
 
     updateSettingsUI();
@@ -1213,7 +1215,6 @@ function updateSettingsUI() {
       : 'Token salvo · aguardando primeiro sync';
     danger.style.display = 'flex';
     document.getElementById('inputToken').value = token.slice(0,4) + '●●●●●●●●●●●●●●●●' + token.slice(-4);
-    document.getElementById('inputGistId').value = gistId;
     setSyncUI('ok', 'Sincronizado');
   } else {
     box.className = 'gist-status-box disconnected';
