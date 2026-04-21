@@ -656,12 +656,138 @@
   ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 99px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--border); }
 
+  /* ── SYNC INDICATOR ── */
+  .sync-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+    user-select: none;
+  }
+  .sync-indicator:hover { filter: brightness(1.2); }
+  .sync-off   { background: var(--surface2); color: var(--text-muted); }
+  .sync-ok    { background: rgba(64,224,160,0.1); color: var(--green); border-color: rgba(64,224,160,0.3); }
+  .sync-ing   { background: rgba(64,128,224,0.1); color: #80b0ff; border-color: rgba(64,128,224,0.3); }
+  .sync-err   { background: rgba(224,64,96,0.1);  color: var(--red); border-color: rgba(224,64,96,0.3); }
+
+  .sync-icon { font-size: 14px; }
+  .sync-ing .sync-icon { display: inline-block; animation: spin 1s linear infinite; }
+
+  /* ── SETTINGS MODAL ── */
+  .settings-modal {
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .steps-list {
+    counter-reset: steps;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .step {
+    counter-increment: steps;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .step::before {
+    content: counter(steps);
+    min-width: 22px; height: 22px;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step a { color: var(--accent); text-decoration: none; }
+  .step a:hover { text-decoration: underline; }
+
+  .step code {
+    background: var(--surface3);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .settings-section {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    margin-top: 4px;
+  }
+
+  .settings-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .gist-status-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .gist-status-box.connected    { background: var(--green-dim); color: var(--green); border: 1px solid rgba(64,224,160,0.3); }
+  .gist-status-box.disconnected { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+
+  .danger-zone {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(224,64,96,0.25);
+    background: rgba(224,64,96,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .danger-zone-text { font-size: 12px; color: var(--text-muted); }
+  .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; }
+
+  .btn-danger {
+    background: rgba(224,64,96,0.15);
+    color: var(--red);
+    border: 1px solid rgba(224,64,96,0.3);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+
   /* Responsive */
   @media (max-width: 600px) {
     header { padding: 20px; }
     main { padding: 20px; }
     .stats-bar { padding: 0 16px; }
     .logo-main { font-size: 22px; }
+    .sync-label { display: none; }
   }
 </style>
 </head>
@@ -674,8 +800,13 @@
     <span class="logo-main">Backlog</span>
   </div>
   <div class="header-actions">
-    <button class="btn btn-ghost" onclick="exportData()"><span class="btn-icon">⬇</span> Exportar JSON</button>
-    <label class="btn btn-ghost" style="cursor:pointer"><span class="btn-icon">⬆</span> Importar JSON<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+    <div id="syncIndicator" class="sync-indicator sync-off" onclick="openSettings()" title="Configurar sincronização">
+      <span class="sync-icon">☁</span>
+      <span class="sync-label" id="syncLabel">Sem sync</span>
+    </div>
+    <button class="btn btn-ghost" onclick="exportData()"><span class="btn-icon">⬇</span> Exportar</button>
+    <label class="btn btn-ghost" style="cursor:pointer"><span class="btn-icon">⬆</span> Importar<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+    <button class="btn btn-ghost" onclick="openSettings()" title="Configurar Gist Sync">⚙ Sync</button>
     <button class="btn btn-primary" onclick="openModal()"><span class="btn-icon">＋</span> Adicionar Anime</button>
   </div>
 </header>
@@ -819,6 +950,63 @@
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsBackdrop" onclick="handleSettingsBackdrop(event)">
+  <div class="modal settings-modal">
+    <button class="modal-close" onclick="closeSettings()">✕</button>
+    <div class="modal-title">☁ Gist Sync</div>
+    <div class="modal-subtitle">Salva seu backlog automaticamente num Gist privado do GitHub.</div>
+
+    <!-- Status box -->
+    <div id="gistStatusBox" class="gist-status-box disconnected">
+      <span id="gistStatusIcon">○</span>
+      <span id="gistStatusText">Não configurado</span>
+    </div>
+
+    <!-- Instructions -->
+    <div class="settings-section">
+      <div class="settings-section-title">📋 Como configurar (1x só)</div>
+      <div class="steps-list">
+        <div class="step">Acesse <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a></div>
+        <div class="step">Em <strong>Note</strong> escreva algo como <code>anime-backlog</code></div>
+        <div class="step">Em <strong>Expiration</strong> escolha <code>No expiration</code></div>
+        <div class="step">Marque apenas o escopo <code>gist</code></div>
+        <div class="step">Clique em <strong>Generate token</strong> e copie o token gerado</div>
+        <div class="step">Cole abaixo e clique em <strong>Conectar</strong> — o Gist é criado automático</div>
+      </div>
+    </div>
+
+    <!-- Token input -->
+    <div class="settings-section">
+      <div class="settings-section-title">🔑 Token do GitHub</div>
+      <div class="form-group">
+        <input type="password" class="form-input" id="inputToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        <div class="form-hint">Fica salvo só no seu navegador, nunca sai daqui.</div>
+      </div>
+      <div class="form-group" id="gistIdGroup">
+        <label class="form-label">Gist ID <span style="font-weight:400;text-transform:none;letter-spacing:0">(preenchido automático — ou cole um existente)</span></label>
+        <input type="text" class="form-input" id="inputGistId" placeholder="Deixe vazio para criar novo">
+        <div class="form-hint">Se já tem um Gist de backup anterior, cole o ID aqui para reaproveitar.</div>
+      </div>
+      <div class="fetch-status hidden" id="gistFetchStatus"></div>
+    </div>
+
+    <div class="modal-footer" style="flex-direction:column;gap:8px">
+      <div style="display:flex;gap:8px;width:100%">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeSettings()">Fechar</button>
+        <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="connectGist()">Conectar e sincronizar agora</button>
+      </div>
+      <div class="danger-zone" id="dangerZone" style="display:none">
+        <div class="danger-zone-text">
+          <strong>Desconectar</strong>
+          Remove o token deste navegador. Seus dados locais ficam intactos.
+        </div>
+        <button class="btn btn-danger" onclick="disconnectGist()">Desconectar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -848,6 +1036,238 @@ function loadData() {
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+  scheduleGistSync();
+}
+
+// ── GIST SYNC ─────────────────────────────────────────
+const GIST_TOKEN_KEY = 'anime_gist_token';
+const GIST_ID_KEY    = 'anime_gist_id';
+const GIST_FILENAME  = 'anime-backlog.json';
+let syncTimer = null;
+let isSyncing = false;
+
+function getToken()  { return localStorage.getItem(GIST_TOKEN_KEY) || ''; }
+function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
+
+function setSyncUI(state, label) {
+  const el = document.getElementById('syncIndicator');
+  const lb = document.getElementById('syncLabel');
+  el.className = 'sync-indicator sync-' + state;
+  lb.textContent = label;
+}
+
+function scheduleGistSync() {
+  if (!getToken()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => pushToGist(), 1500);
+}
+
+async function pushToGist(silent = false) {
+  const token = getToken();
+  const gistId = getGistId();
+  if (!token) return;
+  if (isSyncing) return;
+  isSyncing = true;
+  setSyncUI('ing', 'Sincronizando…');
+
+  const payload = JSON.stringify({ animes, savedAt: new Date().toISOString() }, null, 2);
+
+  try {
+    let res;
+    if (gistId) {
+      // Update existing gist
+      res = await fetch(`https://api.github.com/gists/${gistId}`, {
+        method: 'PATCH',
+        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: { [GIST_FILENAME]: { content: payload } } })
+      });
+    } else {
+      // Create new gist
+      res = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: 'Anime Backlog — sincronização automática',
+          public: false,
+          files: { [GIST_FILENAME]: { content: payload } }
+        })
+      });
+    }
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    // Save gist ID if it was just created
+    if (!gistId) {
+      localStorage.setItem(GIST_ID_KEY, data.id);
+      if (!silent) showToast(`☁ Gist criado e sincronizado!`);
+    } else {
+      if (!silent) { /* silently update — don't spam toasts on every change */ }
+    }
+
+    setSyncUI('ok', 'Sincronizado');
+  } catch (e) {
+    setSyncUI('err', 'Erro no sync');
+    if (!silent) showToast('⚠ Erro ao sincronizar com o Gist.', 'error');
+  } finally {
+    isSyncing = false;
+  }
+}
+
+async function pullFromGist(token, gistId) {
+  const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+    headers: { Authorization: `token ${token}` }
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const raw = data.files?.[GIST_FILENAME]?.content;
+  if (!raw) throw new Error('Arquivo não encontrado no Gist');
+  return JSON.parse(raw);
+}
+
+async function connectGist() {
+  const token = document.getElementById('inputToken').value.trim();
+  const manualGistId = document.getElementById('inputGistId').value.trim();
+
+  if (!token) { setGistFetchStatus('error', '⚠ Cole o token do GitHub primeiro.'); return; }
+
+  setGistFetchStatus('loading', 'Verificando token…');
+
+  try {
+    // Validate token
+    const meRes = await fetch('https://api.github.com/user', {
+      headers: { Authorization: `token ${token}` }
+    });
+    if (!meRes.ok) throw new Error('Token inválido ou sem permissão de gist.');
+    const me = await meRes.json();
+
+    localStorage.setItem(GIST_TOKEN_KEY, token);
+
+    if (manualGistId) {
+      // User provided existing gist ID — pull from it
+      setGistFetchStatus('loading', 'Buscando dados do Gist existente…');
+      localStorage.setItem(GIST_ID_KEY, manualGistId);
+      const remote = await pullFromGist(token, manualGistId);
+      if (Array.isArray(remote.animes)) {
+        // Merge: remote wins for existing IDs, local-only items are kept
+        const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a]));
+        const localOnly = animes.filter(a => !remoteMap[a.id]);
+        animes = [...remote.animes, ...localOnly];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+        renderAll();
+      }
+      setGistFetchStatus('success', `✓ Conectado como @${me.login} — dados importados do Gist!`);
+      showToast(`☁ Gist conectado! ${animes.length} animes carregados.`);
+    } else {
+      // Check if a gist already exists for this token
+      const existingId = getGistId();
+      if (existingId) {
+        // Try to push current data
+        localStorage.setItem(GIST_ID_KEY, existingId);
+      }
+      // Push current local data to create/update gist
+      setGistFetchStatus('loading', 'Criando Gist e enviando dados…');
+      await pushToGist(true);
+      const newId = getGistId();
+      setGistFetchStatus('success', `✓ Conectado como @${me.login} — Gist ${newId ? 'criado' : 'atualizado'}!`);
+      showToast(`☁ Sync ativo! Seus dados estão salvos no GitHub.`);
+    }
+
+    updateSettingsUI();
+  } catch (e) {
+    setGistFetchStatus('error', `❌ ${e.message}`);
+  }
+}
+
+function disconnectGist() {
+  if (!confirm('Desconectar o GitHub Gist deste navegador?\n\nSeus dados locais ficam intactos e o Gist no GitHub não é deletado.')) return;
+  localStorage.removeItem(GIST_TOKEN_KEY);
+  localStorage.removeItem(GIST_ID_KEY);
+  setSyncUI('off', 'Sem sync');
+  updateSettingsUI();
+  showToast('○ Sync desconectado.');
+  closeSettings();
+}
+
+function setGistFetchStatus(type, msg) {
+  const el = document.getElementById('gistFetchStatus');
+  el.className = 'fetch-status ' + type;
+  if (type === 'loading') {
+    el.innerHTML = `<div class="spinner"></div> ${msg}`;
+  } else {
+    el.textContent = msg;
+  }
+}
+
+function updateSettingsUI() {
+  const token = getToken();
+  const gistId = getGistId();
+  const box = document.getElementById('gistStatusBox');
+  const danger = document.getElementById('dangerZone');
+
+  if (token) {
+    box.className = 'gist-status-box connected';
+    document.getElementById('gistStatusIcon').textContent = '✓';
+    document.getElementById('gistStatusText').textContent = gistId
+      ? `Conectado · Gist ID: ${gistId.slice(0,8)}…`
+      : 'Token salvo · aguardando primeiro sync';
+    danger.style.display = 'flex';
+    document.getElementById('inputToken').value = token.slice(0,4) + '●●●●●●●●●●●●●●●●' + token.slice(-4);
+    document.getElementById('inputGistId').value = gistId;
+    setSyncUI('ok', 'Sincronizado');
+  } else {
+    box.className = 'gist-status-box disconnected';
+    document.getElementById('gistStatusIcon').textContent = '○';
+    document.getElementById('gistStatusText').textContent = 'Não configurado';
+    danger.style.display = 'none';
+    setSyncUI('off', 'Sem sync');
+  }
+}
+
+// ── SETTINGS MODAL ────────────────────────────────────
+function openSettings() {
+  updateSettingsUI();
+  setGistFetchStatus('hidden', '');
+  if (!getToken()) {
+    document.getElementById('inputToken').value = '';
+    document.getElementById('inputGistId').value = '';
+  }
+  document.getElementById('settingsBackdrop').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settingsBackdrop').classList.remove('open');
+}
+
+function handleSettingsBackdrop(e) {
+  if (e.target === document.getElementById('settingsBackdrop')) closeSettings();
+}
+
+// Pull on startup if token+gistId exist and local is empty
+async function initGistSync() {
+  const token = getToken();
+  const gistId = getGistId();
+  if (!token || !gistId) return;
+  setSyncUI('ing', 'Carregando…');
+  try {
+    const remote = await pullFromGist(token, gistId);
+    if (Array.isArray(remote.animes) && remote.animes.length > 0) {
+      const remoteDate = remote.savedAt ? new Date(remote.savedAt) : new Date(0);
+      const localRaw = localStorage.getItem(STORAGE_KEY);
+      const localDate = localRaw ? new Date(JSON.parse(localRaw)[0]?.addedAt || 0) : new Date(0);
+
+      if (remote.animes.length >= animes.length || remoteDate > localDate) {
+        const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a]));
+        const localOnly = animes.filter(a => !remoteMap[a.id]);
+        animes = [...remote.animes, ...localOnly];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+        renderAll();
+      }
+    }
+    setSyncUI('ok', 'Sincronizado');
+  } catch {
+    setSyncUI('err', 'Erro no sync');
+  }
 }
 
 function genId() {
@@ -1254,6 +1674,8 @@ function showToast(msg, type = 'default') {
 // ── INIT ──────────────────────────────────────────────
 loadData();
 renderAll();
+updateSettingsUI();
+initGistSync();
 </script>
 </body>
 </html>
