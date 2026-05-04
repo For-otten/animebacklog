@@ -1,6 +1,6 @@
 {
-  "name": "アニメ Backlog",
-  "short_name": "アニメ Backlog",
+  "name": "アニメ Log",
+  "short_name": "アニメ Log",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0a12",
