@@ -374,7 +374,7 @@ function loadData() {
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-  // Bandeirinha: Avisa o sistema que temos mudanças pendentes para enviar ao Gist
+  // Bandeirinha: Avisa o sistema que temos mudanças locais que precisam ir pra nuvem
   localStorage.setItem('anime_pending_sync', 'true');
   scheduleGistSync();
 }
@@ -535,7 +535,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 function onNameInput() { clearTimeout(nameInputTimer); fetchedImageUrl = ''; const name = document.getElementById('inputName').value.trim(); if (!name) { setFetchStatus('hidden', ''); return; } nameInputTimer = setTimeout(() => searchAnimeImage(), 900); }
 async function searchAnimeImage() {
-  if(!navigator.onLine) return setFetchStatus('error', 'Sem internet para buscar capa.'); // Regra offline extra
+  if(!navigator.onLine) return setFetchStatus('error', 'Sem internet para buscar capa.'); 
   const name = document.getElementById('inputName').value.trim(); if (!name || document.getElementById('inputImage').value.trim() || editingId) return;
   setFetchStatus('loading', 'Buscando capa...');
   try { const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(name)}&limit=1&sfw`); const data = await res.json(); const item = data.data?.[0]; if (item && item.images?.jpg?.large_image_url) { fetchedImageUrl = item.images.jpg.large_image_url; setFetchStatus('success', `✓ Encontrado!`); document.getElementById('imgPreview').src = fetchedImageUrl; document.getElementById('imgPreview').classList.add('visible'); } else { setFetchStatus('error', 'Capa não encontrada.'); } } catch { setFetchStatus('error', 'Erro ao buscar.'); }
@@ -546,14 +546,14 @@ function onImageUrlInput() { const url = document.getElementById('inputImage').v
 const GIST_TOKEN_KEY = 'anime_gist_token', GIST_ID_KEY = 'anime_gist_id', GIST_FILENAME = 'anime-backlog.json';
 let syncTimer = null, isSyncing = false;
 
-function getToken() { return localStorage.getItem(GIST_TOKEN_KEY) || ''; } function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
+function getToken() { return localStorage.getItem(GIST_TOKEN_KEY) || ''; } 
+function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
 function setSyncUI(state, label) { const el = document.getElementById('syncIndicator'), lb = document.getElementById('syncLabel'); el.className = 'sync-indicator sync-' + state; lb.textContent = label; }
 function scheduleGistSync() { if (!getToken()) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => pushToGist(), 1500); }
 
 async function pushToGist(silent = false) {
   const token = getToken(), gistId = getGistId(); if (!token || isSyncing) return;
   
-  // LOGICA OFFLINE: Impede envio se estiver sem net
   if (!navigator.onLine) {
     setSyncUI('off', 'Offline (Salvo local)');
     return;
@@ -576,25 +576,55 @@ async function pushToGist(silent = false) {
   } finally { isSyncing = false; }
 }
 
-// OLHEIROS DE REDE: O que fazer quando a internet cai ou volta
-window.addEventListener('online', () => {
-  if (getToken()) {
-    // Se a net voltar e houver uma pendência, empurra pro github automático
-    if (localStorage.getItem('anime_pending_sync') === 'true') {
-      pushToGist();
-    } else {
-      setSyncUI('ok', 'Sincronizado');
-    }
-  }
-});
-
-window.addEventListener('offline', () => {
-  if (getToken()) setSyncUI('off', 'Offline');
-});
-
 async function pullFromGist(token, gistId) {
   const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers: { Authorization: `token ${token}` } });
   if (!res.ok) throw new Error(); const data = await res.json(); return JSON.parse(data.files?.[GIST_FILENAME]?.content);
+}
+
+// OLHEIROS DE REDE: O que fazer quando a internet cai ou volta
+window.addEventListener('online', () => {
+  updateSettingsUI();
+  initGistSync(); // Força a sincronização quando a net volta
+});
+
+window.addEventListener('offline', () => {
+  updateSettingsUI();
+  if (getToken()) setSyncUI('off', 'Offline');
+});
+
+// A Função Principal de Inicialização Corrigida
+async function initGistSync() {
+  const token = getToken(), gistId = getGistId(); 
+  if (!token || !gistId) return; 
+  
+  if (!navigator.onLine) { 
+    setSyncUI('off', 'Offline'); 
+    return; 
+  }
+  
+  // SOLUÇÃO: Se há modificações offline pendentes, ENVIE (Push) primeiro!
+  // Evita que as informações locais sejam substituídas pelo que está no Github
+  if(localStorage.getItem('anime_pending_sync') === 'true') {
+    setSyncUI('ing', 'Enviando offline...');
+    await pushToGist();
+    return; 
+  }
+
+  // Se NÃO há alterações pendentes, ele BAIXA do Github para manter atualizado (Pull)
+  setSyncUI('ing', 'Carregando...');
+  try {
+    const remote = await pullFromGist(token, gistId);
+    if (Array.isArray(remote.animes) && remote.animes.length > 0) {
+      const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); 
+      const localOnly = animes.filter(a => !remoteMap[a.id]);
+      animes = [...remote.animes, ...localOnly]; 
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); 
+      renderAll();
+    } 
+    setSyncUI('ok', 'Sincronizado');
+  } catch { 
+    setSyncUI('err', 'Erro'); 
+  }
 }
 
 async function connectGist() {
@@ -647,29 +677,6 @@ function updateSettingsUI() {
     if (navigator.onLine) setSyncUI('ok', 'Sincronizado'); else setSyncUI('off', 'Offline');
   } 
   else { box.className = 'gist-status-box disconnected'; document.getElementById('gistStatusIcon').textContent = '○'; document.getElementById('gistStatusText').textContent = 'Não configurado'; danger.style.display = 'none'; document.getElementById('inputToken').value = ''; setSyncUI('off', 'Sem sync'); }
-}
-
-async function initGistSync() {
-  const token = getToken(), gistId = getGistId(); if (!token || !gistId) return; 
-  if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
-  
-  setSyncUI('ing', 'Carregando...');
-  try {
-    const remote = await pullFromGist(token, gistId);
-    if (Array.isArray(remote.animes) && remote.animes.length > 0) {
-      const rDate = remote.savedAt ? new Date(remote.savedAt) : new Date(0); const lDate = new Date(animes[0]?.addedAt || 0);
-      if (remote.animes.length >= animes.length || rDate > lDate) {
-        const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); const localOnly = animes.filter(a => !remoteMap[a.id]);
-        animes = [...remote.animes, ...localOnly]; localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); renderAll();
-      }
-    } 
-    // Se tivermos inicializado online, vamos forçar o envio de pendências locais
-    if(localStorage.getItem('anime_pending_sync') === 'true') {
-      pushToGist();
-    } else {
-      setSyncUI('ok', 'Sincronizado');
-    }
-  } catch { setSyncUI('err', 'Erro'); }
 }
 
 function exportData() { const blob = new Blob([JSON.stringify(animes, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `anime-backlog.json`; a.click(); showToast('⬇ Backup exportado!'); }
