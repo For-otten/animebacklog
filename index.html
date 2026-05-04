@@ -230,7 +230,26 @@
     .modal.closing {
       transform: translateY(100%);
     }
-    @keyframes bottomSheetIn { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+    /* ANIMAÇÃO MAIS LEVE: Foca apenas no movimento, que é mais rápido */
+    @keyframes bottomSheetIn {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal { 
+      border-radius: 28px 28px 0 0; 
+      padding: 24px 20px 48px; 
+      /* CURVA MAIS RÁPIDA E RESPONSIVA */
+      animation: bottomSheetIn 0.3s cubic-bezier(0, 0, 0.2, 1) both; 
+      max-height: 92vh; 
+      overflow-y: auto; 
+      border: none; 
+      border-top: 1px solid var(--border);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 1, 1); /* Transição de saída mais suave */
+    }
+    .modal.closing {
+      transform: translateY(100%);
+    }
     .modal::before { content: ''; display: block; width: 40px; height: 5px; background: var(--surface3); border-radius: 5px; margin: 0 auto 24px; }
     .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; color: var(--text-muted); }
     .form-row { flex-direction: column; gap: 0; }
@@ -737,26 +756,36 @@ setTimeout(() => { document.getElementById('tab-' + activeTab).scrollIntoView();
 
 // ── INIT ──────────────────────────────────────────────
 loadData(); renderAll(); updateSettingsUI(); initGistSync();
-// --- LÓGICA ATUALIZADA PARA ARRASTAR O MODAL E FECHAR ---
+// --- VERSÃO FINAL: Lógica do "Empurrão" com Inércia ---
 
 function closeModal() {
   const backdrop = document.getElementById('modalBackdrop');
   const modal = backdrop.querySelector('.modal');
-  modal.classList.add('closing');
+
+  // Define a animação de fechamento via JS para ter controle total
+  modal.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 1, 1)';
+  modal.style.transform = 'translateY(100%)';
+
+  // Limpa tudo após a animação
   setTimeout(() => {
     backdrop.classList.remove('open');
-    modal.classList.remove('closing');
-    editingId = null;
-  }, 300); // Espera a animação de saída terminar
+    modal.style.transition = ''; // Reseta para a próxima abertura
+    modal.style.transform = '';
+    if (editingId !== null) editingId = null;
+  }, 300);
 }
 
 function closeSettings() {
   const backdrop = document.getElementById('settingsBackdrop');
   const modal = backdrop.querySelector('.modal');
-  modal.classList.add('closing');
+
+  modal.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 1, 1)';
+  modal.style.transform = 'translateY(100%)';
+
   setTimeout(() => {
     backdrop.classList.remove('open');
-    modal.classList.remove('closing');
+    modal.style.transition = '';
+    modal.style.transform = '';
   }, 300);
 }
 
@@ -765,52 +794,52 @@ function makeModalDraggable(backdropId, closeFunction) {
   if (!backdrop) return;
   const modal = backdrop.querySelector('.modal');
   
-  let isDragging = false, startY, currentY;
+  let isDragging = false, startY, startTime;
 
   const onTouchStart = (e) => {
-    // Permite iniciar o arraste em qualquer lugar do modal,
-    // mas não em inputs ou botões para não atrapalhar a digitação/clique.
     if (e.target.closest('input, button, select, a')) return;
     
-    if (modal.scrollTop === 0) { // Só permite arrastar se o modal estiver no topo
+    if (modal.scrollTop === 0) {
       isDragging = true;
       startY = e.touches[0].clientY;
-      // CORREÇÃO CRÍTICA: Remove a animação de entrada para liberar o transform
+      startTime = performance.now();
       modal.style.animation = 'none'; 
-      modal.style.transition = 'none';
+      modal.style.transition = 'none'; // Remove transição durante o arraste
     }
   };
 
   const onTouchMove = (e) => {
     if (!isDragging) return;
-    
-    currentY = e.touches[0].clientY;
+    const currentY = e.touches[0].clientY;
     const deltaY = currentY - startY;
-
-    if (deltaY > 0) {
-      // Impede o scroll da página enquanto arrasta o modal
+    if (deltaY >= 0) { // Permite arrastar um pouquinho pra cima sem quebrar
       e.preventDefault(); 
-      // AGORA VAI FUNCIONAR: O modal se moverá com o dedo
       modal.style.transform = `translateY(${deltaY}px)`;
     }
   };
 
-  const onTouchEnd = () => {
+  const onTouchEnd = (e) => {
     if (!isDragging) return;
     isDragging = false;
     
-    // Devolve a transição para animar o retorno ou a saída
-    modal.style.transition = ''; 
-    modal.style.transform = ''; // Limpa o transform inline
+    const finalY = e.changedTouches[0].clientY;
+    const deltaY = finalY - startY;
 
-    const deltaY = currentY - startY;
-    const threshold = modal.offsetHeight * 0.35; // Um pouco mais de 1/3
+    const endTime = performance.now();
+    const duration = endTime - startTime;
+    const velocity = duration > 0 ? deltaY / duration : 0;
 
-    if (deltaY > threshold) {
-      closeFunction(); // Chama a função de fechar, que agora tem a animação
-    } 
-    // Se não atingiu o limite, o CSS cuida de fazer ele voltar sozinho
-    // para a posição original com a transição que acabamos de devolver.
+    // Se o "empurrão" for forte o suficiente...
+    if (velocity > 0.4 || deltaY > 100) {
+      // ...CHAMA A FUNÇÃO QUE ACIONA A ANIMAÇÃO COMPLETA.
+      // O navegador vai animar suavemente da posição atual (onde o dedo soltou)
+      // até o destino final ('translateY(100%)'), criando o efeito de inércia.
+      closeFunction();
+    } else {
+      // Se o empurrão foi fraco, anima de volta para o topo.
+      modal.style.transition = 'transform 0.3s cubic-bezier(0, 0, 0.2, 1)';
+      modal.style.transform = '';
+    }
   };
 
   modal.addEventListener('touchstart', onTouchStart, { passive: true });
