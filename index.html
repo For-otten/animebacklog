@@ -87,7 +87,6 @@
   .btn-ghost:hover { background: var(--surface3); color: var(--text); }
   .btn-icon { font-size: 15px; }
 
-  /* NOVA BARRA DE PESQUISA DESKTOP */
   .search-input {
     background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 10px;
     padding: 10px 16px; font-family: inherit; font-size: 13px; transition: var(--transition); width: 250px;
@@ -115,10 +114,18 @@
   .stat-count { background: var(--surface3); color: var(--text-muted); padding: 2px 7px; border-radius: 20px; font-size: 11px; }
 
   /* ── MAIN & CARDS GRID ORIGINAL DESKTOP ── */
-  main { position: relative; z-index: 5; padding: 32px 40px 60px; }
-  .tab-content { display: none; animation: fadeIn 0.3s ease; } .tab-content.active { display: block; }
+  main { position: relative; z-index: 5; padding: 32px 40px 60px; overflow-x: hidden; }
+  
+  /* Container e Animações (Desktop = Fade / Mobile = Slide) */
+  .tab-content { display: none; } 
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
   @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
   
+  @keyframes slideInRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes slideInLeft { from { transform: translateX(-40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .slide-right { animation: slideInRight 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important; }
+  .slide-left { animation: slideInLeft 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important; }
+
   .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
   .section-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
   .section-line { flex: 1; height: 1px; background: var(--border); }
@@ -233,10 +240,9 @@
 
 
   /* ═════════════════════════════════════════════════════════════════════════
-     ── MOBILE OVERHAUL (O Muro de Concreto - Lista Horizontal, Alvos Grandes)
+     ── MOBILE OVERHAUL (A Mágica do Layout Horizontal sem Sobreposição)
      ═════════════════════════════════════════════════════════════════════════ */
   @media (max-width: 600px) {
-    /* Ajustes globais Mobile */
     header { padding: 16px; top: 0; gap: 12px; }
     .logo-main { font-size: 22px; }
     .header-actions { gap: 8px; flex: 1; justify-content: flex-end; }
@@ -248,9 +254,9 @@
     .stats-bar { padding: 0 16px; gap: 10px; }
     main { padding: 16px 16px 80px; }
     
-    /* Layout Horizontal do Card para Celular */
     .cards-grid { grid-template-columns: 1fr; gap: 14px; }
     
+    /* Estrutura do Card Mobile - Seguro e Responsivo */
     .anime-card { 
       display: flex; 
       flex-direction: row; 
@@ -259,41 +265,43 @@
     }
     
     .card-cover { 
-      width: 110px; 
+      width: 100px; /* Reduzido levemente para dar espaço aos botões de texto */
       padding-top: 0; 
       flex-shrink: 0; 
       border-right: 1px solid var(--border);
     }
     
-    /* Botões Extras GIGANTES flutuando sempre visíveis à direita */
+    /* Botões Flutuantes à Direita (Sempre Visíveis) */
     .card-delete, .card-edit {
-      opacity: 1; /* Sempre visível no mobile */
-      width: 36px; height: 36px; font-size: 16px; 
+      opacity: 1; 
+      width: 34px; height: 34px; font-size: 14px; 
       background: var(--surface2); border: 1px solid var(--border);
-      left: auto; /* Remove alinhamento à esquerda do desktop */
+      left: auto; /* Remove herança do desktop */
     }
     .card-delete { top: 10px; right: 10px; }
-    .card-edit { top: 54px; right: 10px; }
+    .card-edit { top: 52px; right: 10px; }
     
-    /* Corpo do texto apertado à direita para dar espaço aos botões flutuantes */
+    /* ZONA SEGURA: O Padding-right de 52px impede QUALQUER texto/botão de encostar no "X" ou "Lápis" */
     .card-body { 
       flex: 1; 
-      padding: 12px 14px; 
-      padding-right: 54px; /* O Pulo do Gato: texto não bate nos botões! */
-      min-width: 0; 
+      padding: 12px; 
+      padding-right: 52px; /* A mágica anti-sobreposição está aqui */
+      width: calc(100% - 100px); /* Garante que os filhos obedeçam ao limite da tela */
       display: flex; flex-direction: column; justify-content: center;
     }
     
     .card-title { font-size: 14px; margin-bottom: 12px; min-height: auto; }
 
-    /* Touch Targets Gigantes */
-    .card-counters { gap: 8px; margin-bottom: 12px; }
-    .counter-label { font-size: 10px; width: 26px; }
-    .counter-btn { width: 36px; height: 36px; font-size: 20px; }
-    .counter-input { height: 36px; font-size: 15px; }
-    .status-select { height: 44px; font-size: 13px; }
+    /* Touch Targets e inputs comprimidos com segurança */
+    .card-counters { gap: 6px; margin-bottom: 12px; width: 100%; }
+    .counter-row { gap: 6px; width: 100%; }
+    .counter-label { font-size: 10px; width: 28px; }
+    .counter-btn { width: 32px; height: 32px; font-size: 18px; }
+    .counter-input { height: 32px; font-size: 14px; }
     
-    /* Reposicionamento das Tags sobre a imagem */
+    .status-select { height: 40px; font-size: 12px; }
+    
+    /* Tags realocadas na imagem */
     .status-badge { bottom: auto; top: 8px; left: 8px; right: auto; font-size: 9px; padding: 4px 8px; }
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
 
@@ -305,7 +313,6 @@
     .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; color: var(--text-muted); }
     .form-row { flex-direction: column; gap: 0; }
     
-    /* Toast */
     .toast-container { bottom: 20px; right: 16px; left: 16px; }
     .toast { justify-content: center; }
   }
@@ -316,7 +323,6 @@
 <header>
   <div class="logo"><span class="logo-jp">アニメ</span><span class="logo-main">Backlog</span></div>
   
-  <!-- BARRA DE PESQUISA (Escondida dentro do header no Desktop, aparece inteira no Mobile) -->
   <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar anime..." oninput="filterAnimes()">
 
   <div class="header-actions">
@@ -335,6 +341,7 @@
   <div class="stat-pill" data-tab="dropado" onclick="switchTab('dropado', this)"><span class="stat-dot dot-dropado"></span>Dropado<span class="stat-count" id="count-dropado">0</span></div>
 </nav>
 
+<!-- Área que recebe o Swipe/Toque -->
 <main id="swipeArea">
   <div class="tab-content active" id="tab-acompanhando"><div class="cards-grid" id="grid-acompanhando"></div></div>
   <div class="tab-content" id="tab-assistir"><div class="cards-grid" id="grid-assistir"></div></div>
@@ -383,7 +390,6 @@ function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
 
 function filterAnimes() {
   const query = document.getElementById('searchInput').value.toLowerCase();
-  // Usa window.innerWidth pra saber se o display do card filtrado deve ser flex (Mobile) ou block (Desktop)
   const displayType = window.innerWidth <= 600 ? 'flex' : 'block';
   document.querySelectorAll('.anime-card').forEach(card => {
     const title = card.querySelector('.card-title').textContent.toLowerCase();
@@ -391,23 +397,68 @@ function filterAnimes() {
   });
 }
 
-let touchStartX = 0, touchEndX = 0, touchStartY = 0, touchEndY = 0;
-document.getElementById('swipeArea').addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
-document.getElementById('swipeArea').addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; touchEndY = e.changedTouches[0].screenY; handleSwipe(); }, {passive: true});
-function handleSwipe() {
-  if (window.innerWidth > 600) return; // Swipe apenas no mobile
-  const diffX = touchStartX - touchEndX; const diffY = Math.abs(touchStartY - touchEndY);
-  if (diffY > Math.abs(diffX)) return;
+// ── LÓGICA DE SWIPE (COM EFEITO DE PUXAR) ──
+let touchStartX = 0, touchStartY = 0, isSwiping = false;
+document.getElementById('swipeArea').addEventListener('touchstart', e => { 
+  touchStartX = e.changedTouches[0].screenX; 
+  touchStartY = e.changedTouches[0].screenY; 
+  isSwiping = true;
+}, {passive: true});
+
+document.getElementById('swipeArea').addEventListener('touchmove', e => {
+  if (!isSwiping || window.innerWidth > 600) return;
+  let diffX = touchStartX - e.changedTouches[0].screenX;
+  let diffY = Math.abs(touchStartY - e.changedTouches[0].screenY);
+
+  // Se estiver rolando para baixo/cima, cancela o swipe lateral
+  if (diffY > 40 && diffY > Math.abs(diffX)) {
+    isSwiping = false;
+    document.querySelector('.tab-content.active').style.transform = '';
+    return;
+  }
+  
+  // Efeito elástico ao puxar
+  let move = Math.max(-60, Math.min(60, -diffX * 0.3));
+  document.querySelector('.tab-content.active').style.transform = `translateX(${move}px)`;
+}, {passive: true});
+
+document.getElementById('swipeArea').addEventListener('touchend', e => { 
+  if (!isSwiping) return;
+  isSwiping = false;
+  let diffX = touchStartX - e.changedTouches[0].screenX;
+  
+  // Reseta visual da puxada
+  let activeContent = document.querySelector('.tab-content.active');
+  if (activeContent) activeContent.style.transform = '';
+
+  if (window.innerWidth > 600) return;
+
   let idx = TABS_ORDER.indexOf(activeTab);
   if (diffX > 60 && idx < TABS_ORDER.length - 1) document.querySelector(`[data-tab="${TABS_ORDER[idx+1]}"]`).click();
   else if (diffX < -60 && idx > 0) document.querySelector(`[data-tab="${TABS_ORDER[idx-1]}"]`).click();
-}
+}, {passive: true});
 
 function switchTab(tab, el) {
+  let oldIdx = TABS_ORDER.indexOf(activeTab);
+  let newIdx = TABS_ORDER.indexOf(tab);
   activeTab = tab;
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+  // Limpa classes e estilos
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.classList.remove('active', 'slide-left', 'slide-right');
+    t.style.transform = '';
+  });
   document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
+  
+  let targetContent = document.getElementById('tab-' + tab);
+  targetContent.classList.add('active');
+
+  // Adiciona a animação direcional de Slide SÓ no Mobile
+  if (window.innerWidth <= 600 && oldIdx !== newIdx) {
+    if (newIdx > oldIdx) targetContent.classList.add('slide-right');
+    else targetContent.classList.add('slide-left');
+  }
+
   el.classList.add('active');
   document.getElementById('searchInput').value = ''; 
   filterAnimes();
@@ -428,7 +479,6 @@ function buildCard(anime) {
   const card = document.createElement('div'); card.className = `anime-card status-${anime.status}`; card.id = 'card-' + anime.id;
   const sInfo = STATUS_MAP[anime.status];
   
-  // As tags HTML do botão Edit/Delete voltaram a ser filhas diretas de anime-card para o Mobile e Desktop manipularem perfeitamente via CSS
   card.innerHTML = `
     <div class="card-cover">
       ${anime.image ? `<img src="${escHtml(anime.image)}" onerror="this.style.display='none'">` : ''}
