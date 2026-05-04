@@ -263,54 +263,59 @@ main::-webkit-scrollbar { display: none; }
     /* ── Mobile Modal Lógica Flúida e Corrigida ── */
     .modal-backdrop { align-items: flex-end; padding: 0; background: rgba(0,0,0,0.7); backdrop-filter: none; }
 
+/* 1. O Modal sobe como uma "concha" vazia e leve */
     .modal {
         border-radius: 28px 28px 0 0;
         padding: 24px 20px 48px;
         max-height: 92vh;
-        overflow-y: auto;
+        overflow: hidden; /* Evita scrolls estranhos durante a subida */
         border: none;
         border-top: 1px solid var(--border);
         
-        /* Força consistência absoluta na animação */
-        opacity: 1; 
-        transform: translateY(100%) scale(1); 
-        transition: transform 0.4s cubic-bezier(0, 0, 0.2, 1);
+        /* Aceleração máxima de hardware */
         will-change: transform;
+        transform: translate3d(0, 100%, 0); 
+        
+        /* Curva de animação ultra rápida e limpa */
+        transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    
-    .modal-backdrop.visible .modal { transform: translateY(0) scale(1); }
-    .modal.dragging { transition: none !important; }
 
-    .modal::before { content: ''; display: block; width: 40px; height: 5px; background: var(--surface3); border-radius: 5px; margin: 0 auto 24px; }
-    .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; color: var(--text-muted); }
+    .modal-backdrop.visible .modal {
+        transform: translate3d(0, 0, 0);
+    }
 
-    /* Otimização de Conteúdo: Agrupado em apenas 2 blocos para economizar processador */
-    .modal .modal-title, .modal .modal-subtitle, .modal .form-group, 
-    .modal .img-preview-row, .modal .form-row, .modal .modal-footer,
-    .settings-modal .settings-section, .settings-modal .gist-status-box {
+    /* 2. ESCONDEMOS TUDO durante o movimento */
+    /* Usamos visibility: hidden porque o navegador para de renderizar o que está dentro */
+    .modal .modal-title, 
+    .modal .modal-subtitle, 
+    .modal .form-group, 
+    .modal .img-preview-row, 
+    .modal .form-row, 
+    .modal .modal-footer {
         opacity: 0;
-        transform: translateY(8px);
-        transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+        visibility: hidden; 
+        transform: translateY(15px);
+        transition: opacity 0.2s ease, transform 0.25s ease, visibility 0s 0.25s;
     }
 
-    /* Grupo 1: Todo o conteúdo (Aparece junto após a subida do modal) */
+    /* 3. REVELAÇÃO: Só acontece quando o backdrop ganha a classe .visible */
+    /* Adicionamos um delay estratégico para a animação de subida terminar primeiro */
     .modal-backdrop.visible .modal .modal-title,
     .modal-backdrop.visible .modal .modal-subtitle,
     .modal-backdrop.visible .modal .form-group,
     .modal-backdrop.visible .modal .img-preview-row,
     .modal-backdrop.visible .modal .form-row,
-    .modal-backdrop.visible .settings-modal .settings-section,
-    .modal-backdrop.visible .settings-modal .gist-status-box {
-        opacity: 1;
-        transform: translateY(0);
-        transition-delay: 0.12s;
-    }
-
-    /* Grupo 2: Footer/Botões (Aparece por último) */
     .modal-backdrop.visible .modal .modal-footer {
         opacity: 1;
+        visibility: visible;
         transform: translateY(0);
-        transition-delay: 0.22s;
+        transition: opacity 0.3s ease 0.25s, transform 0.3s ease 0.25s, visibility 0s 0.25s;
+    }
+
+    /* Extra: Desativamos o degradê do título durante a entrada para economizar GPU */
+    .modal-backdrop:not(.visible) .modal-title {
+        background: var(--text) !important;
+        -webkit-text-fill-color: var(--text) !important;
     }
 
     /* --- BOTÃO FLUTUANTE MOBILE --- */
@@ -656,10 +661,20 @@ function openModal(id = null) {
   const backdrop = document.getElementById('modalBackdrop');
   backdrop.classList.add('open');
   
-  // O segredo para animação consistente no mobile: um delay mínimo de 10ms
-  setTimeout(() => {
+  const modal = backdrop.querySelector('.modal');
+  
+  // Garante que o modal comece do zero e limpo
+  modal.style.transform = ''; 
+  backdrop.classList.add('open');
+  
+  // Força o "Reflow" para o navegador entender que o modal está em 100% (embaixo)
+  void modal.offsetWidth; 
+
+  // Dispara a subida
+  requestAnimationFrame(() => {
     backdrop.classList.add('visible');
-  }, 10);
+  });
+  
 }
 
 function closeModal() {
