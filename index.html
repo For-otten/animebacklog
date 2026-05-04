@@ -282,7 +282,7 @@
     .cards-grid { grid-template-columns: 1fr; gap: 14px; }
     
     .anime-card { display: flex; flex-direction: row; min-height: 150px; align-items: stretch; }
-    .card-cover { width: 110px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
+    .card-cover { width: 128px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
     
     /* Botões flutuantes fixos na DIREITA */
     .card-delete, .card-edit {
@@ -297,7 +297,7 @@
     .card-title { font-size: 14px; margin-bottom: 12px; min-height: auto; }
 
     .card-counters { gap: 8px; margin-bottom: 12px; }
-    .counter-label { font-size: 10px; width: 26px; }
+    .counter-label { font-size: 10px; width: 17px; }
     .counter-btn { width: 34px; height: 34px; font-size: 18px; }
     .counter-input { height: 34px; font-size: 14px; }
     .status-select { height: 42px; font-size: 13px; }
@@ -547,8 +547,8 @@ function buildCard(anime) {
   const placeholderStyle = anime.image ? 'style="display:none"' : '';
   const concludedBar = anime.status === 'concluido' && anime.concludedAt ? `<div class="concluded-overlay">✅ ${formatDate(anime.concludedAt)}</div>` : '';
 
-  const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">Temp</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
-  const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Chp</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
+  const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
+  const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
 
   card.innerHTML = `
     <div class="card-cover">
