@@ -181,9 +181,10 @@
   .danger-zone { margin-top: 12px; padding: 12px; border-radius: 10px; border: 1px solid rgba(224,64,96,0.25); background: rgba(224,64,96,0.05); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .danger-zone-text { font-size: 12px; color: var(--text-muted); } .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; }
   .btn-danger { background: rgba(224,64,96,0.15); color: var(--red); border: 1px solid rgba(224,64,96,0.3); white-space: nowrap; flex-shrink: 0; } .btn-danger:hover { background: var(--red); color: #fff; }
-
+  .mobile-bottom-bar { display: none; }
   /* ── MOBILE OVERHAUL ── */
   @media (max-width: 600px) {
+    
     header { flex-direction: column; align-items: stretch; padding: 16px 16px 12px; gap: 12px; }
     .logo { align-items: center; text-align: center; width: 100%; } .logo-main { font-size: 24px; padding-bottom: 6px; }
     .search-input { width: 100%; transition: none; } .search-input:focus { width: 100%; }
@@ -222,6 +223,46 @@
     
     .toast-container { bottom: 20px; right: 16px; left: 16px; }
     .toast { justify-content: center; }
+    /* --- INÍCIO: BOTÃO INFERIOR CENTRALIZADO --- */
+  
+  /* Esconde o botão original lá no cabeçalho */
+  .header-actions .btn-primary { display: none; }
+
+  /* Cria o contêiner inferior com o fundo em degradê */
+  .mobile-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 24px 16px;
+    height: 120px;
+    background: linear-gradient(to top, var(--bg) 40%, transparent);
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 90;
+    pointer-events: none; /* Deixa o usuário tocar "através" do degradê escuro */
+  }
+
+  /* Estiliza o botão centralizado */
+  .btn-mobile-add {
+    pointer-events: auto; /* Permite que apenas o botão seja clicável */
+    width: 100%;
+    max-width: 300px; /* Para não ficar esticado demais em telas largas */
+    padding: 16px;
+    font-size: 15px;
+    border-radius: 16px;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.8), 0 4px 20px var(--accent-glow);
+  }
+
+  .btn-mobile-add:active { transform: scale(0.96); }
+
+  /* Ajusta o final da página para o último anime não ficar escondido pelo botão */
+  .tab-content { padding: 16px 16px 120px; }
+  
+  /* Sobe os alertas um pouquinho */
+  .toast-container { bottom: 95px; }
+  
+  /* --- FIM: BOTÃO INFERIOR --- */
   }
 </style>
 </head>
@@ -261,7 +302,14 @@
   <div class="tab-content" id="tab-concluido"><div class="section-header"><span class="section-label">✅ Concluídos</span><div class="section-line"></div></div><div class="cards-grid" id="grid-concluido"></div></div>
   <div class="tab-content" id="tab-dropado"><div class="section-header"><span class="section-label">❌ Dropados</span><div class="section-line"></div></div><div class="cards-grid" id="grid-dropado"></div></div>
 </main>
+</main>
 
+<!-- NOVA BARRA MOBILE COM O BOTÃO NOVO ANIME -->
+<div class="mobile-bottom-bar">
+  <button class="btn btn-primary btn-mobile-add" onclick="openModal()">
+    <span class="btn-icon">＋</span> Novo Anime
+  </button>
+</div>
 <!-- MODAL NOVO/EDITAR -->
 <div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
   <div class="modal">
