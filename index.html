@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+<!-- Correção do Favicon 404 -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎌</text></svg>">
+
 <title>アニメ · Backlog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
@@ -282,7 +285,7 @@
     .cards-grid { grid-template-columns: 1fr; gap: 14px; }
     
     .anime-card { display: flex; flex-direction: row; min-height: 150px; align-items: stretch; }
-    .card-cover { width: 128px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
+    .card-cover { width: 110px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
     
     /* Botões flutuantes fixos na DIREITA */
     .card-delete, .card-edit {
@@ -293,11 +296,11 @@
     .card-edit { top: 52px; right: 10px; }
     
     /* Espaço para não bater nos botões */
-    .card-body { flex: 1; padding: 12px 8px; padding-right: 52px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+    .card-body { flex: 1; padding: 12px 14px; padding-right: 52px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
     .card-title { font-size: 14px; margin-bottom: 12px; min-height: auto; }
 
     .card-counters { gap: 8px; margin-bottom: 12px; }
-    .counter-label { font-size: 10px; width: 21px; }
+    .counter-label { font-size: 10px; width: 26px; }
     .counter-btn { width: 34px; height: 34px; font-size: 18px; }
     .counter-input { height: 34px; font-size: 14px; }
     .status-select { height: 42px; font-size: 13px; }
@@ -336,7 +339,6 @@
   <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar anime..." oninput="filterAnimes()">
 
   <div class="header-actions">
-    <!-- Botão único de Sync agora abre o modal completo -->
     <div id="syncIndicator" class="sync-indicator sync-off" onclick="openSettings()" title="Configurar sincronização">
       <span class="sync-icon">☁</span>
       <span class="sync-label" id="syncLabel">Sem sync</span>
@@ -370,7 +372,11 @@
     <div class="modal-title" id="modalTitle">Novo Anime</div>
     <div class="modal-subtitle" id="modalSubtitle">Vou buscar a capa automaticamente pelo nome ✨</div>
     
-    <div class="form-group"><label class="form-label">Nome do anime *</label><input type="text" class="form-input" id="inputName" placeholder="Ex: Jujutsu Kaisen" oninput="onNameInput()" onkeydown="if(event.key==='Enter')searchAnimeImage()"><div class="fetch-status hidden" id="fetchStatus"></div></div>
+    <div class="form-group">
+      <label class="form-label">Nome do anime *</label>
+      <input type="text" class="form-input" id="inputName" placeholder="Ex: Jujutsu Kaisen" oninput="onNameInput()" onkeydown="if(event.key==='Enter')searchAnimeImage()">
+      <div class="fetch-status hidden" id="fetchStatus"></div>
+    </div>
     
     <div class="img-preview-row">
       <div class="form-group" style="flex:1"><label class="form-label">URL da imagem (opcional)</label><input type="text" class="form-input" id="inputImage" placeholder="https://..." oninput="onImageUrlInput()"><div class="form-hint">Se não encontrar automático, cole o link.</div></div>
@@ -547,8 +553,8 @@ function buildCard(anime) {
   const placeholderStyle = anime.image ? 'style="display:none"' : '';
   const concludedBar = anime.status === 'concluido' && anime.concludedAt ? `<div class="concluded-overlay">✅ ${formatDate(anime.concludedAt)}</div>` : '';
 
-  const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
-  const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
+  const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">Temp</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
+  const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Chp</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
 
   card.innerHTML = `
     <div class="card-cover">
@@ -607,6 +613,18 @@ function deleteAnime(id) { const idx = animes.findIndex(a => a.id === id); if (i
 function updateField(id, field, val) { const anime = animes.find(a => a.id === id); if (!anime) return; const num = parseInt(val); const min = field === 'season' ? 1 : 0; anime[field] = isNaN(num) ? min : Math.max(min, num); saveData(); const card = document.getElementById('card-' + id); if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field]; }
 function changeValue(id, field, delta) { const anime = animes.find(a => a.id === id); if (!anime) return; const min = field === 'season' ? 1 : 0; const cur = parseInt(anime[field]) || min; anime[field] = Math.max(min, cur + delta); saveData(); const card = document.getElementById('card-' + id); if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field]; }
 function updateStatus(id, newStatus) { const anime = animes.find(a => a.id === id); if (!anime) return; anime.status = newStatus; if (newStatus === 'concluido' && !anime.concludedAt) anime.concludedAt = new Date().toISOString(); if (newStatus !== 'concluido') anime.concludedAt = null; saveData(); renderAll(); document.querySelector(`[data-tab="${newStatus}"]`).click(); showToast(`Status atualizado!`); }
+
+// ── FUNÇÃO RESTAURADA (Buscando Imagem) ───────────────
+function setFetchStatus(type, msg) {
+  const el = document.getElementById('fetchStatus');
+  el.className = 'fetch-status ' + type;
+  
+  if (type === 'loading') {
+    el.innerHTML = `<div class="spinner"></div> ${msg}`;
+  } else {
+    el.textContent = msg;
+  }
+}
 
 // ── MODAL UI ──────────────────────────────────────────
 function openModal(id = null) {
@@ -686,9 +704,12 @@ async function connectGist() {
 
 function disconnectGist() { localStorage.removeItem(GIST_TOKEN_KEY); localStorage.removeItem(GIST_ID_KEY); setSyncUI('off', 'Sem sync'); updateSettingsUI(); closeSettings(); showToast('○ Desconectado.'); }
 
+// ── FUNÇÃO DO SPINNER PARA O GIST ─────────────────────
 function setGistFetchStatus(type, msg) {
-  const el = document.getElementById('gistFetchStatus'); el.className = 'fetch-status ' + type;
-  el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; el.classList.remove('hidden');
+  const el = document.getElementById('gistFetchStatus'); 
+  el.className = 'fetch-status ' + type;
+  el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; 
+  el.classList.remove('hidden');
 }
 
 function openSettings() { updateSettingsUI(); setGistFetchStatus('hidden', ''); document.getElementById('settingsBackdrop').classList.add('open'); }
