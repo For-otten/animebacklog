@@ -236,7 +236,7 @@
     padding: 24px 16px;
     height: 120px;
     background: linear-gradient(to top, var(--bg) 40%, transparent);
-    justify-content: center;
+    justify-content: flex-end;
     align-items: flex-end;
     z-index: 90;
     pointer-events: none; /* Deixa o usuário tocar "através" do degradê escuro */
@@ -244,14 +244,14 @@
 
   /* Estiliza o botão centralizado */
   .btn-mobile-add {
-    pointer-events: auto; /* Permite que apenas o botão seja clicável */
-    width: 100%;
-    max-width: 300px; /* Para não ficar esticado demais em telas largas */
-    padding: 16px;
-    font-size: 15px;
-    border-radius: 16px;
-    justify-content: center;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.8), 0 4px 20px var(--accent-glow);
+        pointer-events: auto;
+        width: 19%;
+        max-width: 55px;
+        padding: 17px;
+        font-size: 21px;
+        border-radius: 100%;
+        justify-content: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 4px 20px var(--accent-glow);
   }
 
   .btn-mobile-add:active { transform: scale(0.96); }
@@ -307,7 +307,7 @@
 <!-- NOVA BARRA MOBILE COM O BOTÃO NOVO ANIME -->
 <div class="mobile-bottom-bar">
   <button class="btn btn-primary btn-mobile-add" onclick="openModal()">
-    <span class="btn-icon">＋</span> Novo Anime
+    <span class="btn-icon">＋</span> 
   </button>
 </div>
 <!-- MODAL NOVO/EDITAR -->
