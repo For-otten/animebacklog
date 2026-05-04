@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
 <style>
-  :root {
+:root {
     --bg: #0a0a12;
     --surface: #12121f;
     --surface2: #1a1a2e;
@@ -129,11 +129,24 @@
   .empty-state { grid-column: 1/-1; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 80px 20px; color: var(--text-muted); text-align: center; }
   .empty-icon { font-size: 48px; opacity: 0.4; } .empty-title { font-size: 18px; font-weight: 700; } .empty-sub { font-size: 13px; opacity: 0.6; }
 
-  /* ── MODAIS ── */
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
+  /* ── MODAIS (Lógica Base e Desktop) ── */
+  .modal-backdrop { 
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); 
+    z-index: 100; align-items: center; justify-content: center; padding: 20px; 
+    display: none; opacity: 0; transition: opacity 0.35s ease;
+  }
   .modal-backdrop.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; padding: 32px; position: relative; animation: modalIn 0.3s cubic-bezier(0.4,0,0.2,1) both; box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
-  @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: none; } }
+  .modal-backdrop.visible { opacity: 1; }
+
+  .modal { 
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px; 
+    width: 100%; max-width: 420px; padding: 32px; position: relative; 
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6); 
+    opacity: 0; transform: translateY(20px) scale(0.96);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+  }
+  .modal-backdrop.visible .modal { opacity: 1; transform: translateY(0) scale(1); }
+
   .modal-title { font-size: 20px; font-weight: 900; margin-bottom: 6px; background: linear-gradient(135deg, var(--text) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
   .form-group { margin-bottom: 18px; } .form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
@@ -182,6 +195,7 @@
   .danger-zone-text { font-size: 12px; color: var(--text-muted); } .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; }
   .btn-danger { background: rgba(224,64,96,0.15); color: var(--red); border: 1px solid rgba(224,64,96,0.3); white-space: nowrap; flex-shrink: 0; } .btn-danger:hover { background: var(--red); color: #fff; }
   .mobile-bottom-bar { display: none; }
+
   /* ── MOBILE OVERHAUL ── */
   @media (max-width: 600px) {
     
@@ -214,88 +228,63 @@
     .status-badge { bottom: auto; top: 8px; left: 8px; right: auto; font-size: 9px; padding: 4px 8px; }
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
 
+    /* ── Mobile Modal Lógica Flúida ── */
     .modal-backdrop { align-items: flex-end; padding: 0; }
+    
     .modal { 
       border-radius: 28px 28px 0 0; 
       padding: 24px 20px 48px; 
-      animation: bottomSheetIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; 
       max-height: 92vh; 
       overflow-y: auto; 
       border: none; 
       border-top: 1px solid var(--border);
-      /* LINHA-CHAVE: Adiciona uma transição para animar o retorno e a saída */
-      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-    /* NOVA REGRA: Define como o modal se comporta ao fechar */
-    .modal.closing {
+      opacity: 1; 
       transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    /* ANIMAÇÃO MAIS LEVE: Foca apenas no movimento, que é mais rápido */
-    @keyframes bottomSheetIn {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
+    
+    .modal-backdrop.visible .modal { transform: translateY(0); }
+    
+    .modal.dragging { transition: none !important; }
 
-    .modal { 
-      border-radius: 28px 28px 0 0; 
-      padding: 24px 20px 48px; 
-      /* CURVA MAIS RÁPIDA E RESPONSIVA */
-      animation: bottomSheetIn 0.3s cubic-bezier(0, 0, 0.2, 1) both; 
-      max-height: 92vh; 
-      overflow-y: auto; 
-      border: none; 
-      border-top: 1px solid var(--border);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 1, 1); /* Transição de saída mais suave */
-    }
-    .modal.closing {
-      transform: translateY(100%);
-    }
     .modal::before { content: ''; display: block; width: 40px; height: 5px; background: var(--surface3); border-radius: 5px; margin: 0 auto 24px; }
     .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; color: var(--text-muted); }
     .form-row { flex-direction: column; gap: 0; }
     
     .toast-container { bottom: 20px; right: 16px; left: 16px; }
     .toast { justify-content: center; }
+    
     /* --- INÍCIO: BOTÃO INFERIOR CENTRALIZADO --- */
-  
-  /* Esconde o botão original lá no cabeçalho */
-  .header-actions .btn-primary { display: none; }
+    .header-actions .btn-primary { display: none; }
 
-  /* Cria o contêiner inferior com o fundo em degradê */
-  .mobile-bottom-bar {
-    display: flex;
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    padding: 24px 16px;
-    height: 120px;
-    background: linear-gradient(to top, var(--bg) 40%, transparent);
-    justify-content: flex-end;
-    align-items: flex-end;
-    z-index: 90;
-    pointer-events: none; /* Deixa o usuário tocar "através" do degradê escuro */
-  }
+    .mobile-bottom-bar {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 24px 16px;
+      height: 120px;
+      background: linear-gradient(to top, var(--bg) 40%, transparent);
+      justify-content: flex-end;
+      align-items: flex-end;
+      z-index: 90;
+      pointer-events: none;
+    }
 
-  /* Estiliza o botão centralizado */
-  .btn-mobile-add {
-        pointer-events: auto;
-        width: 19%;
-        max-width: 55px;
-        padding: 17px;
-        font-size: 21px;
-        border-radius: 100%;
-        justify-content: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 4px 20px var(--accent-glow);
-  }
+    .btn-mobile-add {
+      pointer-events: auto;
+      width: 19%;
+      max-width: 55px;
+      padding: 17px;
+      font-size: 21px;
+      border-radius: 100%;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 4px 20px var(--accent-glow);
+    }
+    .btn-mobile-add:active { transform: scale(0.96); }
 
-  .btn-mobile-add:active { transform: scale(0.96); }
-
-  /* Ajusta o final da página para o último anime não ficar escondido pelo botão */
-  .tab-content { padding: 16px 16px 120px; }
-  
-  /* Sobe os alertas um pouquinho */
-  .toast-container { bottom: 95px; }
-  
-  /* --- FIM: BOTÃO INFERIOR --- */
+    .tab-content { padding: 16px 16px 120px; }
+    .toast-container { bottom: 95px; }
+    /* --- FIM: BOTÃO INFERIOR --- */
   }
 </style>
 </head>
@@ -607,9 +596,26 @@ function openModal(id = null) {
   document.getElementById('inputName').value = anime?.title ?? ''; document.getElementById('inputSeason').value = anime?.season ?? ''; document.getElementById('inputEpisode').value = anime?.episode ?? ''; document.getElementById('inputChapter').value = anime?.chapter ?? ''; document.getElementById('inputImage').value = anime?.image ?? ''; document.getElementById('inputStatus').value = anime?.status ?? 'assistir';
   fetchedImageUrl = ''; setFetchStatus('hidden', ''); const preview = document.getElementById('imgPreview');
   if (anime?.image) { preview.src = anime.image; preview.classList.add('visible'); } else { preview.src = ''; preview.classList.remove('visible'); }
-  document.getElementById('modalBackdrop').classList.add('open');
+  
+  const backdrop = document.getElementById('modalBackdrop');
+  backdrop.classList.add('open'); // 1. Dá o Display Flex
+  
+  // 2. Dispara a animação no próximo frame
+  requestAnimationFrame(() => {
+    backdrop.classList.add('visible'); 
+  });
 }
-function closeModal() { document.getElementById('modalBackdrop').classList.remove('open'); editingId = null; }
+
+function closeModal() {
+  const backdrop = document.getElementById('modalBackdrop');
+  backdrop.classList.remove('visible'); // 1. Começa a animação de descida
+  
+  // 2. Espera a animação acabar e some com o display
+  setTimeout(() => {
+    backdrop.classList.remove('open');
+    editingId = null;
+  }, 350);
+}
 function handleBackdropClick(e) { if (e.target === document.getElementById('modalBackdrop')) closeModal(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
@@ -733,8 +739,25 @@ function setGistFetchStatus(type, msg) {
   el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; el.classList.remove('hidden');
 }
 
-function openSettings() { updateSettingsUI(); setGistFetchStatus('hidden', ''); document.getElementById('settingsBackdrop').classList.add('open'); }
-function closeSettings() { document.getElementById('settingsBackdrop').classList.remove('open'); }
+function openSettings() { 
+  updateSettingsUI(); 
+  setGistFetchStatus('hidden', ''); 
+  
+  const backdrop = document.getElementById('settingsBackdrop');
+  backdrop.classList.add('open');
+  requestAnimationFrame(() => {
+    backdrop.classList.add('visible');
+  });
+}
+
+function closeSettings() { 
+  const backdrop = document.getElementById('settingsBackdrop');
+  backdrop.classList.remove('visible');
+  
+  setTimeout(() => {
+    backdrop.classList.remove('open');
+  }, 350);
+}
 function handleSettingsBackdrop(e) { if (e.target === document.getElementById('settingsBackdrop')) closeSettings(); }
 
 function updateSettingsUI() {
@@ -789,66 +812,60 @@ function closeSettings() {
   }, 300);
 }
 
+// --- VERSÃO FINAL E FLUIDA: Lógica do "Empurrão" ---
+
 function makeModalDraggable(backdropId, closeFunction) {
   const backdrop = document.getElementById(backdropId);
   if (!backdrop) return;
   const modal = backdrop.querySelector('.modal');
   
-  let isDragging = false, startY, startTime;
+  let isDragging = false;
+  let startY = 0;
+  let currentY = 0;
+  let isAtTop = false;
 
-  const onTouchStart = (e) => {
-    if (e.target.closest('input, button, select, a')) return;
-    
-    if (modal.scrollTop === 0) {
-      isDragging = true;
-      startY = e.touches[0].clientY;
-      startTime = performance.now();
-      modal.style.animation = 'none'; 
-      modal.style.transition = 'none'; // Remove transição durante o arraste
-    }
-  };
+  modal.addEventListener('touchstart', (e) => {
+    // Só inicia o arrasto se o scroll do modal estiver totalmente no topo
+    isAtTop = modal.scrollTop <= 0;
+    if (!isAtTop) return;
 
-  const onTouchMove = (e) => {
-    if (!isDragging) return;
-    const currentY = e.touches[0].clientY;
+    startY = e.touches[0].clientY;
+    isDragging = true;
+    modal.style.transform = ''; // Limpa qualquer resquício
+  }, { passive: true });
+
+  modal.addEventListener('touchmove', (e) => {
+    if (!isDragging || !isAtTop) return;
+
+    currentY = e.touches[0].clientY;
     const deltaY = currentY - startY;
-    if (deltaY >= 0) { // Permite arrastar um pouquinho pra cima sem quebrar
-      e.preventDefault(); 
+
+    // Se estiver puxando para baixo
+    if (deltaY > 0) {
+      if (e.cancelable) e.preventDefault(); // Previne o pull-to-refresh nativo
+      modal.classList.add('dragging'); // Desativa a transição do CSS para não ter lag
       modal.style.transform = `translateY(${deltaY}px)`;
     }
-  };
+  }, { passive: false });
 
-  const onTouchEnd = (e) => {
+  const onTouchEnd = () => {
     if (!isDragging) return;
     isDragging = false;
+    modal.classList.remove('dragging'); // Devolve o controle pro CSS
     
-    const finalY = e.changedTouches[0].clientY;
-    const deltaY = finalY - startY;
+    const deltaY = currentY - startY;
+    modal.style.transform = ''; // Tira o inline, o CSS assume
 
-    const endTime = performance.now();
-    const duration = endTime - startTime;
-    const velocity = duration > 0 ? deltaY / duration : 0;
-
-    // Se o "empurrão" for forte o suficiente...
-    if (velocity > 0.4 || deltaY > 100) {
-      // ...CHAMA A FUNÇÃO QUE ACIONA A ANIMAÇÃO COMPLETA.
-      // O navegador vai animar suavemente da posição atual (onde o dedo soltou)
-      // até o destino final ('translateY(100%)'), criando o efeito de inércia.
+    // Se puxou mais de 80px pra baixo, fecha o modal
+    if (deltaY > 80) {
       closeFunction();
-    } else {
-      // Se o empurrão foi fraco, anima de volta para o topo.
-      modal.style.transition = 'transform 0.3s cubic-bezier(0, 0, 0.2, 1)';
-      modal.style.transform = '';
     }
   };
 
-  modal.addEventListener('touchstart', onTouchStart, { passive: true });
-  document.addEventListener('touchmove', onTouchMove, { passive: false });
-  document.addEventListener('touchend', onTouchEnd);
-  document.addEventListener('touchcancel', onTouchEnd);
+  modal.addEventListener('touchend', onTouchEnd);
+  modal.addEventListener('touchcancel', onTouchEnd);
 }
 
-// Ativa a funcionalidade para os dois modais do app
 makeModalDraggable('modalBackdrop', closeModal);
 makeModalDraggable('settingsBackdrop', closeSettings);
 </script>
