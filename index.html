@@ -149,10 +149,13 @@ main::-webkit-scrollbar { display: none; }
     transform-style: preserve-3d;
     text-rendering: optimizeSpeed;
     will-change: transform, opacity;
-
+    transform: translate3d(0, 100%, 0); 
     /* Estado inicial Desktop */
     opacity: 0; transform: translateY(20px) scale(0.96);
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+    contain: content; 
+
+
 }
 .modal-backdrop.visible .modal {
     opacity: 1;
@@ -271,9 +274,10 @@ main::-webkit-scrollbar { display: none; }
         overflow: hidden; /* Evita scrolls estranhos durante a subida */
         border: none;
         border-top: 1px solid var(--border);
-        
+        contain: content; 
+
         /* Aceleração máxima de hardware */
-        will-change: transform;
+         will-change: transform, opacity;
         transform: translate3d(0, 100%, 0); 
         
         /* Curva de animação ultra rápida e limpa */
@@ -714,6 +718,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 function onNameInput() { clearTimeout(nameInputTimer); fetchedImageUrl = ''; const name = document.getElementById('inputName').value.trim(); if (!name) { setFetchStatus('hidden', ''); return; } nameInputTimer = setTimeout(() => searchAnimeImage(), 900); }
 async function searchAnimeImage() {
+  
   if(!navigator.onLine) return setFetchStatus('error', 'Sem internet para buscar capa.'); 
   const name = document.getElementById('inputName').value.trim(); if (!name || document.getElementById('inputImage').value.trim() || editingId) return;
   setFetchStatus('loading', 'Buscando capa...');
@@ -749,7 +754,37 @@ async function pullFromGist(token, gistId) {
   const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers: { Authorization: `token ${token}` } });
   if (!res.ok) throw new Error(); const data = await res.json(); return JSON.parse(data.files?.[GIST_FILENAME]?.content);
 }
+document.addEventListener('DOMContentLoaded', () => {
 
+    // ── LÓGICA DE PRÉ-AQUECIMENTO (Warm-up) ──
+    const warmUp = () => {
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const settingsBackdrop = document.getElementById('settingsBackdrop');
+
+        // Mostra os modais por 1 frame mas com opacidade zero e sem interação
+        [modalBackdrop, settingsBackdrop].forEach(el => {
+            el.style.display = 'flex';
+            el.style.opacity = '0';
+            el.style.pointerEvents = 'none';
+        });
+
+        // Força o navegador a calcular o layout (Reflow)
+        void modalBackdrop.offsetWidth;
+        void settingsBackdrop.offsetWidth;
+
+        // Esconde novamente após o cálculo
+        requestAnimationFrame(() => {
+            [modalBackdrop, settingsBackdrop].forEach(el => {
+                el.style.display = '';
+                el.style.opacity = '';
+                el.style.pointerEvents = '';
+            });
+        });
+    };
+
+    // Executa o aquecimento 500ms após carregar (quando o celular estiver ocioso)
+    setTimeout(warmUp, 500);
+});
 // ── EVENTOS DE CONEXÃO: O que fazer quando a internet cai ou volta ──
 window.addEventListener('online', () => {
   updateSettingsUI();
