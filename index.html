@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<!-- Correção do Favicon 404 -->
+<!-- Configurações PWA e Ícone -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icone.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎌</text></svg>">
 
 <title>アニメ · Backlog</title>
@@ -110,7 +115,7 @@
   .dot-acompanhando { background: var(--green); } .dot-assistir { background: var(--blue); } .dot-esperando { background: var(--yellow); } .dot-concluido { background: var(--text-muted); } .dot-dropado { background: var(--red); }
   .stat-count { background: var(--surface3); color: var(--text-muted); padding: 2px 7px; border-radius: 20px; font-size: 11px; }
 
-  /* ── MAIN & CARDS GRID (ATUALIZADO PARA CARROSSEL FLEX) ── */
+  /* ── MAIN & CARDS GRID (CARROSSEL FLEX) ── */
   main { 
     position: relative; z-index: 5; 
     display: flex; width: 100%; overflow-x: hidden; 
@@ -118,7 +123,7 @@
   
   .tab-content { 
     flex: 0 0 100%; width: 100%; 
-    padding: 32px 40px 60px; /* Padding foi movido para cá para acompanhar o card */
+    padding: 32px 40px 60px;
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
@@ -415,7 +420,6 @@
       <span id="gistStatusText">Não configurado</span>
     </div>
 
-    <!-- PASSO A PASSO RESTAURADO AQUI -->
     <div class="settings-section">
       <div class="settings-section-title">📋 Como configurar (1x só)</div>
       <div class="steps-list">
@@ -453,6 +457,13 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
+// ── REGISTRO DO SERVICE WORKER (Para permitir instalação PWA) ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log("SW falhou:", e));
+  });
+}
+
 // ── DATA ──────────────────────────────────────────────
 const STORAGE_KEY = 'anime_backlog_v2';
 let animes = [];
@@ -503,7 +514,6 @@ swipeArea.addEventListener('touchstart', e => {
   isDragging = true;
   isScrollingVertical = false;
 
-  // Remove a transição suave para grudar no dedo imediatamente
   document.querySelectorAll('.tab-content').forEach(t => {
     t.style.transition = 'none';
   });
@@ -517,7 +527,6 @@ swipeArea.addEventListener('touchmove', e => {
   const diffX = currentX - touchStartX;
   const diffY = Math.abs(currentY - startY);
 
-  // Se for scroll vertical natural, cancela o swipe horizontal
   if (diffY > Math.abs(diffX) && !isScrollingVertical) {
     isScrollingVertical = true;
     isDragging = false;
@@ -529,11 +538,9 @@ swipeArea.addEventListener('touchmove', e => {
   const idx = TABS_ORDER.indexOf(activeTab);
   let percentMove = (diffX / window.innerWidth) * 100;
 
-  // Resistência ao arrastar nos limites (primeira e última aba)
   if (idx === 0 && diffX > 0) percentMove = percentMove / 3;
   if (idx === TABS_ORDER.length - 1 && diffX < 0) percentMove = percentMove / 3;
 
-  // Empurra as abas baseadas no dedo
   document.querySelectorAll('.tab-content').forEach(t => {
     t.style.transform = `translateX(calc(-${idx * 100}% + ${percentMove}vw))`;
   });
@@ -544,9 +551,8 @@ swipeArea.addEventListener('touchend', e => {
   isDragging = false;
 
   const diffX = e.changedTouches[0].clientX - touchStartX;
-  const threshold = window.innerWidth * 0.2; // 20% da tela para confirmar troca de aba
+  const threshold = window.innerWidth * 0.2; 
 
-  // Devolve a transição suave para finalizar a animação de mola
   document.querySelectorAll('.tab-content').forEach(t => {
     t.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
   });
@@ -558,7 +564,7 @@ swipeArea.addEventListener('touchend', e => {
   } else if (diffX > threshold && idx > 0) {
     document.querySelector(`[data-tab="${TABS_ORDER[idx-1]}"]`).click();
   } else {
-    snapBack(); // Volta pra mesma aba
+    snapBack(); 
   }
 }, {passive: true});
 
@@ -578,10 +584,8 @@ function switchTab(tab, el) {
   document.getElementById('searchInput').value = ''; 
   filterAnimes();
   
-  // Rola a pílula do topo suavemente para ficar visível
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
-  // Move todas as abas (Estilo Carrossel)
   const idx = TABS_ORDER.indexOf(tab);
   document.querySelectorAll('.tab-content').forEach(t => {
     t.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
@@ -691,7 +695,6 @@ function updateStatus(id, newStatus) { const anime = animes.find(a => a.id === i
 function setFetchStatus(type, msg) {
   const el = document.getElementById('fetchStatus');
   el.className = 'fetch-status ' + type;
-  
   if (type === 'loading') {
     el.innerHTML = `<div class="spinner"></div> ${msg}`;
   } else {
@@ -777,7 +780,6 @@ async function connectGist() {
 
 function disconnectGist() { localStorage.removeItem(GIST_TOKEN_KEY); localStorage.removeItem(GIST_ID_KEY); setSyncUI('off', 'Sem sync'); updateSettingsUI(); closeSettings(); showToast('○ Desconectado.'); }
 
-// ── FUNÇÃO DO SPINNER PARA O GIST ─────────────────────
 function setGistFetchStatus(type, msg) {
   const el = document.getElementById('gistFetchStatus'); 
   el.className = 'fetch-status ' + type;
@@ -813,7 +815,6 @@ function exportData() { const blob = new Blob([JSON.stringify(animes, null, 2)],
 function importData(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = ev => { try { const data = JSON.parse(ev.target.result); const existing = new Set(animes.map(a => a.id)); let added = 0; data.forEach(item => { if (!existing.has(item.id)) { animes.push(item); added++; } }); saveData(); renderAll(); showToast(`⬆ ${added} importado(s)!`); } catch { showToast('❌ Arquivo inválido!', 'error'); } e.target.value = ''; }; reader.readAsText(file); }
 function showToast(msg, type = 'default') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = msg; container.appendChild(toast); setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, 3000); }
 
-// Inicialização das posições das abas (MUITO IMPORTANTE PARA O CARROSSEL FUNCIONAR CORRETAMENTE DE INÍCIO)
 switchTab(activeTab, document.querySelector(`[data-tab="${activeTab}"]`));
 
 // ── INIT ──────────────────────────────────────────────
