@@ -285,7 +285,7 @@
     }
     
     .card-cover { 
-      width: 110px; 
+      width: 128px; 
       padding-top: 0; 
       flex-shrink: 0; 
       border-right: 1px solid var(--border);
@@ -314,7 +314,7 @@
 
     /* Touch Targets Gigantes e segurados pra não vazar */
     .card-counters { gap: 8px; margin-bottom: 12px; }
-    .counter-label { font-size: 10px; width: 26px; }
+    .counter-label { font-size: 10px; width: 17px; }
     .counter-btn { width: 34px; height: 34px; font-size: 18px; }
     .counter-input { height: 34px; font-size: 14px; }
     .status-select { height: 42px; font-size: 13px; }
@@ -485,9 +485,9 @@ function buildCard(anime) {
     <div class="card-body">
       <div class="card-title">${escHtml(anime.title)}</div>
       <div class="card-counters">
-        ${anime.season ? `<div class="counter-row"><span class="counter-label">Temp</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>`:''}
+        ${anime.season ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>`:''}
         <div class="counter-row"><span class="counter-label">Ep</span><button class="counter-btn" onclick="changeValue('${anime.id}','episode',-1)">−</button><input class="counter-input" type="number" value="${anime.episode}" data-field="episode" onchange="updateField('${anime.id}','episode',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button></div>
-        ${anime.chapter ? `<div class="counter-row"><span class="counter-label">Chp</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>`:''}
+        ${anime.chapter ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>`:''}
       </div>
       <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
         ${Object.entries(STATUS_MAP).map(([k,v]) => `<option value="${k}" ${k===anime.status?'selected':''}>${v.emoji} ${v.label}</option>`).join('')}
