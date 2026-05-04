@@ -374,7 +374,6 @@ function loadData() {
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-  // Bandeirinha: Avisa o sistema que temos mudanças locais que precisam ir pra nuvem
   localStorage.setItem('anime_pending_sync', 'true');
   scheduleGistSync();
 }
@@ -449,7 +448,6 @@ function buildCard(anime) {
   const hasManga = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
   const hasSeason = anime.season !== null && anime.season !== undefined && anime.season !== '';
 
-  // MODIFICAÇÃO AQUI: Salvamos a URL original no 'data-src'. E se a imagem carregar (onload), ela esconde a capa reserva roxa.
   const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onload="this.style.display='';this.nextElementSibling.style.display='none'">` : '';
   const placeholderStyle = anime.image ? 'style="display:none"' : '';
   const concludedBar = anime.status === 'concluido' && anime.concludedAt ? `<div class="concluded-overlay">✅ ${formatDate(anime.concludedAt)}</div>` : '';
@@ -553,12 +551,7 @@ function scheduleGistSync() { if (!getToken()) return; clearTimeout(syncTimer); 
 
 async function pushToGist(silent = false) {
   const token = getToken(), gistId = getGistId(); if (!token || isSyncing) return;
-  
-  if (!navigator.onLine) {
-    setSyncUI('off', 'Offline (Salvo local)');
-    return;
-  }
-
+  if (!navigator.onLine) { setSyncUI('off', 'Offline (Salvo local)'); return; }
   isSyncing = true; setSyncUI('ing', 'Sync...');
   const payload = JSON.stringify({ animes, savedAt: new Date().toISOString() }, null, 2);
   try {
@@ -567,13 +560,9 @@ async function pushToGist(silent = false) {
     else { res = await fetch('https://api.github.com/gists', { method: 'POST', headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ description: 'Anime Backlog', public: false, files: { [GIST_FILENAME]: { content: payload } } }) }); }
     if (!res.ok) throw new Error(); const data = await res.json();
     if (!gistId) { localStorage.setItem(GIST_ID_KEY, data.id); if (!silent) showToast(`☁ Gist criado!`); }
-    
-    // Sucesso! Limpa a bandeirinha de alteração pendente
     localStorage.removeItem('anime_pending_sync');
     setSyncUI('ok', 'Sincronizado');
-  } catch (e) { 
-    setSyncUI('err', 'Erro'); if (!silent) showToast('⚠ Erro no Gist', 'error'); 
-  } finally { isSyncing = false; }
+  } catch (e) { setSyncUI('err', 'Erro'); if (!silent) showToast('⚠ Erro no Gist', 'error'); } finally { isSyncing = false; }
 }
 
 async function pullFromGist(token, gistId) {
@@ -584,20 +573,17 @@ async function pullFromGist(token, gistId) {
 // ── EVENTOS DE CONEXÃO: O que fazer quando a internet cai ou volta ──
 window.addEventListener('online', () => {
   updateSettingsUI();
-  initGistSync(); // Dispara o motor principal que decide se sobe backup ou se baixa do servidor
+  initGistSync(); 
   
-  // MÁGICA DA IMAGEM: Procura todas as imagens que falharam enquanto tava offline e tenta baixar de novo!
+  // NOVA LÓGICA AQUI: Força o recarregamento das imagens que falharam com cache-busting
   document.querySelectorAll('.anime-card img[data-src]').forEach(img => {
+    // A condição 'img.style.display === "none"' confirma que a imagem falhou (o 'onerror' foi ativado)
     if (img.style.display === 'none') {
-      img.src = img.getAttribute('data-src'); 
+      const originalSrc = img.getAttribute('data-src');
+      // Adicionamos ?t=... para enganar o cache do navegador e forçar uma nova requisição
+      img.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
     }
   });
-
-  // Se o usuário estiver com o Modal de novo anime aberto e a capa tava quebrada, recarrega ela tbm
-  const modalPreview = document.getElementById('imgPreview');
-  if (modalPreview.classList.contains('visible') && modalPreview.src) {
-    modalPreview.src = modalPreview.src; 
-  }
 });
 
 window.addEventListener('offline', () => {
@@ -607,22 +593,15 @@ window.addEventListener('offline', () => {
 
 // A Função Principal de Inicialização
 async function initGistSync() {
-  const token = getToken(), gistId = getGistId(); 
-  if (!token || !gistId) return; 
+  const token = getToken(), gistId = getGistId(); if (!token || !gistId) return; 
+  if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
   
-  if (!navigator.onLine) { 
-    setSyncUI('off', 'Offline'); 
-    return; 
-  }
-  
-  // Se há modificações offline pendentes, ENVIE (Push) primeiro! Evita substituição dos seus saves!
   if(localStorage.getItem('anime_pending_sync') === 'true') {
     setSyncUI('ing', 'Enviando offline...');
     await pushToGist();
     return; 
   }
 
-  // Se NÃO há alterações pendentes, ele BAIXA do Github para manter atualizado (Pull)
   setSyncUI('ing', 'Carregando...');
   try {
     const remote = await pullFromGist(token, gistId);
@@ -641,19 +620,16 @@ async function initGistSync() {
 
 async function connectGist() {
   if (!navigator.onLine) return showToast('⚠️ Conecte-se à internet primeiro!', 'error');
-
   const token = document.getElementById('inputToken').value.trim(); if (!token) return;
   setGistFetchStatus('loading', 'Verificando...');
   try {
     const meRes = await fetch('https://api.github.com/user', { headers: { Authorization: `token ${token}` } }); if (!meRes.ok) throw new Error('Token inválido');
     localStorage.setItem(GIST_TOKEN_KEY, token); let foundGistId = null;
-    
     setGistFetchStatus('loading', 'Buscando Gist...');
     for (let page = 1; page <= 3; page++) {
       const listRes = await fetch(`https://api.github.com/gists?page=${page}`, { headers: { Authorization: `token ${token}` } }); if (!listRes.ok) break;
       const gists = await listRes.json(); const g = gists.find(x => x.files?.[GIST_FILENAME]); if (g) { foundGistId = g.id; break; } if (gists.length < 30) break;
     }
-    
     if (foundGistId) {
       localStorage.setItem(GIST_ID_KEY, foundGistId); setGistFetchStatus('loading', 'Importando dados...');
       const remote = await pullFromGist(token, foundGistId);
