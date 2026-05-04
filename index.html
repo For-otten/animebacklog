@@ -424,11 +424,39 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-// ── REGISTRO DO SERVICE WORKER (Para funcionar Offline e PWA) ──
+// --- REGISTRO DO SERVICE WORKER COM LÓGICA DE ATUALIZAÇÃO AUTOMÁTICA ---
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(e => console.log("SW falhou:", e));
-  });
+  const swUrl = 'sw.js';
+  
+  // 1. Registra o Service Worker
+  navigator.serviceWorker.register(swUrl).then(registration => {
+    // 2. Ouve por atualizações encontradas
+    registration.onupdatefound = () => {
+      const installingWorker = registration.installing;
+      if (installingWorker == null) {
+        return;
+      }
+      
+      // 3. Espera a nova versão ser instalada
+      installingWorker.onstatechange = () => {
+        if (installingWorker.state === 'installed') {
+          if (navigator.serviceWorker.controller) {
+            // Se já existe uma versão controlando a página,
+            // envia a mensagem para a nova versão assumir o controle.
+            console.log('Nova versão instalada. Enviando comando para ativar.');
+            installingWorker.postMessage({ type: 'SKIP_WAITING' });
+          }
+        }
+      };
+    };
+  }).catch(error => console.error('SW falhou no registro:', error));
+
+  // 4. Ouve a troca de controle
+  navigator.serviceWorker.oncontrollerchange = () => {
+    // Quando o novo Service Worker assume, a página recarrega para usar os novos arquivos.
+    console.log('Controlador trocado. Recarregando a página.');
+    window.location.reload();
+  };
 }
 
 // ── DATA ──────────────────────────────────────────────

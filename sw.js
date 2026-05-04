@@ -23,7 +23,17 @@ self.addEventListener('activate', event => {
     ))
   );
 });
-
+// Ativação: limpa caches antigos e ASSUME CONTROLE IMEDIATO
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    Promise.all([
+      caches.keys().then(keys => Promise.all(
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+      )),
+      self.clients.claim() // <--- ISSO AQUI É O QUE FAZ A MÁGICA
+    ])
+  );
+});
 // Intercepta requisições
 self.addEventListener('fetch', event => {
   // Ignora chamadas de API (Jikan e GitHub) para não dar conflito
