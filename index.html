@@ -256,7 +256,41 @@
     
     .toast-container { bottom: 20px; right: 16px; left: 16px; }
     .toast { justify-content: center; }
-    
+    /* Otimização: Faz o conteúdo pesado aparecer depois da animação principal */
+    .modal .form-group, .modal .modal-footer, .modal .modal-title, .modal .modal-subtitle {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s; /* 0.1s de delay */
+    }
+
+    .modal-backdrop.visible .modal .form-group,
+    .modal-backdrop.visible .modal .modal-footer,
+    .modal-backdrop.visible .modal .modal-title,
+    .modal-backdrop.visible .modal .modal-subtitle {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Animação escalonada para um efeito mais bonito */
+    .modal-backdrop.visible .modal .form-group:nth-child(2) { transition-delay: 0.15s; }
+    .modal-backdrop.visible .modal .form-group:nth-child(3) { transition-delay: 0.20s; }
+    .modal-backdrop.visible .modal .form-group:nth-child(4) { transition-delay: 0.25s; }
+    .modal-backdrop.visible .modal .modal-footer { transition-delay: 0.30s; }
+    .settings-modal .settings-section, .settings-modal .gist-status-box, 
+    .settings-modal .form-group, .settings-modal .modal-footer, 
+    .settings-modal .modal-title, .settings-modal .modal-subtitle {
+      opacity: 0;
+      transition: opacity 0.25s ease 0.1s;
+    }
+
+    .modal-backdrop.visible .settings-modal .settings-section,
+    .modal-backdrop.visible .settings-modal .gist-status-box,
+    .modal-backdrop.visible .settings-modal .form-group,
+    .modal-backdrop.visible .settings-modal .modal-footer,
+    .modal-backdrop.visible .settings-modal .modal-title,
+    .modal-backdrop.visible .settings-modal .modal-subtitle {
+      opacity: 1;
+    }
     /* --- INÍCIO: BOTÃO INFERIOR CENTRALIZADO --- */
     .header-actions .btn-primary { display: none; }
 
