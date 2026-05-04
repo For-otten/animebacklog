@@ -2,7 +2,8 @@ const CACHE_NAME = 'anime-backlog-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './logo.png'  
 ];
 
 // Instalação: guarda a interface em cache
