@@ -110,14 +110,17 @@
   .dot-acompanhando { background: var(--green); } .dot-assistir { background: var(--blue); } .dot-esperando { background: var(--yellow); } .dot-concluido { background: var(--text-muted); } .dot-dropado { background: var(--red); }
   .stat-count { background: var(--surface3); color: var(--text-muted); padding: 2px 7px; border-radius: 20px; font-size: 11px; }
 
-  /* ── MAIN & CARDS GRID ── */
-  main { position: relative; z-index: 5; padding: 32px 40px 60px; }
-  .tab-content { display: none; } .tab-content.active { display: block; }
+  /* ── MAIN & CARDS GRID (ATUALIZADO PARA CARROSSEL FLEX) ── */
+  main { 
+    position: relative; z-index: 5; 
+    display: flex; width: 100%; overflow-x: hidden; 
+  }
   
-  @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-  @keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
-  .slide-right { animation: slideInRight 0.3s cubic-bezier(0.4,0,0.2,1) both; }
-  .slide-left { animation: slideInLeft 0.3s cubic-bezier(0.4,0,0.2,1) both; }
+  .tab-content { 
+    flex: 0 0 100%; width: 100%; 
+    padding: 32px 40px 60px; /* Padding foi movido para cá para acompanhar o card */
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
 
   .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
   .section-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
@@ -279,7 +282,10 @@
     .btn-icon { display: inline-block; }
 
     .stats-bar { padding: 0 16px; gap: 10px; }
-    main { padding: 16px 16px 80px; }
+    
+    /* Ajuste de padding para mobile */
+    main { padding: 0; }
+    .tab-content { padding: 16px 16px 80px; }
     
     /* Layout Horizontal do Card para Celular */
     .cards-grid { grid-template-columns: 1fr; gap: 14px; }
@@ -358,7 +364,7 @@
 </nav>
 
 <main id="swipeArea">
-  <div class="tab-content active" id="tab-acompanhando"><div class="section-header"><span class="section-label">🎬 Acompanhando</span><div class="section-line"></div></div><div class="cards-grid" id="grid-acompanhando"></div></div>
+  <div class="tab-content" id="tab-acompanhando"><div class="section-header"><span class="section-label">🎬 Acompanhando</span><div class="section-line"></div></div><div class="cards-grid" id="grid-acompanhando"></div></div>
   <div class="tab-content" id="tab-assistir"><div class="section-header"><span class="section-label">📋 Backlog para assistir</span><div class="section-line"></div></div><div class="cards-grid" id="grid-assistir"></div></div>
   <div class="tab-content" id="tab-esperando"><div class="section-header"><span class="section-label">⏳ Esperando nova temporada</span><div class="section-line"></div></div><div class="cards-grid" id="grid-esperando"></div></div>
   <div class="tab-content" id="tab-concluido"><div class="section-header"><span class="section-label">✅ Concluídos</span><div class="section-line"></div></div><div class="cards-grid" id="grid-concluido"></div></div>
@@ -474,7 +480,7 @@ function saveData() {
   scheduleGistSync();
 }
 
-// ── SWIPE LOGIC & FILTER ──────────────────────────────
+// ── SWIPE LOGIC & FILTER (CARROSSEL) ──────────────────
 function filterAnimes() {
   const query = document.getElementById('searchInput').value.toLowerCase();
   const displayType = window.innerWidth <= 600 ? 'flex' : 'block';
@@ -484,36 +490,103 @@ function filterAnimes() {
   });
 }
 
-let touchStartX = 0, touchEndX = 0, touchStartY = 0, touchEndY = 0;
-document.getElementById('swipeArea').addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
-document.getElementById('swipeArea').addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; touchEndY = e.changedTouches[0].screenY; handleSwipe(); }, {passive: true});
-function handleSwipe() {
-  if (window.innerWidth > 600) return;
-  const diffX = touchStartX - touchEndX; const diffY = Math.abs(touchStartY - touchEndY);
-  if (diffY > Math.abs(diffX)) return;
+let touchStartX = 0;
+let startY = 0;
+let isDragging = false;
+let isScrollingVertical = false;
+const swipeArea = document.getElementById('swipeArea');
+
+swipeArea.addEventListener('touchstart', e => {
+  if (window.innerWidth > 600) return; // Carrossel apenas mobile
+  touchStartX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+  isDragging = true;
+  isScrollingVertical = false;
+
+  // Remove a transição suave para grudar no dedo imediatamente
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.style.transition = 'none';
+  });
+}, {passive: true});
+
+swipeArea.addEventListener('touchmove', e => {
+  if (!isDragging || window.innerWidth > 600) return;
+
+  const currentX = e.touches[0].clientX;
+  const currentY = e.touches[0].clientY;
+  const diffX = currentX - touchStartX;
+  const diffY = Math.abs(currentY - startY);
+
+  // Se for scroll vertical natural, cancela o swipe horizontal
+  if (diffY > Math.abs(diffX) && !isScrollingVertical) {
+    isScrollingVertical = true;
+    isDragging = false;
+    snapBack();
+    return;
+  }
+  if (isScrollingVertical) return;
+
+  const idx = TABS_ORDER.indexOf(activeTab);
+  let percentMove = (diffX / window.innerWidth) * 100;
+
+  // Resistência ao arrastar nos limites (primeira e última aba)
+  if (idx === 0 && diffX > 0) percentMove = percentMove / 3;
+  if (idx === TABS_ORDER.length - 1 && diffX < 0) percentMove = percentMove / 3;
+
+  // Empurra as abas baseadas no dedo
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.style.transform = `translateX(calc(-${idx * 100}% + ${percentMove}vw))`;
+  });
+}, {passive: true});
+
+swipeArea.addEventListener('touchend', e => {
+  if (!isDragging || window.innerWidth > 600) return;
+  isDragging = false;
+
+  const diffX = e.changedTouches[0].clientX - touchStartX;
+  const threshold = window.innerWidth * 0.2; // 20% da tela para confirmar troca de aba
+
+  // Devolve a transição suave para finalizar a animação de mola
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+  });
+
   let idx = TABS_ORDER.indexOf(activeTab);
-  if (diffX > 60 && idx < TABS_ORDER.length - 1) document.querySelector(`[data-tab="${TABS_ORDER[idx+1]}"]`).click();
-  else if (diffX < -60 && idx > 0) document.querySelector(`[data-tab="${TABS_ORDER[idx-1]}"]`).click();
+
+  if (diffX < -threshold && idx < TABS_ORDER.length - 1) {
+    document.querySelector(`[data-tab="${TABS_ORDER[idx+1]}"]`).click();
+  } else if (diffX > threshold && idx > 0) {
+    document.querySelector(`[data-tab="${TABS_ORDER[idx-1]}"]`).click();
+  } else {
+    snapBack(); // Volta pra mesma aba
+  }
+}, {passive: true});
+
+function snapBack() {
+  const idx = TABS_ORDER.indexOf(activeTab);
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+    t.style.transform = `translateX(-${idx * 100}%)`;
+  });
 }
 
 function switchTab(tab, el) {
-  const currentIdx = TABS_ORDER.indexOf(activeTab);
-  const newIdx = TABS_ORDER.indexOf(tab);
-  const directionClass = newIdx > currentIdx ? 'slide-right' : 'slide-left';
-  
   activeTab = tab;
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active', 'slide-right', 'slide-left'));
   document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active'));
-  
-  const activeContent = document.getElementById('tab-' + tab);
-  activeContent.classList.add('active');
-  void activeContent.offsetWidth; 
-  activeContent.classList.add(directionClass);
-  
   el.classList.add('active');
+
   document.getElementById('searchInput').value = ''; 
   filterAnimes();
+  
+  // Rola a pílula do topo suavemente para ficar visível
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+  // Move todas as abas (Estilo Carrossel)
+  const idx = TABS_ORDER.indexOf(tab);
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+    t.style.transform = `translateX(-${idx * 100}%)`;
+  });
 }
 
 // ── RENDER ────────────────────────────────────────────
@@ -739,6 +812,9 @@ async function initGistSync() {
 function exportData() { const blob = new Blob([JSON.stringify(animes, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `anime-backlog.json`; a.click(); showToast('⬇ Backup exportado!'); }
 function importData(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = ev => { try { const data = JSON.parse(ev.target.result); const existing = new Set(animes.map(a => a.id)); let added = 0; data.forEach(item => { if (!existing.has(item.id)) { animes.push(item); added++; } }); saveData(); renderAll(); showToast(`⬆ ${added} importado(s)!`); } catch { showToast('❌ Arquivo inválido!', 'error'); } e.target.value = ''; }; reader.readAsText(file); }
 function showToast(msg, type = 'default') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = msg; container.appendChild(toast); setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, 3000); }
+
+// Inicialização das posições das abas (MUITO IMPORTANTE PARA O CARROSSEL FUNCIONAR CORRETAMENTE DE INÍCIO)
+switchTab(activeTab, document.querySelector(`[data-tab="${activeTab}"]`));
 
 // ── INIT ──────────────────────────────────────────────
 loadData(); renderAll(); updateSettingsUI(); initGistSync();
