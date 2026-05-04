@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>アニメ · Backlog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
@@ -781,13 +781,87 @@
   }
   .btn-danger:hover { background: var(--red); color: #fff; }
 
-  /* Responsive */
+/* ── RESPONSIVO PARA CELULAR (Estilo App Nativo) ── */
   @media (max-width: 600px) {
-    header { padding: 20px; }
-    main { padding: 20px; }
-    .stats-bar { padding: 0 16px; }
-    .logo-main { font-size: 22px; }
+    /* Ajustes globais e Header */
+    header { 
+      padding: 16px; 
+      position: sticky;
+      top: 0;
+      gap: 12px;
+    }
+    .logo-main { font-size: 20px; }
+    .logo-jp { font-size: 10px; letter-spacing: 4px; }
+    
+    /* Enxugando os botões do header (esconde o texto, deixa o ícone) */
+    .header-actions { gap: 8px; flex: 1; justify-content: flex-end; }
     .sync-label { display: none; }
+    .sync-indicator { padding: 8px 10px; }
+    .btn { padding: 8px 12px; font-size: 12px; }
+    
+    /* Barra de estatísticas (Tabs) fluida */
+    .stats-bar { 
+      padding: 0 16px; 
+      gap: 10px; 
+      -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+    }
+    .stat-pill { padding: 12px 4px; font-size: 11px; }
+
+    /* Área principal */
+    main { padding: 20px 16px 80px; } /* Espaço extra no final */
+    
+    /* Grid de Cards: Força 2 colunas lado a lado no celular */
+    .cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    /* Ajustes internos do Card para caber na tela pequena */
+    .card-body { padding: 10px; }
+    .card-title { font-size: 12px; min-height: 32px; margin-bottom: 8px; }
+    .status-badge { font-size: 9px; padding: 3px 6px; top: 6px; right: 6px; }
+    .card-counters { gap: 4px; margin-bottom: 8px; }
+    .counter-label { font-size: 9px; width: 22px; }
+    .counter-btn { width: 20px; height: 20px; font-size: 12px; }
+    .counter-input { font-size: 11px; padding: 2px 4px; }
+    .status-select { font-size: 10px; padding: 6px 8px; padding-right: 20px; background-position: right 6px center; }
+    .card-delete { width: 24px; height: 24px; top: 6px; left: 6px; font-size: 10px; opacity: 1; } /* Sempre visível no mobile */
+    .card-edit { width: 24px; height: 24px; top: 34px; left: 6px; font-size: 11px; opacity: 1; }
+
+    /* Estilo "Bottom Sheet" para os Modais (Sobe da parte de baixo) */
+    .modal-backdrop { align-items: flex-end; padding: 0; }
+    .modal {
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px 32px; /* Área de respiro extra na base */
+      animation: bottomSheetIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+    
+    /* Nova animação nativa para o modal mobile */
+    @keyframes bottomSheetIn {
+      from { opacity: 0; transform: translateY(100%); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Brinde: Puxador visual (Handle) no topo do modal para indicar que arrasta */
+    .modal::before {
+      content: '';
+      display: block;
+      width: 36px; height: 4px;
+      background: var(--surface3);
+      border-radius: 4px;
+      margin: 0 auto 20px;
+    }
+
+    .modal-close { top: 16px; right: 16px; }
+    .form-row { flex-direction: column; gap: 0; } /* Inputs empilhados para não espremer */
+    
+    /* Toasts ocupando a tela quase toda */
+    .toast-container { bottom: 16px; right: 16px; left: 16px; }
+    .toast { font-size: 12px; justify-content: center; }
   }
 </style>
 </head>
