@@ -2,8 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a12">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,6 +14,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
 <style>
+  html, body {
+    background-color: var(--bg); /* Cor #0a0a12 */
+    overscroll-behavior-y: none; /* Desativa o 'puxar para atualizar' e o elástico no topo */
+}
 :root {
     --bg: #0a0a12;
     --surface: #12121f;
@@ -135,15 +138,29 @@ main::-webkit-scrollbar { display: none; }
     position: fixed; inset: 0; background: rgba(0,0,0,0.7);
     z-index: 100; align-items: center; justify-content: center; padding: 20px;
     display: none; opacity: 0; transition: opacity 0.35s ease;
+    background: rgba(0, 0, 0, 0.85);
+    top: -100px;
 }
 .modal-backdrop.open { display: flex; }
 .modal-backdrop.visible { opacity: 1; }
 
 .modal {
+        border-radius: 28px 28px 0 0;
+        padding: 24px 20px 48px;
+        max-height: 92vh;
+        overflow: hidden; /* Evita scrolls estranhos durante a subida */
+        border: none;
+        border-top: 1px solid var(--border);
+        contain: content; 
     background: var(--surface);
-    border: 1px solid var(--border);
-    /* Remova will-change daqui se estiver causando sombras estranhas */
-    backface-visibility: hidden;
+
+        /* Aceleração máxima de hardware */
+         will-change: transform, opacity;
+        transform: translate3d(0, 100%, 0); 
+        
+        /* Curva de animação ultra rápida e limpa */
+        transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    
 }
 .modal-backdrop.visible .modal {
     opacity: 1;
@@ -154,7 +171,7 @@ main::-webkit-scrollbar { display: none; }
     font-size: 20px;
     font-weight: 900;
     margin-bottom: 6px;
-    color: var(--text); /* Cor sólida = Performance 60fps */
+    color: var(--text);
     background: none;
     -webkit-text-fill-color: initial;
     background-clip: initial;
@@ -172,8 +189,6 @@ main::-webkit-scrollbar { display: none; }
 .img-preview { 
     width: 60px; height: 80px; border-radius: 6px; 
     object-fit: cover; border: 2px solid var(--border); display: none; 
-    
-    /* Evita que o carregamento da imagem cause engasgos */
     will-change: transform;
     image-rendering: -webkit-optimize-contrast;
 }
@@ -185,7 +200,7 @@ main::-webkit-scrollbar { display: none; }
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    min-height: 84px; /* Mantém o espaço reservado para a imagem */
+    min-height: 84px; 
 }
 .fetch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-top: 8px; }
 .fetch-status.loading { background: var(--blue-dim); color: #80b0ff; } .fetch-status.success { background: var(--green-dim); color: var(--green); } .fetch-status.error { background: var(--red-dim); color: var(--red); } .fetch-status.hidden { display: none; }
@@ -252,8 +267,14 @@ main::-webkit-scrollbar { display: none; }
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
 
     /* ── Mobile Modal Lógica Flúida e Corrigida ── */
-    .modal-backdrop { align-items: flex-end; padding: 0; background: rgba(0,0,0,0.7); backdrop-filter: none; }
-
+    .modal-backdrop { background: rgba(0, 0, 0, 0.85);align-items: flex-end; padding: 0; background: rgba(0,0,0,0.7); backdrop-filter: none; }
+/* Quando o modal está aberto, travamos o scroll do body */
+body.modal-is-open {
+    overflow: hidden;
+    height: 100vh;
+    position: fixed; /* Impede qualquer movimento elástico do navegador */
+    width: 100%;
+}
 /* 1. O Modal sobe como uma "concha" vazia e leve */
     .modal {
         border-radius: 28px 28px 0 0;
@@ -304,11 +325,8 @@ main::-webkit-scrollbar { display: none; }
         transition: opacity 0.3s ease 0.25s, transform 0.3s ease 0.25s, visibility 0s 0.25s;
     }
 
-    /* Extra: Desativamos o degradê do título durante a entrada para economizar GPU */
-    .modal-backdrop:not(.visible) .modal-title {
-        background: var(--text) !important;
-        -webkit-text-fill-color: var(--text) !important;
-    }
+  
+
 
     /* --- BOTÃO FLUTUANTE MOBILE --- */
     .header-actions .btn-primary { display: none; }
@@ -671,15 +689,18 @@ function openModal(id = null) {
 
 function closeModal() {
   const backdrop = document.getElementById('modalBackdrop');
-  backdrop.classList.remove('visible'); // 1. Dispara a animação de descida
+  backdrop.classList.remove('visible');
+  
+  // Removemos o foco de qualquer input para garantir que o teclado suma
+  if (document.activeElement) document.activeElement.blur();
 
-  // 2. Espera a animação terminar para esconder o contêiner e limpar o estado
   setTimeout(() => {
     backdrop.classList.remove('open');
+    const modal = backdrop.querySelector('.modal');
+    modal.style.transform = ''; // Só limpa o style DEPOIS que ele já sumiu da tela
     editingId = null;
-  }, 400); // Deve ser igual ou maior que a duração da transição no CSS
+  }, 400);
 }
-
 function openSettings() {
   updateSettingsUI(); setGistFetchStatus('hidden', '');
   const backdrop = document.getElementById('settingsBackdrop');
@@ -693,12 +714,15 @@ function openSettings() {
 function closeSettings() {
   const backdrop = document.getElementById('settingsBackdrop');
   backdrop.classList.remove('visible');
+  
+  if (document.activeElement) document.activeElement.blur();
 
   setTimeout(() => {
     backdrop.classList.remove('open');
+    const modal = backdrop.querySelector('.modal');
+    modal.style.transform = '';
   }, 400);
 }
-
 
 
 function handleBackdropClick(e) { if (e.target === document.getElementById('modalBackdrop')) closeModal(); }
@@ -893,18 +917,32 @@ function makeModalDraggable(backdropId, closeFunction) {
     isDragging = true;
     hasMovedEnough = false;
   }, { passive: true });
-
-  modal.addEventListener('touchmove', (e) => {
+modal.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
     currentY = e.touches[0].clientY;
     const deltaY = currentY - startY;
+
+    // 1. Quando o movimento é confirmado como um arrasto (mais de 12px)
     if (!hasMovedEnough && deltaY > 12) {
       hasMovedEnough = true;
       modal.classList.add('dragging');
+
+      // MÁGICA AQUI: Removemos a classe .visible do BACKDROP.
+      // Isso faz o conteúdo interno (textos e imagens) sumir instantaneamente.
+      // Assim, o celular move apenas uma "caixa vazia", eliminando a barra branca.
+      backdrop.classList.remove('visible');
+
+      // Esconde o teclado para evitar que o espaço em branco dele cause bugs
+      if (document.activeElement) document.activeElement.blur();
     }
+
+    // 2. Executa o movimento seguindo o dedo
     if (hasMovedEnough && deltaY > 0) {
       if (e.cancelable) e.preventDefault();
-      modal.style.transform = `translateY(${deltaY}px)`;
+      
+      // Mudamos de translateY para translate3d para forçar o uso da GPU
+      // Isso isola o modal em uma camada própria e mata o flicker branco
+      modal.style.transform = `translate3d(0, ${deltaY}px, 0)`;
     }
   }, { passive: false });
 
