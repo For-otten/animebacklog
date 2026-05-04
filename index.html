@@ -139,37 +139,25 @@ main::-webkit-scrollbar { display: none; }
 .modal-backdrop.open { display: flex; }
 .modal-backdrop.visible { opacity: 1; }
 
-.modal { 
-    background: var(--surface); border: 1px solid var(--border); border-radius: 20px; 
-    width: 100%; max-width: 420px; padding: 32px; position: relative; 
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6); 
-    
+.modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    /* Remova will-change daqui se estiver causando sombras estranhas */
     backface-visibility: hidden;
-    perspective: 1000px;
-    transform-style: preserve-3d;
-    text-rendering: optimizeSpeed;
-    will-change: transform, opacity;
-    transform: translate3d(0, 100%, 0); 
-    /* Estado inicial Desktop */
-    opacity: 0; transform: translateY(20px) scale(0.96);
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
-    contain: content; 
-
-
 }
 .modal-backdrop.visible .modal {
     opacity: 1;
     transform: translateY(0) scale(1);
 }
 
-.modal-title { 
-    font-size: 20px; font-weight: 900; margin-bottom: 6px; 
-    background: linear-gradient(135deg, var(--text) 40%, var(--accent)); 
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; 
-    
-    /* Evita que o gradiente (que é pesado) trave a subida do modal */
-    will-change: opacity; 
-    backface-visibility: hidden;
+.modal-title {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 6px;
+    color: var(--text); /* Cor sólida = Performance 60fps */
+    background: none;
+    -webkit-text-fill-color: initial;
+    background-clip: initial;
 }
 .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
 .form-group { margin-bottom: 18px; }
