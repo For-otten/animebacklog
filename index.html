@@ -449,7 +449,8 @@ function buildCard(anime) {
   const hasManga = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
   const hasSeason = anime.season !== null && anime.season !== undefined && anime.season !== '';
 
-  const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : '';
+  // MODIFICAÇÃO AQUI: Salvamos a URL original no 'data-src'. E se a imagem carregar (onload), ela esconde a capa reserva roxa.
+  const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onload="this.style.display='';this.nextElementSibling.style.display='none'">` : '';
   const placeholderStyle = anime.image ? 'style="display:none"' : '';
   const concludedBar = anime.status === 'concluido' && anime.concludedAt ? `<div class="concluded-overlay">✅ ${formatDate(anime.concludedAt)}</div>` : '';
 
@@ -546,8 +547,7 @@ function onImageUrlInput() { const url = document.getElementById('inputImage').v
 const GIST_TOKEN_KEY = 'anime_gist_token', GIST_ID_KEY = 'anime_gist_id', GIST_FILENAME = 'anime-backlog.json';
 let syncTimer = null, isSyncing = false;
 
-function getToken() { return localStorage.getItem(GIST_TOKEN_KEY) || ''; } 
-function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
+function getToken() { return localStorage.getItem(GIST_TOKEN_KEY) || ''; } function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
 function setSyncUI(state, label) { const el = document.getElementById('syncIndicator'), lb = document.getElementById('syncLabel'); el.className = 'sync-indicator sync-' + state; lb.textContent = label; }
 function scheduleGistSync() { if (!getToken()) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => pushToGist(), 1500); }
 
@@ -581,10 +581,23 @@ async function pullFromGist(token, gistId) {
   if (!res.ok) throw new Error(); const data = await res.json(); return JSON.parse(data.files?.[GIST_FILENAME]?.content);
 }
 
-// OLHEIROS DE REDE: O que fazer quando a internet cai ou volta
+// ── EVENTOS DE CONEXÃO: O que fazer quando a internet cai ou volta ──
 window.addEventListener('online', () => {
   updateSettingsUI();
-  initGistSync(); // Força a sincronização quando a net volta
+  initGistSync(); // Dispara o motor principal que decide se sobe backup ou se baixa do servidor
+  
+  // MÁGICA DA IMAGEM: Procura todas as imagens que falharam enquanto tava offline e tenta baixar de novo!
+  document.querySelectorAll('.anime-card img[data-src]').forEach(img => {
+    if (img.style.display === 'none') {
+      img.src = img.getAttribute('data-src'); 
+    }
+  });
+
+  // Se o usuário estiver com o Modal de novo anime aberto e a capa tava quebrada, recarrega ela tbm
+  const modalPreview = document.getElementById('imgPreview');
+  if (modalPreview.classList.contains('visible') && modalPreview.src) {
+    modalPreview.src = modalPreview.src; 
+  }
 });
 
 window.addEventListener('offline', () => {
@@ -592,7 +605,7 @@ window.addEventListener('offline', () => {
   if (getToken()) setSyncUI('off', 'Offline');
 });
 
-// A Função Principal de Inicialização Corrigida
+// A Função Principal de Inicialização
 async function initGistSync() {
   const token = getToken(), gistId = getGistId(); 
   if (!token || !gistId) return; 
@@ -602,8 +615,7 @@ async function initGistSync() {
     return; 
   }
   
-  // SOLUÇÃO: Se há modificações offline pendentes, ENVIE (Push) primeiro!
-  // Evita que as informações locais sejam substituídas pelo que está no Github
+  // Se há modificações offline pendentes, ENVIE (Push) primeiro! Evita substituição dos seus saves!
   if(localStorage.getItem('anime_pending_sync') === 'true') {
     setSyncUI('ing', 'Enviando offline...');
     await pushToGist();
