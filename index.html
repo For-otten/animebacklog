@@ -228,7 +228,7 @@
     .status-badge { bottom: auto; top: 8px; left: 8px; right: auto; font-size: 9px; padding: 4px 8px; }
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
 
-    /* ── Mobile Modal Lógica Flúida ── */
+/* ── Mobile Modal Lógica Flúida ── */
     .modal-backdrop { align-items: flex-end; padding: 0; }
     
     .modal { 
@@ -238,9 +238,15 @@
       overflow-y: auto; 
       border: none; 
       border-top: 1px solid var(--border);
+      
+      /* Otimização: Força o uso da GPU do celular para evitar lag */
+      will-change: transform;
+      
       opacity: 1; 
       transform: translateY(100%);
-      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      
+      /* Curva de animação mais suave e nativa (tipo iOS) */
+      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
     }
     
     .modal-backdrop.visible .modal { transform: translateY(0); }
@@ -249,7 +255,7 @@
 
     .modal::before { content: ''; display: block; width: 40px; height: 5px; background: var(--surface3); border-radius: 5px; margin: 0 auto 24px; }
     .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; color: var(--text-muted); }
-    .form-row { flex-direction: column; gap: 0; }
+  
     
     .toast-container { bottom: 20px; right: 16px; left: 16px; }
     .toast { justify-content: center; }
@@ -589,6 +595,7 @@ function setFetchStatus(type, msg) {
 }
 
 // ── MODAL UI ──────────────────────────────────────────
+
 function openModal(id = null) {
   editingId = id; const isEdit = !!id; const anime = isEdit ? animes.find(a => a.id === id) : null;
   document.getElementById('modalTitle').textContent = isEdit ? 'Editar Anime' : 'Novo Anime';
@@ -598,23 +605,23 @@ function openModal(id = null) {
   if (anime?.image) { preview.src = anime.image; preview.classList.add('visible'); } else { preview.src = ''; preview.classList.remove('visible'); }
   
   const backdrop = document.getElementById('modalBackdrop');
-  backdrop.classList.add('open'); // 1. Dá o Display Flex
+  backdrop.classList.add('open');
   
-  // 2. Dispara a animação no próximo frame
-  requestAnimationFrame(() => {
-    backdrop.classList.add('visible'); 
-  });
+  // Pequeno delay garante que o navegador renderize o display:flex antes de animar
+  setTimeout(() => backdrop.classList.add('visible'), 10);
 }
 
 function closeModal() {
   const backdrop = document.getElementById('modalBackdrop');
-  backdrop.classList.remove('visible'); // 1. Começa a animação de descida
+  const modal = backdrop.querySelector('.modal');
   
-  // 2. Espera a animação acabar e some com o display
+  modal.style.transform = ''; // Limpa qualquer arrasto manual
+  backdrop.classList.remove('visible');
+  
   setTimeout(() => {
     backdrop.classList.remove('open');
     editingId = null;
-  }, 350);
+  }, 400); // Tempo igual ao da transição CSS
 }
 function handleBackdropClick(e) { if (e.target === document.getElementById('modalBackdrop')) closeModal(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
@@ -740,23 +747,20 @@ function setGistFetchStatus(type, msg) {
 }
 
 function openSettings() { 
-  updateSettingsUI(); 
-  setGistFetchStatus('hidden', ''); 
-  
+  updateSettingsUI(); setGistFetchStatus('hidden', ''); 
   const backdrop = document.getElementById('settingsBackdrop');
   backdrop.classList.add('open');
-  requestAnimationFrame(() => {
-    backdrop.classList.add('visible');
-  });
+  setTimeout(() => backdrop.classList.add('visible'), 10);
 }
 
 function closeSettings() { 
   const backdrop = document.getElementById('settingsBackdrop');
+  const modal = backdrop.querySelector('.modal');
+  
+  modal.style.transform = '';
   backdrop.classList.remove('visible');
   
-  setTimeout(() => {
-    backdrop.classList.remove('open');
-  }, 350);
+  setTimeout(() => backdrop.classList.remove('open'), 400);
 }
 function handleSettingsBackdrop(e) { if (e.target === document.getElementById('settingsBackdrop')) closeSettings(); }
 
@@ -823,15 +827,19 @@ function makeModalDraggable(backdropId, closeFunction) {
   let startY = 0;
   let currentY = 0;
   let isAtTop = false;
+  let hasMovedEnough = false; // A margem de erro para não fechar clicando sem querer
 
   modal.addEventListener('touchstart', (e) => {
-    // Só inicia o arrasto se o scroll do modal estiver totalmente no topo
+    // 1. PROTEÇÃO DE INPUTS: Se tocou num input, select ou botão, aborta o arrasto.
+
+
+    // 2. Só permite arrastar se o scroll interno do modal estiver no topo
     isAtTop = modal.scrollTop <= 0;
     if (!isAtTop) return;
 
     startY = e.touches[0].clientY;
     isDragging = true;
-    modal.style.transform = ''; // Limpa qualquer resquício
+    hasMovedEnough = false;
   }, { passive: true });
 
   modal.addEventListener('touchmove', (e) => {
@@ -840,10 +848,15 @@ function makeModalDraggable(backdropId, closeFunction) {
     currentY = e.touches[0].clientY;
     const deltaY = currentY - startY;
 
-    // Se estiver puxando para baixo
-    if (deltaY > 0) {
-      if (e.cancelable) e.preventDefault(); // Previne o pull-to-refresh nativo
-      modal.classList.add('dragging'); // Desativa a transição do CSS para não ter lag
+    // 3. MARGEM DE ERRO: Só considera arrasto se moveu mais de 12px
+    if (!hasMovedEnough && Math.abs(deltaY) > 12) {
+      hasMovedEnough = true;
+      modal.classList.add('dragging'); // Tira transição pro modal seguir o dedo
+    }
+
+    // 4. Se já passou da margem e está puxando pra baixo
+    if (hasMovedEnough && deltaY > 0) {
+      if (e.cancelable) e.preventDefault(); // Impede o navegador de puxar a página
       modal.style.transform = `translateY(${deltaY}px)`;
     }
   }, { passive: false });
@@ -851,14 +864,16 @@ function makeModalDraggable(backdropId, closeFunction) {
   const onTouchEnd = () => {
     if (!isDragging) return;
     isDragging = false;
-    modal.classList.remove('dragging'); // Devolve o controle pro CSS
+    modal.classList.remove('dragging'); // Devolve o controle pro CSS animar
     
     const deltaY = currentY - startY;
-    modal.style.transform = ''; // Tira o inline, o CSS assume
 
-    // Se puxou mais de 80px pra baixo, fecha o modal
-    if (deltaY > 80) {
+    // 5. Se puxou mais de 100px pra baixo com intenção, fecha
+    if (hasMovedEnough && deltaY > 100) {
       closeFunction();
+    } else {
+      // Se desistiu ou foi só um toque acidental, volta pro topo
+      modal.style.transform = ''; 
     }
   };
 
@@ -866,6 +881,7 @@ function makeModalDraggable(backdropId, closeFunction) {
   modal.addEventListener('touchcancel', onTouchEnd);
 }
 
+// Ativa a funcionalidade nos dois modais
 makeModalDraggable('modalBackdrop', closeModal);
 makeModalDraggable('settingsBackdrop', closeSettings);
 </script>
