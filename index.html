@@ -131,7 +131,7 @@
 
   /* ── MODAIS (Lógica Base e Desktop) ── */
   .modal-backdrop { 
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); 
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); 
     z-index: 100; align-items: center; justify-content: center; padding: 20px; 
     display: none; opacity: 0; transition: opacity 0.35s ease;
   }
@@ -231,22 +231,19 @@
 /* ── Mobile Modal Lógica Flúida ── */
     .modal-backdrop { align-items: flex-end; padding: 0; }
     
-    .modal { 
+.modal { 
       border-radius: 28px 28px 0 0; 
       padding: 24px 20px 48px; 
       max-height: 92vh; 
       overflow-y: auto; 
       border: none; 
       border-top: 1px solid var(--border);
-      
-      /* Otimização: Força o uso da GPU do celular para evitar lag */
       will-change: transform;
-      
       opacity: 1; 
       transform: translateY(100%);
       
-      /* Curva de animação mais suave e nativa (tipo iOS) */
-      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+      /* CURVA MAIS SUAVE E RÁPIDA - PADRÃO "EASE OUT" */
+      transition: transform 0.38s cubic-bezier(0, 0, 0.2, 1);
     }
     
     .modal-backdrop.visible .modal { transform: translateY(0); }
