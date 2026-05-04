@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<!-- Configurações PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a12">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,301 +15,174 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a12;
-    --surface: #12121f;
-    --surface2: #1a1a2e;
-    --surface3: #22223a;
-    --border: rgba(255,255,255,0.07);
-    --text: #e8e8f0;
-    --text-muted: #7a7a9a;
-    --accent: #e040a0;
-    --accent2: #a040e0;
-    --accent-glow: rgba(224,64,160,0.3);
-    --green: #40e0a0;
-    --green-dim: rgba(64,224,160,0.15);
-    --yellow: #f0c040;
-    --yellow-dim: rgba(240,192,64,0.15);
-    --red: #e04060;
-    --red-dim: rgba(224,64,96,0.15);
-    --blue: #4080e0;
-    --blue-dim: rgba(64,128,224,0.15);
-    --radius: 16px;
-    --card-w: 220px;
-    --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    --bg: #0a0a12; --surface: #12121f; --surface2: #1a1a2e; --surface3: #22223a;
+    --border: rgba(255,255,255,0.07); --text: #e8e8f0; --text-muted: #7a7a9a;
+    --accent: #e040a0; --accent2: #a040e0; --accent-glow: rgba(224,64,160,0.3);
+    --green: #40e0a0; --green-dim: rgba(64,224,160,0.15); --yellow: #f0c040; --yellow-dim: rgba(240,192,64,0.15);
+    --red: #e04060; --red-dim: rgba(224,64,96,0.15); --blue: #4080e0; --blue-dim: rgba(64,128,224,0.15);
+    --radius: 16px; --card-w: 220px; --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: 'Zen Kaku Gothic New', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 60% 40% at 80% 10%, rgba(160,64,224,0.12) 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 10% 80%, rgba(224,64,160,0.10) 0%, transparent 60%); }
+  body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px); }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background: radial-gradient(ellipse 60% 40% at 80% 10%, rgba(160,64,224,0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 30% at 10% 80%, rgba(224,64,160,0.10) 0%, transparent 60%);
-  }
-
-  body::after {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
-  }
-
-  /* ── HEADER ORIGINAL DESKTOP ── */
-  header {
-    position: sticky; top: 0; z-index: 10;
-    padding: 32px 40px 20px;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-    border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); background: rgba(10,10,18,0.7);
-  }
-
+  header { position: sticky; top: 0; z-index: 10; padding: 24px 40px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: var(--bg); }
   .logo { display: flex; flex-direction: column; line-height: 1; }
   .logo-jp { font-family: 'Sawarabi Mincho', serif; font-size: 13px; color: var(--accent); letter-spacing: 6px; opacity: 0.8; }
-  .logo-main {
-    font-size: 28px; font-weight: 900; letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--text) 40%, var(--accent));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-
-  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 10px;
-    font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: var(--transition); border: none; letter-spacing: 0.3px;
-  }
+  .logo-main { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--text) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 12px 18px; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: var(--transition); border: none; letter-spacing: 0.3px; }
   .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 4px 20px var(--accent-glow); }
-  .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 6px 28px var(--accent-glow); }
+  .btn-primary:active { transform: scale(0.96); }
   .btn-ghost { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { background: var(--surface3); color: var(--text); }
-  .btn-icon { font-size: 15px; }
+  .btn-ghost:active { background: var(--surface3); color: var(--text); }
+  .btn-icon { font-size: 16px; }
 
-  .search-input {
-    background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 10px;
-    padding: 10px 16px; font-family: inherit; font-size: 13px; transition: var(--transition); width: 250px;
-  }
-  .search-input:focus { outline: none; border-color: var(--accent); background: var(--surface2); width: 300px;}
+  .search-container { position: sticky; top: 80px; z-index: 9; padding: 0 40px 16px; background: linear-gradient(to bottom, var(--bg) 60%, transparent); }
+  .search-input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 12px; padding: 14px 16px; font-family: inherit; font-size: 14px; transition: var(--transition); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  .search-input:focus { outline: none; border-color: var(--accent); background: var(--surface2); }
   .search-input::placeholder { color: var(--text-muted); }
 
-  /* ── STATS BAR ORIGINAL ── */
-  .stats-bar {
-    position: relative; z-index: 5; display: flex; gap: 0; padding: 0 40px;
-    border-bottom: 1px solid var(--border); background: rgba(10,10,18,0.5); backdrop-filter: blur(8px);
-    overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth;
-  }
+  .stats-bar { position: relative; z-index: 5; display: flex; gap: 0; padding: 0 40px; border-bottom: 1px solid var(--border); background: rgba(10,10,18,0.5); backdrop-filter: blur(8px); overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
   .stats-bar::-webkit-scrollbar { display: none; }
-  .stat-pill {
-    display: flex; align-items: center; gap: 8px; padding: 12px 18px; font-size: 12px; color: var(--text-muted);
-    white-space: nowrap; border-bottom: 2px solid transparent; transition: var(--transition); cursor: pointer;
-    user-select: none; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-  }
-  .stat-pill:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .stat-pill { display: flex; align-items: center; gap: 8px; padding: 14px 18px; font-size: 13px; color: var(--text-muted); white-space: nowrap; border-bottom: 2px solid transparent; transition: var(--transition); cursor: pointer; user-select: none; font-weight: 700; text-transform: uppercase; }
   .stat-pill.active { color: var(--text); border-bottom-color: var(--accent); }
   .stat-pill.active .stat-dot { opacity: 1; }
   .stat-dot { width: 7px; height: 7px; border-radius: 50%; opacity: 0.5; }
   .dot-acompanhando { background: var(--green); } .dot-assistir { background: var(--blue); } .dot-esperando { background: var(--yellow); } .dot-concluido { background: var(--text-muted); } .dot-dropado { background: var(--red); }
   .stat-count { background: var(--surface3); color: var(--text-muted); padding: 2px 7px; border-radius: 20px; font-size: 11px; }
 
-  /* ── MAIN & CARDS GRID ORIGINAL DESKTOP ── */
-  main { position: relative; z-index: 5; padding: 32px 40px 60px; overflow-x: hidden; }
-  
-  /* Container e Animações (Desktop = Fade / Mobile = Slide) */
-  .tab-content { display: none; } 
-  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+  main { position: relative; z-index: 5; padding: 24px 40px 80px; }
+  .tab-content { display: none; animation: fadeIn 0.3s ease; } .tab-content.active { display: block; }
   @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
   
-  @keyframes slideInRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-  @keyframes slideInLeft { from { transform: translateX(-40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-  .slide-right { animation: slideInRight 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important; }
-  .slide-left { animation: slideInLeft 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important; }
-
-  .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
-  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
-  .section-line { flex: 1; height: 1px; background: var(--border); }
-
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr)); gap: 20px; }
-
-  /* ANIME CARD DESKTOP */
-  .anime-card {
-    background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden;
-    transition: var(--transition); position: relative; animation: cardIn 0.4s cubic-bezier(0.4,0,0.2,1) both;
-  }
+  
+  /* DESKTOP CARD STYLE */
+  .anime-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; transition: var(--transition); position: relative; animation: cardIn 0.4s cubic-bezier(0.4,0,0.2,1) both; }
   @keyframes cardIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
-  .anime-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.15); }
-
-  .anime-card.status-acompanhando { border-color: rgba(64,224,160,0.3); box-shadow: 0 0 0 0 var(--green); }
-  .anime-card.status-acompanhando:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(64,224,160,0.2); }
-  .anime-card.status-assistir { border-color: rgba(64,128,224,0.25); }
-  .anime-card.status-esperando { border-color: rgba(240,192,64,0.4); }
-  .anime-card.status-concluido { opacity: 0.65; } .anime-card.status-concluido:hover { opacity: 0.9; }
-  .anime-card.status-dropado { opacity: 0.5; border-color: rgba(224,64,96,0.35); }
+  .anime-card.status-acompanhando { border-color: rgba(64,224,160,0.3); } .anime-card.status-assistir { border-color: rgba(64,128,224,0.25); } .anime-card.status-esperando { border-color: rgba(240,192,64,0.4); } .anime-card.status-concluido { opacity: 0.65; } .anime-card.status-dropado { opacity: 0.5; border-color: rgba(224,64,96,0.35); }
 
   .card-cover { position: relative; width: 100%; padding-top: 140%; overflow: hidden; background: var(--surface2); }
-  .card-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-  .anime-card:hover .card-cover img { transform: scale(1.05); }
-
-  .card-cover-placeholder {
-    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-    background: linear-gradient(145deg, var(--surface2), var(--surface3)); color: var(--text-muted); font-size: 36px;
-  }
-  .card-cover-placeholder span { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-
-  /* Itens flutuantes sobre a capa (Desktop) */
-  .status-badge {
-    position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; padding: 4px 10px;
-    border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; backdrop-filter: blur(8px); text-transform: uppercase; z-index: 5;
-  }
-  .status-badge.badge-acompanhando { background: rgba(64,224,160,0.25); color: var(--green); border: 1px solid rgba(64,224,160,0.4); }
-  .status-badge.badge-assistir { background: rgba(64,128,224,0.25); color: #80b0ff; border: 1px solid rgba(64,128,224,0.4); }
-  .status-badge.badge-esperando { background: rgba(240,192,64,0.2); color: var(--yellow); border: 1px solid rgba(240,192,64,0.4); }
-  .status-badge.badge-concluido { background: rgba(150,150,170,0.2); color: #aaaacc; border: 1px solid rgba(150,150,170,0.3); }
-  .status-badge.badge-dropado { background: rgba(224,64,96,0.2); color: var(--red); border: 1px solid rgba(224,64,96,0.35); }
-
-  .card-delete, .card-edit {
-    position: absolute; width: 28px; height: 28px; border-radius: 50%;
-    background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted);
-    cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: var(--transition); backdrop-filter: blur(4px); z-index: 5;
-  }
-  .card-delete { top: 10px; left: 10px; font-size: 12px; }
-  .card-edit { top: 42px; left: 10px; font-size: 14px; }
-  .anime-card:hover .card-delete, .anime-card:hover .card-edit { opacity: 1; }
-  .card-delete:hover { background: var(--red); color: #fff; border-color: var(--red); }
-  .card-edit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-  .concluded-overlay {
-    position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); font-size: 10px; color: rgba(255,255,255,0.6);
-  }
-
-  /* Card Body Desktop */
-  .card-body { padding: 14px; }
-  .card-title {
-    font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.35;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 36px;
-  }
-
-  .card-counters { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
-  .counter-row { display: flex; align-items: center; gap: 6px; }
-  .counter-label { font-size: 10px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; width: 28px; flex-shrink: 0; }
-  .counter-btn { width: 24px; height: 24px; border-radius: 6px; background: var(--surface3); border: 1px solid var(--border); color: var(--text); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); flex-shrink: 0; line-height: 1; font-family: inherit; }
-  .counter-btn:hover { background: var(--accent); border-color: var(--accent); }
-  .counter-input { flex: 1; background: var(--surface3); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 3px 6px; font-family: inherit; font-size: 13px; font-weight: 700; text-align: center; min-width: 0; transition: var(--transition); }
-  .counter-input:focus { outline: none; border-color: var(--accent); background: var(--surface2); }
+  .card-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .card-cover-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(145deg, var(--surface2), var(--surface3)); color: var(--text-muted); font-size: 36px; }
   
-  .status-select {
-    width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 10px;
-    font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; transition: var(--transition); appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
-  }
-  .status-select:focus { outline: none; border-color: var(--accent); }
+  .status-badge { position: absolute; bottom: 8px; left: 8px; display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; backdrop-filter: blur(8px); text-transform: uppercase; z-index: 2; pointer-events: none;}
+  .status-badge.badge-acompanhando { background: rgba(64,224,160,0.25); color: var(--green); border: 1px solid rgba(64,224,160,0.4); } .status-badge.badge-assistir { background: rgba(64,128,224,0.25); color: #80b0ff; border: 1px solid rgba(64,128,224,0.4); } .status-badge.badge-esperando { background: rgba(240,192,64,0.2); color: var(--yellow); border: 1px solid rgba(240,192,64,0.4); } .status-badge.badge-concluido { background: rgba(150,150,170,0.2); color: #aaaacc; border: 1px solid rgba(150,150,170,0.3); } .status-badge.badge-dropado { background: rgba(224,64,96,0.2); color: var(--red); border: 1px solid rgba(224,64,96,0.35); }
 
-  .empty-state { grid-column: 1/-1; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 80px 20px; color: var(--text-muted); text-align: center; }
-  .empty-icon { font-size: 48px; opacity: 0.4; } .empty-title { font-size: 18px; font-weight: 700; } .empty-sub { font-size: 13px; opacity: 0.6; }
+  .card-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 5; opacity: 0; transition: var(--transition); }
+  .anime-card:hover .card-actions { opacity: 1; }
+  .action-btn { width: 34px; height: 34px; border-radius: 50%; background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .action-btn:hover { transform: scale(1.1); }
+  .btn-del:hover { background: var(--red); border-color: var(--red); }
+  .btn-edt:hover { background: var(--accent); border-color: var(--accent); }
 
-  /* ── MODAIS DESKTOP ORIGINAL ── */
+  .concluded-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 10px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); font-size: 11px; color: rgba(255,255,255,0.8); z-index: 1; }
+
+  .card-body { padding: 16px; display: flex; flex-direction: column; }
+  .card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 14px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
+
+  .card-counters { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .counter-row { display: flex; align-items: center; gap: 8px; }
+  .counter-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; width: 30px; flex-shrink: 0; }
+  .counter-btn { width: 32px; height: 32px; border-radius: 8px; background: var(--surface3); border: 1px solid var(--border); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; user-select: none;}
+  .counter-btn:active { background: var(--accent); }
+  .counter-input { flex: 1; height: 32px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-size: 14px; font-weight: 700; text-align: center; min-width: 0; }
+  
+  .status-select { width: 100%; height: 40px; background: var(--surface3); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 0 14px; font-size: 13px; font-weight: 700; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+
+  .empty-state { grid-column: 1/-1; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; color: var(--text-muted); text-align: center; }
+  .empty-icon { font-size: 48px; opacity: 0.4; margin-bottom: 10px; }
+
+  /* Modais */
   .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
   .modal-backdrop.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; padding: 32px; position: relative; animation: modalIn 0.3s cubic-bezier(0.4,0,0.2,1) both; box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
-  @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: none; } }
-  .modal-title { font-size: 20px; font-weight: 900; margin-bottom: 6px; background: linear-gradient(135deg, var(--text) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; padding: 32px; position: relative; animation: modalIn 0.3s both; box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  .modal-title { font-size: 22px; font-weight: 900; margin-bottom: 6px; color: var(--text); }
   .form-group { margin-bottom: 18px; }
-  .form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
-  .form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 11px 14px; font-family: inherit; font-size: 14px; transition: var(--transition); }
-  .form-input:focus { outline: none; border-color: var(--accent); background: var(--surface3); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .form-label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 12px; padding: 14px; font-size: 15px; }
   .form-row { display: flex; gap: 12px; } .form-row .form-group { flex: 1; }
-  .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; opacity: 0.6; }
-  .modal-footer { display: flex; gap: 10px; margin-top: 8px; } .modal-footer .btn { flex: 1; justify-content: center; padding: 12px; }
-  .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); font-family: inherit; }
-  .modal-close:hover { background: var(--surface3); color: var(--text); }
-  .img-preview { width: 60px; height: 80px; border-radius: 6px; object-fit: cover; border: 2px solid var(--border); display: none; } .img-preview.visible { display: block; }
+  .modal-footer { display: flex; gap: 10px; margin-top: 12px; } .modal-footer .btn { flex: 1; justify-content: center; padding: 14px; }
+  .modal-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size: 16px; display: flex; align-items: center; justify-content: center; }
+  .img-preview { width: 70px; height: 90px; border-radius: 8px; object-fit: cover; border: 2px solid var(--border); display: none; } .img-preview.visible { display: block; }
   .img-preview-row { display: flex; align-items: flex-start; gap: 12px; } .img-preview-row .form-group { flex: 1; }
   .fetch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-top: 8px; } .fetch-status.loading { background: var(--blue-dim); color: #80b0ff; } .fetch-status.success { background: var(--green-dim); color: var(--green); } .fetch-status.error { background: var(--red-dim); color: var(--red); } .fetch-status.hidden { display: none; }
-  .spinner { width: 14px; height: 14px; border: 2px solid rgba(64,128,224,0.3); border-top-color: #80b0ff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; } @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(64,128,224,0.3); border-top-color: #80b0ff; border-radius: 50%; animation: spin 0.7s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
 
   .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-  .toast { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 18px; font-size: 13px; font-weight: 700; color: var(--text); box-shadow: 0 8px 32px rgba(0,0,0,0.5); animation: toastIn 0.3s ease both; pointer-events: auto; display: flex; align-items: center; gap: 8px; }
-  @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } } .toast.out { animation: toastOut 0.3s ease forwards; } @keyframes toastOut { to { opacity: 0; transform: translateX(20px); } }
+  .toast { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; font-size: 14px; font-weight: 700; box-shadow: 0 8px 32px rgba(0,0,0,0.5); animation: toastIn 0.3s ease both; pointer-events: auto; display: flex; gap: 8px; }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } } .toast.out { animation: toastOut 0.3s forwards; } @keyframes toastOut { to { opacity: 0; transform: translateX(20px); } }
+  .sync-indicator { display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); } .sync-off { background: var(--surface2); color: var(--text-muted); } .sync-ok { background: rgba(64,224,160,0.1); color: var(--green); border-color: rgba(64,224,160,0.3); } .sync-ing { background: rgba(64,128,224,0.1); color: #80b0ff; border-color: rgba(64,128,224,0.3); } .sync-err { background: rgba(224,64,96,0.1); color: var(--red); border-color: rgba(224,64,96,0.3); } .sync-ing .sync-icon { display: inline-block; animation: spin 1s linear infinite; }
 
-  .sync-indicator { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); transition: var(--transition); user-select: none; } .sync-indicator:hover { filter: brightness(1.2); } .sync-off { background: var(--surface2); color: var(--text-muted); } .sync-ok { background: rgba(64,224,160,0.1); color: var(--green); border-color: rgba(64,224,160,0.3); } .sync-ing { background: rgba(64,128,224,0.1); color: #80b0ff; border-color: rgba(64,128,224,0.3); } .sync-err { background: rgba(224,64,96,0.1); color: var(--red); border-color: rgba(224,64,96,0.3); } .sync-ing .sync-icon { display: inline-block; animation: spin 1s linear infinite; }
-  .settings-modal { max-width: 520px; max-height: 90vh; overflow-y: auto; } .steps-list { counter-reset: steps; display: flex; flex-direction: column; gap: 10px; margin: 16px 0; } .step { counter-increment: steps; display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: var(--text-muted); line-height: 1.5; } .step::before { content: counter(steps); min-width: 22px; height: 22px; background: var(--surface3); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: var(--accent); flex-shrink: 0; margin-top: 1px; } .step a { color: var(--accent); text-decoration: none; } .step a:hover { text-decoration: underline; } .step code { background: var(--surface3); padding: 1px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; color: var(--text); } .settings-section { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; } .settings-section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; } .gist-status-box { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px; } .gist-status-box.connected { background: var(--green-dim); color: var(--green); border: 1px solid rgba(64,224,160,0.3); } .gist-status-box.disconnected { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); } .danger-zone { margin-top: 12px; padding: 12px; border-radius: 10px; border: 1px solid rgba(224,64,96,0.25); background: rgba(224,64,96,0.05); display: flex; align-items: center; justify-content: space-between; gap: 12px; } .danger-zone-text { font-size: 12px; color: var(--text-muted); } .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; } .btn-danger { background: rgba(224,64,96,0.15); color: var(--red); border: 1px solid rgba(224,64,96,0.3); white-space: nowrap; flex-shrink: 0; } .btn-danger:hover { background: var(--red); color: #fff; }
-
-
-  /* ═════════════════════════════════════════════════════════════════════════
-     ── MOBILE OVERHAUL (A Mágica do Layout Horizontal sem Sobreposição)
-     ═════════════════════════════════════════════════════════════════════════ */
+  /* ── MOBILE OVERHAUL (Lista Horizontal) ── */
   @media (max-width: 600px) {
     header { padding: 16px; top: 0; gap: 12px; }
     .logo-main { font-size: 22px; }
     .header-actions { gap: 8px; flex: 1; justify-content: flex-end; }
-    .search-input { width: 100%; transition: none;}
-    .search-input:focus { width: 100%;}
-    
     .sync-label { display: none; } .btn-icon { display: none; } .btn-primary .btn-icon { display: inline-block; }
     .btn { padding: 10px 14px; font-size: 13px; }
+    
+    .search-container { padding: 0 16px 12px; top: 68px; }
     .stats-bar { padding: 0 16px; gap: 10px; }
     main { padding: 16px 16px 80px; }
     
+    /* MÁGICA MOBILE: 1 Item por linha, Formato de Lista deitada */
     .cards-grid { grid-template-columns: 1fr; gap: 14px; }
     
-    /* Estrutura do Card Mobile - Seguro e Responsivo */
     .anime-card { 
       display: flex; 
-      flex-direction: row; 
+      flex-direction: row; /* Coloca imagem na esquerda e conteúdo na direita */
       min-height: 150px; 
       align-items: stretch;
     }
     
     .card-cover { 
-      width: 100px; /* Reduzido levemente para dar espaço aos botões de texto */
-      padding-top: 0; 
-      flex-shrink: 0; 
+      width: 110px; /* Largura fixa para a imagem */
+      padding-top: 0; /* Remove a proporção do desktop */
+      flex-shrink: 0; /* Impede a imagem de esmagar */
       border-right: 1px solid var(--border);
     }
     
-    /* Botões Flutuantes à Direita (Sempre Visíveis) */
-    .card-delete, .card-edit {
+    /* Os botões de ação ficam SEMPRE visíveis e grandes no Mobile */
+    .card-actions { 
       opacity: 1; 
-      width: 34px; height: 34px; font-size: 14px; 
-      background: var(--surface2); border: 1px solid var(--border);
-      left: auto; /* Remove herança do desktop */
+      top: 10px; 
+      right: 10px; 
+      gap: 10px;
     }
-    .card-delete { top: 10px; right: 10px; }
-    .card-edit { top: 52px; right: 10px; }
+    .action-btn { width: 36px; height: 36px; font-size: 16px; background: var(--surface2); }
     
-    /* ZONA SEGURA: O Padding-right de 52px impede QUALQUER texto/botão de encostar no "X" ou "Lápis" */
     .card-body { 
       flex: 1; 
-      padding: 12px; 
-      padding-right: 52px; /* A mágica anti-sobreposição está aqui */
-      width: calc(100% - 100px); /* Garante que os filhos obedeçam ao limite da tela */
-      display: flex; flex-direction: column; justify-content: center;
+      padding: 12px 14px; 
+      min-width: 0; /* Permite cortar texto longo na direita */
+      justify-content: center;
     }
     
-    .card-title { font-size: 14px; margin-bottom: 12px; min-height: auto; }
+    /* Dá um espaço na direita do título para não bater nos botões */
+    .card-title { font-size: 15px; margin-bottom: 12px; padding-right: 70px; min-height: auto; }
 
-    /* Touch Targets e inputs comprimidos com segurança */
-    .card-counters { gap: 6px; margin-bottom: 12px; width: 100%; }
-    .counter-row { gap: 6px; width: 100%; }
+    /* Contadores perfeitamente espaçados */
+    .card-counters { gap: 8px; margin-bottom: 12px; }
     .counter-label { font-size: 10px; width: 28px; }
-    .counter-btn { width: 32px; height: 32px; font-size: 18px; }
-    .counter-input { height: 32px; font-size: 14px; }
+    .counter-btn { width: 36px; height: 36px; font-size: 20px; }
+    .counter-input { height: 36px; font-size: 15px; }
     
-    .status-select { height: 40px; font-size: 12px; }
-    
-    /* Tags realocadas na imagem */
-    .status-badge { bottom: auto; top: 8px; left: 8px; right: auto; font-size: 9px; padding: 4px 8px; }
+    .status-select { height: 44px; font-size: 13px; }
+    .status-badge { bottom: auto; top: 8px; left: 8px; font-size: 9px; padding: 4px 8px; }
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
 
-    /* Modal Bottom Sheet */
+    /* Modal vira Bottom Sheet Native-like */
     .modal-backdrop { align-items: flex-end; padding: 0; }
     .modal { border-radius: 28px 28px 0 0; padding: 24px 20px 40px; animation: bottomSheetIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; max-height: 92vh; overflow-y: auto; border: none; border-top: 1px solid var(--border); }
     @keyframes bottomSheetIn { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
     .modal::before { content: ''; display: block; width: 40px; height: 5px; background: var(--surface3); border-radius: 5px; margin: 0 auto 24px; }
-    .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; color: var(--text-muted); }
+    .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; }
     .form-row { flex-direction: column; gap: 0; }
     
     .toast-container { bottom: 20px; right: 16px; left: 16px; }
@@ -322,16 +194,17 @@
 
 <header>
   <div class="logo"><span class="logo-jp">アニメ</span><span class="logo-main">Backlog</span></div>
-  
-  <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar anime..." oninput="filterAnimes()">
-
   <div class="header-actions">
     <div id="syncIndicator" class="sync-indicator sync-off" onclick="openSettings()"><span class="sync-icon">☁</span><span class="sync-label" id="syncLabel">Sem sync</span></div>
-    <button class="btn btn-ghost" onclick="exportData()"><span class="btn-icon">⬇</span> Backup</button>
-    <label class="btn btn-ghost" style="cursor:pointer"><span class="btn-icon">⬆</span> Importar<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+    <button class="btn btn-ghost" onclick="exportData()">Backup</button>
+    <label class="btn btn-ghost" style="cursor:pointer">Importar<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
     <button class="btn btn-primary" onclick="openModal()"><span class="btn-icon">＋</span> Novo Anime</button>
   </div>
 </header>
+
+<div class="search-container">
+  <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar anime..." oninput="filterAnimes()">
+</div>
 
 <nav class="stats-bar" id="statsBar">
   <div class="stat-pill active" data-tab="acompanhando" onclick="switchTab('acompanhando', this)"><span class="stat-dot dot-acompanhando"></span>Acompanhando<span class="stat-count" id="count-acompanhando">0</span></div>
@@ -341,7 +214,6 @@
   <div class="stat-pill" data-tab="dropado" onclick="switchTab('dropado', this)"><span class="stat-dot dot-dropado"></span>Dropado<span class="stat-count" id="count-dropado">0</span></div>
 </nav>
 
-<!-- Área que recebe o Swipe/Toque -->
 <main id="swipeArea">
   <div class="tab-content active" id="tab-acompanhando"><div class="cards-grid" id="grid-acompanhando"></div></div>
   <div class="tab-content" id="tab-assistir"><div class="cards-grid" id="grid-assistir"></div></div>
@@ -354,11 +226,10 @@
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-title" id="modalTitle">Novo Anime</div>
-    <div class="modal-subtitle" id="modalSubtitle">Busco a capa automaticamente ✨</div>
     <div class="form-group"><label class="form-label">Nome do anime *</label><input type="text" class="form-input" id="inputName" placeholder="Ex: Jujutsu Kaisen" oninput="onNameInput()" onkeydown="if(event.key==='Enter')searchAnimeImage()"><div class="fetch-status hidden" id="fetchStatus"></div></div>
     <div class="img-preview-row"><div class="form-group" style="flex:1"><label class="form-label">URL da imagem (opcional)</label><input type="text" class="form-input" id="inputImage" placeholder="https://..." oninput="onImageUrlInput()"></div><img class="img-preview" id="imgPreview" src=""></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Temporada</label><input type="number" class="form-input" id="inputSeason" placeholder="Opcional" min="1"></div><div class="form-group"><label class="form-label">Episódio atual</label><input type="number" class="form-input" id="inputEpisode" placeholder="1" min="0"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Capítulo (manga)</label><input type="number" class="form-input" id="inputChapter" placeholder="Opcional" min="0"></div><div class="form-group"><label class="form-label">Status inicial</label><select class="form-input status-select" id="inputStatus"><option value="assistir">📋 Backlog (Assistir)</option><option value="acompanhando">🟢 Acompanhando</option><option value="esperando">⏳ Esperando nova temp.</option><option value="concluido">✅ Concluído</option><option value="dropado">❌ Dropado</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Capítulo (manga)</label><input type="number" class="form-input" id="inputChapter" placeholder="Opcional" min="0"></div><div class="form-group"><label class="form-label">Status inicial</label><select class="form-input status-select" style="background-color: var(--surface2)" id="inputStatus"><option value="assistir">📋 Backlog (Assistir)</option><option value="acompanhando">🟢 Acompanhando</option><option value="esperando">⏳ Esperando nova temp.</option><option value="concluido">✅ Concluído</option><option value="dropado">❌ Dropado</option></select></div></div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" id="modalConfirmBtn" onclick="saveAnime()">Salvar</button></div>
   </div>
 </div>
@@ -367,14 +238,10 @@
   <div class="modal settings-modal">
     <button class="modal-close" onclick="closeSettings()">✕</button>
     <div class="modal-title">☁ Gist Sync</div>
-    <div class="modal-subtitle">Salva seu backlog num Gist privado do GitHub.</div>
-    <div id="gistStatusBox" class="gist-status-box disconnected"><span id="gistStatusIcon">○</span><span id="gistStatusText">Não configurado</span></div>
-    <div class="settings-section"><div class="settings-section-title">🔑 Token do GitHub</div><div class="form-group"><input type="password" class="form-input" id="inputToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"></div><div class="fetch-status hidden" id="gistFetchStatus"></div></div>
-    <div class="modal-footer" style="flex-direction:column;gap:8px"><button class="btn btn-primary" style="width:100%;justify-content:center" onclick="connectGist()">Conectar e sincronizar</button>
-    <div class="danger-zone" id="dangerZone" style="display:none"><div class="danger-zone-text"><strong>Desconectar</strong> Remove o token.</div><button class="btn btn-danger" onclick="disconnectGist()">Sair</button></div></div>
+    <div class="form-group"><label class="form-label">Token do GitHub</label><input type="password" class="form-input" id="inputToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"></div>
+    <div class="modal-footer" style="flex-direction:column;gap:8px"><button class="btn btn-primary" style="width:100%;justify-content:center" onclick="connectGist()">Conectar e sincronizar</button><button class="btn btn-ghost" style="width:100%;color:var(--red)" onclick="disconnectGist()">Desconectar</button></div>
   </div>
 </div>
-
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
@@ -390,75 +257,28 @@ function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
 
 function filterAnimes() {
   const query = document.getElementById('searchInput').value.toLowerCase();
-  const displayType = window.innerWidth <= 600 ? 'flex' : 'block';
   document.querySelectorAll('.anime-card').forEach(card => {
     const title = card.querySelector('.card-title').textContent.toLowerCase();
-    card.style.display = title.includes(query) ? displayType : 'none';
+    card.style.display = title.includes(query) ? 'flex' : 'none'; // Mudado para 'flex' no mobile
   });
 }
 
-// ── LÓGICA DE SWIPE (COM EFEITO DE PUXAR) ──
-let touchStartX = 0, touchStartY = 0, isSwiping = false;
-document.getElementById('swipeArea').addEventListener('touchstart', e => { 
-  touchStartX = e.changedTouches[0].screenX; 
-  touchStartY = e.changedTouches[0].screenY; 
-  isSwiping = true;
-}, {passive: true});
-
-document.getElementById('swipeArea').addEventListener('touchmove', e => {
-  if (!isSwiping || window.innerWidth > 600) return;
-  let diffX = touchStartX - e.changedTouches[0].screenX;
-  let diffY = Math.abs(touchStartY - e.changedTouches[0].screenY);
-
-  // Se estiver rolando para baixo/cima, cancela o swipe lateral
-  if (diffY > 40 && diffY > Math.abs(diffX)) {
-    isSwiping = false;
-    document.querySelector('.tab-content.active').style.transform = '';
-    return;
-  }
-  
-  // Efeito elástico ao puxar
-  let move = Math.max(-60, Math.min(60, -diffX * 0.3));
-  document.querySelector('.tab-content.active').style.transform = `translateX(${move}px)`;
-}, {passive: true});
-
-document.getElementById('swipeArea').addEventListener('touchend', e => { 
-  if (!isSwiping) return;
-  isSwiping = false;
-  let diffX = touchStartX - e.changedTouches[0].screenX;
-  
-  // Reseta visual da puxada
-  let activeContent = document.querySelector('.tab-content.active');
-  if (activeContent) activeContent.style.transform = '';
-
-  if (window.innerWidth > 600) return;
-
+let touchStartX = 0, touchEndX = 0, touchStartY = 0, touchEndY = 0;
+document.getElementById('swipeArea').addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+document.getElementById('swipeArea').addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; touchEndY = e.changedTouches[0].screenY; handleSwipe(); }, {passive: true});
+function handleSwipe() {
+  const diffX = touchStartX - touchEndX; const diffY = Math.abs(touchStartY - touchEndY);
+  if (diffY > Math.abs(diffX)) return;
   let idx = TABS_ORDER.indexOf(activeTab);
   if (diffX > 60 && idx < TABS_ORDER.length - 1) document.querySelector(`[data-tab="${TABS_ORDER[idx+1]}"]`).click();
   else if (diffX < -60 && idx > 0) document.querySelector(`[data-tab="${TABS_ORDER[idx-1]}"]`).click();
-}, {passive: true});
+}
 
 function switchTab(tab, el) {
-  let oldIdx = TABS_ORDER.indexOf(activeTab);
-  let newIdx = TABS_ORDER.indexOf(tab);
   activeTab = tab;
-
-  // Limpa classes e estilos
-  document.querySelectorAll('.tab-content').forEach(t => {
-    t.classList.remove('active', 'slide-left', 'slide-right');
-    t.style.transform = '';
-  });
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active'));
-  
-  let targetContent = document.getElementById('tab-' + tab);
-  targetContent.classList.add('active');
-
-  // Adiciona a animação direcional de Slide SÓ no Mobile
-  if (window.innerWidth <= 600 && oldIdx !== newIdx) {
-    if (newIdx > oldIdx) targetContent.classList.add('slide-right');
-    else targetContent.classList.add('slide-left');
-  }
-
+  document.getElementById('tab-' + tab).classList.add('active');
   el.classList.add('active');
   document.getElementById('searchInput').value = ''; 
   filterAnimes();
@@ -469,7 +289,7 @@ function renderAll() {
   TABS_ORDER.forEach(tab => {
     const grid = document.getElementById('grid-' + tab); const items = animes.filter(a => a.status === tab);
     document.getElementById('count-' + tab).textContent = items.length; grid.innerHTML = '';
-    if (items.length === 0) grid.innerHTML = `<div class="empty-state"><div class="empty-icon">${{acompanhando:'🎌',assistir:'📚',esperando:'🌸',concluido:'🏆',dropado:'💔'}[tab]}</div><div class="empty-title">Lista Vazia</div></div>`;
+    if (items.length === 0) grid.innerHTML = `<div class="empty-state"><div class="empty-icon">${{acompanhando:'🎌',assistir:'📚',esperando:'🌸',concluido:'🏆',dropado:'💔'}[tab]}</div><div>Lista Vazia</div></div>`;
     else items.forEach(anime => grid.appendChild(buildCard(anime)));
   });
   filterAnimes(); 
@@ -478,24 +298,23 @@ function renderAll() {
 function buildCard(anime) {
   const card = document.createElement('div'); card.className = `anime-card status-${anime.status}`; card.id = 'card-' + anime.id;
   const sInfo = STATUS_MAP[anime.status];
-  
   card.innerHTML = `
     <div class="card-cover">
       ${anime.image ? `<img src="${escHtml(anime.image)}" onerror="this.style.display='none'">` : ''}
       <div class="card-cover-placeholder" ${anime.image?'style="display:none"':''}>🎌</div>
+      <div class="status-badge ${sInfo.badge}">${sInfo.emoji} ${sInfo.label}</div>
       ${anime.status === 'concluido' && anime.concludedAt ? `<div class="concluded-overlay">✅ ${new Date(anime.concludedAt).toLocaleDateString('pt-BR')}</div>` : ''}
     </div>
-    
-    <div class="status-badge ${sInfo.badge}">${sInfo.emoji} ${sInfo.label}</div>
-    <button class="card-delete" onclick="deleteAnime('${anime.id}')">✕</button>
-    <button class="card-edit" onclick="openModal('${anime.id}')">✎</button>
-    
     <div class="card-body">
+      <div class="card-actions">
+        <button class="action-btn btn-edt" onclick="openModal('${anime.id}')">✎</button>
+        <button class="action-btn btn-del" onclick="deleteAnime('${anime.id}')">✕</button>
+      </div>
       <div class="card-title">${escHtml(anime.title)}</div>
       <div class="card-counters">
-        ${anime.season ? `<div class="counter-row"><span class="counter-label">Temp</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>`:''}
+        ${anime.season ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>`:''}
         <div class="counter-row"><span class="counter-label">Ep</span><button class="counter-btn" onclick="changeValue('${anime.id}','episode',-1)">−</button><input class="counter-input" type="number" value="${anime.episode}" data-field="episode" onchange="updateField('${anime.id}','episode',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button></div>
-        ${anime.chapter ? `<div class="counter-row"><span class="counter-label">Chp</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>`:''}
+        ${anime.chapter ? `<div class="counter-row"><span class="counter-label">Ch</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>`:''}
       </div>
       <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
         ${Object.entries(STATUS_MAP).map(([k,v]) => `<option value="${k}" ${k===anime.status?'selected':''}>${v.emoji} ${v.label}</option>`).join('')}
@@ -505,14 +324,14 @@ function buildCard(anime) {
 
 function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function saveAnime() {
-  const n = document.getElementById('inputName').value.trim(); if (!n) return showToast('⚠️ Digite o nome!', 'warning');
+  const n = document.getElementById('inputName').value.trim(); if (!n) return showToast('Digite o nome!');
   const ep = document.getElementById('inputEpisode').value, ch = document.getElementById('inputChapter').value, se = document.getElementById('inputSeason').value, st = document.getElementById('inputStatus').value, img = document.getElementById('inputImage').value.trim() || fetchedImageUrl;
   if (editingId) {
     const a = animes.find(x => x.id === editingId); if (!a) return;
     a.title = n; a.image = img; a.season = se!==''?+se:null; a.episode = ep!==''?+ep:1; a.chapter = ch!==''?+ch:null;
     if(st === 'concluido' && a.status !== 'concluido') a.concludedAt = new Date().toISOString(); if(st !== 'concluido') a.concludedAt = null; a.status = st;
   } else { animes.push({ id: Date.now().toString(36), title: n, image: img, season: se!==''?+se:null, episode: ep!==''?+ep:1, chapter: ch!==''?+ch:null, status: st, concludedAt: st==='concluido'?new Date().toISOString():null, addedAt: new Date().toISOString() }); }
-  saveData(); renderAll(); closeModal(); document.querySelector(`[data-tab="${st}"]`).click(); showToast(`Salvo!`);
+  saveData(); renderAll(); closeModal(); document.querySelector(`[data-tab="${st}"]`).click(); showToast(`Salvo com sucesso!`);
 }
 function deleteAnime(id) { if(confirm("Remover da lista?")){ animes = animes.filter(a => a.id !== id); saveData(); renderAll(); showToast(`Removido.`);} }
 function updateField(id, f, val) { const a = animes.find(x => x.id === id); if(a){ a[f] = Math.max(f==='season'?1:0, parseInt(val)||0); saveData(); document.getElementById('card-'+id).querySelector(`[data-field="${f}"]`).value = a[f]; } }
@@ -529,19 +348,17 @@ function onImageUrlInput() { const url = document.getElementById('inputImage').v
 function setFetchStatus(t, m) { const el = document.getElementById('fetchStatus'); el.className = 'fetch-status '+t; el.innerHTML = t==='loading'?`<div class="spinner"></div> ${m}`:m; }
 
 function exportData() { const b = new Blob([JSON.stringify(animes, null, 2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'anime-backlog.json'; a.click(); showToast('Backup exportado!'); }
-function importData(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev => { try { const d = JSON.parse(ev.target.result); const ex = new Set(animes.map(x=>x.id)); let add = 0; d.forEach(i => { if(!ex.has(i.id)){animes.push(i); add++;} }); saveData(); renderAll(); showToast(`${add} importados!`); } catch { showToast('Arquivo inválido!', 'error'); } e.target.value = ''; }; r.readAsText(f); }
-function showToast(m, type='default') { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; c.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3000); }
+function importData(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev => { try { const d = JSON.parse(ev.target.result); const ex = new Set(animes.map(x=>x.id)); let add = 0; d.forEach(i => { if(!ex.has(i.id)){animes.push(i); add++;} }); saveData(); renderAll(); showToast(`${add} importados!`); } catch { showToast('Arquivo inválido!'); } e.target.value = ''; }; r.readAsText(f); }
+function showToast(m) { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; c.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3000); }
 
-/* GIST SYNC */
 const G_TOK='anime_gist_token', G_ID='anime_gist_id', G_FILE='anime-backlog.json'; let sTmr=null, isS=false;
 function getToken(){return localStorage.getItem(G_TOK)||'';} function getGistId(){return localStorage.getItem(G_ID)||'';}
 function setSyncUI(s, l){const el=document.getElementById('syncIndicator'), lb=document.getElementById('syncLabel'); el.className='sync-indicator sync-'+s; lb.textContent=l;}
 function scheduleGistSync(){if(!getToken())return; clearTimeout(sTmr); sTmr=setTimeout(pushToGist, 1500);}
 async function pushToGist(sil=false){ const tok=getToken(), gId=getGistId(); if(!tok||isS)return; isS=true; setSyncUI('ing','Sync...'); try { const res=await fetch(`https://api.github.com/gists${gId?'/'+gId:''}`,{method:gId?'PATCH':'POST',headers:{Authorization:`token ${tok}`,'Content-Type':'application/json'},body:JSON.stringify(gId?{files:{[G_FILE]:{content:JSON.stringify({animes,savedAt:new Date().toISOString()})}}}:{description:'Anime Backlog',public:false,files:{[G_FILE]:{content:JSON.stringify({animes,savedAt:new Date().toISOString()})}}})}); if(!res.ok)throw new Error(); const d=await res.json(); if(!gId){localStorage.setItem(G_ID,d.id); if(!sil)showToast('Gist criado!');} setSyncUI('ok','Sincronizado'); } catch(e){setSyncUI('err','Erro');} finally{isS=false;} }
-async function connectGist(){ const tok=document.getElementById('inputToken').value.trim(); if(!tok)return; setGistFetchStatus('loading','Conectando...'); try{ const res=await fetch('https://api.github.com/user',{headers:{Authorization:`token ${tok}`}}); if(!res.ok)throw new Error(); localStorage.setItem(G_TOK,tok); let gId=null; for(let i=1;i<=3;i++){ const lr=await fetch(`https://api.github.com/gists?page=${i}`,{headers:{Authorization:`token ${tok}`}}); const gs=await lr.json(); const g=gs.find(x=>x.files?.[G_FILE]); if(g){gId=g.id;break;} if(gs.length<30)break; } if(gId){ localStorage.setItem(G_ID,gId); const data=await fetch(`https://api.github.com/gists/${gId}`,{headers:{Authorization:`token ${tok}`}}).then(r=>r.json()); const rem=JSON.parse(data.files[G_FILE].content); const rMap=Object.fromEntries(rem.animes.map(a=>[a.id,a])); animes=[...rem.animes, ...animes.filter(a=>!rMap[a.id])]; localStorage.setItem(STORAGE_KEY,JSON.stringify(animes)); renderAll(); }else{ await pushToGist(true); } closeSettings(); showToast('Conectado à nuvem!'); setSyncUI('ok','Sincronizado'); }catch(e){setGistFetchStatus('error','Erro ao conectar.');} }
+async function connectGist(){ const tok=document.getElementById('inputToken').value.trim(); if(!tok)return; try{ const res=await fetch('https://api.github.com/user',{headers:{Authorization:`token ${tok}`}}); if(!res.ok)throw new Error(); localStorage.setItem(G_TOK,tok); let gId=null; for(let i=1;i<=3;i++){ const lr=await fetch(`https://api.github.com/gists?page=${i}`,{headers:{Authorization:`token ${tok}`}}); const gs=await lr.json(); const g=gs.find(x=>x.files?.[G_FILE]); if(g){gId=g.id;break;} if(gs.length<30)break; } if(gId){ localStorage.setItem(G_ID,gId); const data=await fetch(`https://api.github.com/gists/${gId}`,{headers:{Authorization:`token ${tok}`}}).then(r=>r.json()); const rem=JSON.parse(data.files[G_FILE].content); const rMap=Object.fromEntries(rem.animes.map(a=>[a.id,a])); animes=[...rem.animes, ...animes.filter(a=>!rMap[a.id])]; localStorage.setItem(STORAGE_KEY,JSON.stringify(animes)); renderAll(); }else{ await pushToGist(true); } closeSettings(); showToast('Conectado à nuvem!'); setSyncUI('ok','Sincronizado'); }catch(e){showToast('Erro ao conectar!');} }
 function disconnectGist(){ localStorage.removeItem(G_TOK); localStorage.removeItem(G_ID); setSyncUI('off','Sem sync'); closeSettings(); showToast('Desconectado.'); }
-function openSettings(){ document.getElementById('settingsBackdrop').classList.add('open'); updateSettingsUI(); } function closeSettings(){ document.getElementById('settingsBackdrop').classList.remove('open'); }
-function updateSettingsUI(){ const tok = getToken(); const danger = document.getElementById('dangerZone'); const box = document.getElementById('gistStatusBox'); if(tok){ box.className='gist-status-box connected'; document.getElementById('gistStatusIcon').textContent='✓'; document.getElementById('gistStatusText').textContent='Conectado'; danger.style.display='flex'; document.getElementById('inputToken').value='●●●●●●●●●●●●●●●●'; }else{ box.className='gist-status-box disconnected'; document.getElementById('gistStatusIcon').textContent='○'; document.getElementById('gistStatusText').textContent='Não configurado'; danger.style.display='none'; } }
+function openSettings(){ document.getElementById('settingsBackdrop').classList.add('open'); } function closeSettings(){ document.getElementById('settingsBackdrop').classList.remove('open'); }
 async function initGistSync(){ const t=getToken(), g=getGistId(); if(!t||!g)return; setSyncUI('ing','Carregando...'); try{ const d=await fetch(`https://api.github.com/gists/${g}`,{headers:{Authorization:`token ${t}`}}).then(r=>r.json()); const rem=JSON.parse(d.files[G_FILE].content); const rDate=new Date(rem.savedAt||0), lDate=new Date(animes[0]?.addedAt||0); if(rem.animes.length>=animes.length || rDate>lDate){ const rMap=Object.fromEntries(rem.animes.map(a=>[a.id,a])); animes=[...rem.animes, ...animes.filter(a=>!rMap[a.id])]; localStorage.setItem(STORAGE_KEY,JSON.stringify(animes)); renderAll(); } setSyncUI('ok','Sincronizado'); }catch{setSyncUI('err','Erro');} }
 
 loadData(); renderAll(); initGistSync(); if(getToken())setSyncUI('ok','Sincronizado');
