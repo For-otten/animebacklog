@@ -139,14 +139,19 @@ main::-webkit-scrollbar { display: none; }
 .modal-backdrop.open { display: flex; }
 .modal-backdrop.visible { opacity: 1; }
 
-.modal {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
-    width: 100%; max-width: 420px; padding: 32px; position: relative;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+.modal { 
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px; 
+    width: 100%; max-width: 420px; padding: 32px; position: relative; 
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6); 
+    
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    text-rendering: optimizeSpeed;
     will-change: transform, opacity;
-    /* Estado inicial para Desktop */
-    opacity: 0;
-    transform: translateY(20px) scale(0.96);
+
+    /* Estado inicial Desktop */
+    opacity: 0; transform: translateY(20px) scale(0.96);
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
 }
 .modal-backdrop.visible .modal {
@@ -154,7 +159,15 @@ main::-webkit-scrollbar { display: none; }
     transform: translateY(0) scale(1);
 }
 
-.modal-title { font-size: 20px; font-weight: 900; margin-bottom: 6px; background: linear-gradient(135deg, var(--text) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.modal-title { 
+    font-size: 20px; font-weight: 900; margin-bottom: 6px; 
+    background: linear-gradient(135deg, var(--text) 40%, var(--accent)); 
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; 
+    
+    /* Evita que o gradiente (que é pesado) trave a subida do modal */
+    will-change: opacity; 
+    backface-visibility: hidden;
+}
 .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
 .form-group { margin-bottom: 18px; }
 .form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
@@ -165,9 +178,24 @@ main::-webkit-scrollbar { display: none; }
 .modal-footer { display: flex; gap: 10px; margin-top: 8.1px; } .modal-footer .btn { flex: 1; justify-content: center; padding: 12px; }
 .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
 
-.img-preview { width: 60px; height: 80px; border-radius: 6px; object-fit: cover; border: 2px solid var(--border); display: none; } .img-preview.visible { display: block; }
-.img-preview-row { display: flex; align-items: flex-start; gap: 12px; } .img-preview-row .form-group { flex: 1; }
+.img-preview { 
+    width: 60px; height: 80px; border-radius: 6px; 
+    object-fit: cover; border: 2px solid var(--border); display: none; 
+    
+    /* Evita que o carregamento da imagem cause engasgos */
+    will-change: transform;
+    image-rendering: -webkit-optimize-contrast;
+}
 
+.img-preview.visible {
+    display: block !important;
+}
+.img-preview-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 84px; /* Mantém o espaço reservado para a imagem */
+}
 .fetch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-top: 8px; }
 .fetch-status.loading { background: var(--blue-dim); color: #80b0ff; } .fetch-status.success { background: var(--green-dim); color: var(--green); } .fetch-status.error { background: var(--red-dim); color: var(--red); } .fetch-status.hidden { display: none; }
 .spinner { width: 14px; height: 14px; border: 2px solid rgba(64,128,224,0.3); border-top-color: #80b0ff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; } @keyframes spin { to { transform: rotate(360deg); } }
@@ -203,7 +231,6 @@ main::-webkit-scrollbar { display: none; }
 .danger-zone-text { font-size: 12px; color: var(--text-muted); } .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; }
 .btn-danger { background: rgba(224,64,96,0.15); color: var(--red); border: 1px solid rgba(224,64,96,0.3); white-space: nowrap; flex-shrink: 0; } .btn-danger:hover { background: var(--red); color: #fff; }
 .mobile-bottom-bar { display: none; }
-
 /* ── MOBILE OVERHAUL ── */
 @media (max-width: 600px) {
     header { flex-direction: column; align-items: stretch; padding: 16px 16px 12px; gap: 12px; }
@@ -233,8 +260,8 @@ main::-webkit-scrollbar { display: none; }
     .status-badge { bottom: auto; top: 8px; left: 8px; right: auto; font-size: 9px; padding: 4px 8px; }
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
 
-/* ── Mobile Modal Lógica Flúida e Corrigida ── */
-    .modal-backdrop { align-items: flex-end; padding: 0; }
+    /* ── Mobile Modal Lógica Flúida e Corrigida ── */
+    .modal-backdrop { align-items: flex-end; padding: 0; background: rgba(0,0,0,0.7); backdrop-filter: none; }
 
     .modal {
         border-radius: 28px 28px 0 0;
@@ -244,66 +271,46 @@ main::-webkit-scrollbar { display: none; }
         border: none;
         border-top: 1px solid var(--border);
         
-        /* CORREÇÃO: Garante que a animação seja puramente de translação (slide) */
-        opacity: 1; /* Sobrescreve a opacidade do desktop */
-        transform: translateY(100%) scale(1); /* Estado inicial: embaixo e com escala normal */
-        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        /* Força consistência absoluta na animação */
+        opacity: 1; 
+        transform: translateY(100%) scale(1); 
+        transition: transform 0.4s cubic-bezier(0, 0, 0.2, 1);
+        will-change: transform;
     }
     
-    .modal-backdrop.visible .modal {
-        transform: translateY(0) scale(1); /* Estado final: no lugar e com escala normal */
-    }
-    
+    .modal-backdrop.visible .modal { transform: translateY(0) scale(1); }
     .modal.dragging { transition: none !important; }
 
     .modal::before { content: ''; display: block; width: 40px; height: 5px; background: var(--surface3); border-radius: 5px; margin: 0 auto 24px; }
     .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; color: var(--text-muted); }
 
-    .toast-container { bottom: 20px; right: 16px; left: 16px; }
-    .toast { justify-content: center; }
-
-    /* Otimização: Faz o conteúdo pesado aparecer depois da animação principal */
-    .modal .form-group, .modal .modal-footer, .modal .modal-title, .modal .modal-subtitle, .modal .img-preview-row {
+    /* Otimização de Conteúdo: Agrupado em apenas 2 blocos para economizar processador */
+    .modal .modal-title, .modal .modal-subtitle, .modal .form-group, 
+    .modal .img-preview-row, .modal .form-row, .modal .modal-footer,
+    .settings-modal .settings-section, .settings-modal .gist-status-box {
         opacity: 0;
-        transform: translateY(10px);
-        transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s; /* 0.1s de delay */
+        transform: translateY(8px);
+        transition: opacity 0.25s ease-out, transform 0.25s ease-out;
     }
 
-    .modal-backdrop.visible .modal .form-group,
-    .modal-backdrop.visible .modal .modal-footer,
+    /* Grupo 1: Todo o conteúdo (Aparece junto após a subida do modal) */
     .modal-backdrop.visible .modal .modal-title,
     .modal-backdrop.visible .modal .modal-subtitle,
-    .modal-backdrop.visible .modal .img-preview-row {
+    .modal-backdrop.visible .modal .form-group,
+    .modal-backdrop.visible .modal .img-preview-row,
+    .modal-backdrop.visible .modal .form-row,
+    .modal-backdrop.visible .settings-modal .settings-section,
+    .modal-backdrop.visible .settings-modal .gist-status-box {
         opacity: 1;
         transform: translateY(0);
+        transition-delay: 0.12s;
     }
 
-    /* Animação escalonada para um efeito mais bonito */
-    .modal-backdrop.visible .modal .form-group:nth-child(2) { transition-delay: 0.15s; }
-    .modal-backdrop.visible .modal .form-group:nth-child(3) { transition-delay: 0.20s; }
-    .modal-backdrop.visible .modal .form-group:nth-child(4) { transition-delay: 0.25s; }
-    .modal-backdrop.visible .modal .modal-footer { transition-delay: 0.30s; }
-
-/* ── Ajuste do Modal de Sincronização ── */
-    .settings-modal .settings-section, 
-    .settings-modal .gist-status-box, 
-    .settings-modal .form-group, 
-    .settings-modal .modal-footer, 
-    .settings-modal .modal-title, 
-    .settings-modal .modal-subtitle {
-      opacity: 0;
-      transform: translateY(10px); /* Começa um pouco abaixo */
-      transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
-    }
-
-    .modal-backdrop.visible .settings-modal .settings-section,
-    .modal-backdrop.visible .settings-modal .gist-status-box,
-    .modal-backdrop.visible .settings-modal .form-group,
-    .modal-backdrop.visible .settings-modal .modal-footer,
-    .modal-backdrop.visible .settings-modal .modal-title,
-    .modal-backdrop.visible .settings-modal .modal-subtitle {
-      opacity: 1;
-      transform: translateY(0); /* Sobe para a posição final */
+    /* Grupo 2: Footer/Botões (Aparece por último) */
+    .modal-backdrop.visible .modal .modal-footer {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.22s;
     }
 
     /* --- BOTÃO FLUTUANTE MOBILE --- */
@@ -324,11 +331,8 @@ main::-webkit-scrollbar { display: none; }
 
     .btn-mobile-add {
       pointer-events: auto;
-      width: 56px;
-      height: 56px;
-      padding: 0;
-      font-size: 22px;
-      border-radius: 50%;
+      width: 56px; height: 56px; padding: 0;
+      font-size: 22px; border-radius: 50%;
       justify-content: center;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 4px 20px var(--accent-glow);
     }
