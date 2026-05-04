@@ -41,44 +41,20 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  /* MUDANÇA: O body agora tem altura fixa (100dvh). Ele não rola. Quem rola são as abas internamente! */
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    height: 100dvh;
-    overflow: hidden; 
-    display: flex;
-    flex-direction: column;
+    background: var(--bg); color: var(--text); font-family: 'Zen Kaku Gothic New', sans-serif;
+    height: 100dvh; overflow: hidden; display: flex; flex-direction: column;
   }
 
-  body::before {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background: radial-gradient(ellipse 60% 40% at 80% 10%, rgba(160,64,224,0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 30% at 10% 80%, rgba(224,64,160,0.10) 0%, transparent 60%);
-  }
+  body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 60% 40% at 80% 10%, rgba(160,64,224,0.12) 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 10% 80%, rgba(224,64,160,0.10) 0%, transparent 60%); }
+  body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px); }
 
-  body::after {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
-  }
-
-  /* HEADER & NAV: não diminuem de tamanho */
   header, .stats-bar { flex-shrink: 0; position: relative; z-index: 10; }
-
-  header {
-    padding: 32px 40px 20px;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-    border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); background: rgba(10,10,18,0.7);
-  }
+  header { padding: 32px 40px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); background: rgba(10,10,18,0.7); }
 
   .logo { display: flex; flex-direction: column; line-height: 1; }
   .logo-jp { font-family: 'Sawarabi Mincho', serif; font-size: 13px; color: var(--accent); letter-spacing: 6px; opacity: 0.8; }
-  .logo-main {
-    font-size: 28px; font-weight: 900; letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--text) 40%, var(--accent));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; padding-bottom: 5px;
-  }
+  .logo-main { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--text) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; padding-bottom: 5px; }
 
   .search-input { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 10px 16px; font-family: inherit; font-size: 13px; transition: var(--transition); width: 250px; }
   .search-input:focus { outline: none; border-color: var(--accent); background: var(--surface2); width: 300px;}
@@ -92,16 +68,9 @@
   .btn-ghost:hover { background: var(--surface3); color: var(--text); }
   .btn-icon { font-size: 15px; }
 
-  .stats-bar {
-    display: flex; gap: 0; padding: 0 40px;
-    border-bottom: 1px solid var(--border); background: rgba(10,10,18,0.5); backdrop-filter: blur(8px);
-    overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth;
-  }
+  .stats-bar { display: flex; gap: 0; padding: 0 40px; border-bottom: 1px solid var(--border); background: rgba(10,10,18,0.5); backdrop-filter: blur(8px); overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
   .stats-bar::-webkit-scrollbar { display: none; }
-  .stat-pill {
-    display: flex; align-items: center; gap: 8px; padding: 12px 18px; font-size: 12px; color: var(--text-muted);
-    white-space: nowrap; border-bottom: 2px solid transparent; transition: var(--transition); cursor: pointer; user-select: none; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-  }
+  .stat-pill { display: flex; align-items: center; gap: 8px; padding: 12px 18px; font-size: 12px; color: var(--text-muted); white-space: nowrap; border-bottom: 2px solid transparent; transition: var(--transition); cursor: pointer; user-select: none; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
   .stat-pill:hover { color: var(--text); background: rgba(255,255,255,0.03); }
   .stat-pill.active { color: var(--text); border-bottom-color: var(--accent); }
   .stat-pill.active .stat-dot { opacity: 1; }
@@ -109,30 +78,11 @@
   .dot-acompanhando { background: var(--green); } .dot-assistir { background: var(--blue); } .dot-esperando { background: var(--yellow); } .dot-concluido { background: var(--text-muted); } .dot-dropado { background: var(--red); }
   .stat-count { background: var(--surface3); color: var(--text-muted); padding: 2px 7px; border-radius: 20px; font-size: 11px; }
 
-  /* ── MAIN SCROLL (A MÁGICA ACONTECE AQUI) ── */
-  main { 
-    position: relative; z-index: 5; 
-    flex: 1; min-height: 0; /* Ocupa o resto da tela */
-    display: flex; width: 100%; 
-    overflow-x: auto; /* Rolagem horizontal nativa */
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory; /* Gruda perfeitamente na aba */
-    scrollbar-width: none; 
-    scroll-behavior: smooth; /* Para transições suaves ao clicar no menu */
-    -webkit-overflow-scrolling: touch;
-  }
+  main { position: relative; z-index: 5; flex: 1; min-height: 0; display: flex; width: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
   main::-webkit-scrollbar { display: none; }
   
-  .tab-content { 
-    flex: 0 0 100%; width: 100%; height: 100%; 
-    scroll-snap-align: center; /* Cada aba alinha no centro */
-    scroll-snap-stop: always;
-    overflow-y: auto; /* CADA ABA TEM SEU SCROLL VERTICAL INDEPENDENTE */
-    padding: 32px 40px 60px;
-  }
-  .tab-content::-webkit-scrollbar { width: 6px; }
-  .tab-content::-webkit-scrollbar-track { background: transparent; }
-  .tab-content::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 99px; }
+  .tab-content { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: center; scroll-snap-stop: always; overflow-y: auto; padding: 32px 40px 60px; }
+  .tab-content::-webkit-scrollbar { width: 6px; } .tab-content::-webkit-scrollbar-track { background: transparent; } .tab-content::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 99px; }
 
   .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
   .section-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
@@ -140,16 +90,11 @@
 
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr)); gap: 20px; padding-bottom: 40px; }
 
-  /* ANIME CARD DESKTOP */
   .anime-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; transition: var(--transition); position: relative; animation: cardIn 0.4s cubic-bezier(0.4,0,0.2,1) both; }
   @keyframes cardIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
   .anime-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.15); }
-  .anime-card.status-acompanhando { border-color: rgba(64,224,160,0.3); box-shadow: 0 0 0 0 var(--green); }
-  .anime-card.status-acompanhando:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(64,224,160,0.2); }
-  .anime-card.status-assistir { border-color: rgba(64,128,224,0.25); }
-  .anime-card.status-esperando { border-color: rgba(240,192,64,0.4); }
-  .anime-card.status-concluido { opacity: 0.65; } .anime-card.status-concluido:hover { opacity: 0.9; }
-  .anime-card.status-dropado { opacity: 0.5; border-color: rgba(224,64,96,0.35); }
+  .anime-card.status-acompanhando { border-color: rgba(64,224,160,0.3); box-shadow: 0 0 0 0 var(--green); } .anime-card.status-acompanhando:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(64,224,160,0.2); }
+  .anime-card.status-assistir { border-color: rgba(64,128,224,0.25); } .anime-card.status-esperando { border-color: rgba(240,192,64,0.4); } .anime-card.status-concluido { opacity: 0.65; } .anime-card.status-concluido:hover { opacity: 0.9; } .anime-card.status-dropado { opacity: 0.5; border-color: rgba(224,64,96,0.35); }
 
   .card-cover { position: relative; width: 100%; padding-top: 140%; overflow: hidden; background: var(--surface2); }
   .card-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
@@ -158,17 +103,12 @@
   .card-cover-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(145deg, var(--surface2), var(--surface3)); color: var(--text-muted); font-size: 36px; }
 
   .status-badge { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; backdrop-filter: blur(8px); text-transform: uppercase; z-index: 5; white-space: nowrap; }
-  .status-badge.badge-acompanhando { background: rgba(64,224,160,0.25); color: var(--green); border: 1px solid rgba(64,224,160,0.4); }
-  .status-badge.badge-assistir { background: rgba(64,128,224,0.25); color: #80b0ff; border: 1px solid rgba(64,128,224,0.4); }
-  .status-badge.badge-esperando { background: rgba(240,192,64,0.2); color: var(--yellow); border: 1px solid rgba(240,192,64,0.4); }
-  .status-badge.badge-concluido { background: rgba(150,150,170,0.2); color: #aaaacc; border: 1px solid rgba(150,150,170,0.3); }
-  .status-badge.badge-dropado { background: rgba(224,64,96,0.2); color: var(--red); border: 1px solid rgba(224,64,96,0.35); }
+  .status-badge.badge-acompanhando { background: rgba(64,224,160,0.25); color: var(--green); border: 1px solid rgba(64,224,160,0.4); } .status-badge.badge-assistir { background: rgba(64,128,224,0.25); color: #80b0ff; border: 1px solid rgba(64,128,224,0.4); } .status-badge.badge-esperando { background: rgba(240,192,64,0.2); color: var(--yellow); border: 1px solid rgba(240,192,64,0.4); } .status-badge.badge-concluido { background: rgba(150,150,170,0.2); color: #aaaacc; border: 1px solid rgba(150,150,170,0.3); } .status-badge.badge-dropado { background: rgba(224,64,96,0.2); color: var(--red); border: 1px solid rgba(224,64,96,0.35); }
 
   .card-delete, .card-edit { position: absolute; width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: var(--transition); backdrop-filter: blur(4px); z-index: 5; }
   .card-delete { top: 10px; left: 10px; font-size: 12px; } .card-edit { top: 42px; left: 10px; font-size: 14px; }
   .anime-card:hover .card-delete, .anime-card:hover .card-edit { opacity: 1; }
-  .card-delete:hover { background: var(--red); color: #fff; border-color: var(--red); }
-  .card-edit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .card-delete:hover { background: var(--red); color: #fff; border-color: var(--red); } .card-edit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
   .concluded-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); font-size: 10px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; }
 
@@ -184,8 +124,7 @@
   .counter-input:focus { outline: none; border-color: var(--accent); background: var(--surface2); }
   
   .status-select { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 10px; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; transition: var(--transition); appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-  .status-select:focus { outline: none; border-color: var(--accent); }
-  .status-select option { background: #1a1a2e; }
+  .status-select:focus { outline: none; border-color: var(--accent); } .status-select option { background: #1a1a2e; }
 
   .empty-state { grid-column: 1/-1; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 80px 20px; color: var(--text-muted); text-align: center; }
   .empty-icon { font-size: 48px; opacity: 0.4; } .empty-title { font-size: 18px; font-weight: 700; } .empty-sub { font-size: 13px; opacity: 0.6; }
@@ -197,8 +136,7 @@
   @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: none; } }
   .modal-title { font-size: 20px; font-weight: 900; margin-bottom: 6px; background: linear-gradient(135deg, var(--text) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
-  .form-group { margin-bottom: 18px; }
-  .form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
+  .form-group { margin-bottom: 18px; } .form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
   .form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 11px 14px; font-family: inherit; font-size: 14px; transition: var(--transition); }
   .form-input:focus { outline: none; border-color: var(--accent); background: var(--surface3); box-shadow: 0 0 0 3px var(--accent-glow); }
   .form-row { display: flex; gap: 12px; } .form-row .form-group { flex: 1; }
@@ -210,10 +148,7 @@
   .img-preview-row { display: flex; align-items: flex-start; gap: 12px; } .img-preview-row .form-group { flex: 1; }
   
   .fetch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-top: 8px; }
-  .fetch-status.loading { background: var(--blue-dim); color: #80b0ff; }
-  .fetch-status.success { background: var(--green-dim); color: var(--green); }
-  .fetch-status.error { background: var(--red-dim); color: var(--red); }
-  .fetch-status.hidden { display: none; }
+  .fetch-status.loading { background: var(--blue-dim); color: #80b0ff; } .fetch-status.success { background: var(--green-dim); color: var(--green); } .fetch-status.error { background: var(--red-dim); color: var(--red); } .fetch-status.hidden { display: none; }
   .spinner { width: 14px; height: 14px; border: 2px solid rgba(64,128,224,0.3); border-top-color: #80b0ff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; } @keyframes spin { to { transform: rotate(360deg); } }
 
   .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
@@ -247,39 +182,24 @@
   .danger-zone-text { font-size: 12px; color: var(--text-muted); } .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; }
   .btn-danger { background: rgba(224,64,96,0.15); color: var(--red); border: 1px solid rgba(224,64,96,0.3); white-space: nowrap; flex-shrink: 0; } .btn-danger:hover { background: var(--red); color: #fff; }
 
-  /* ═════════════════════════════════════════════════════════════════════════
-     ── MOBILE OVERHAUL
-     ═════════════════════════════════════════════════════════════════════════ */
+  /* ── MOBILE OVERHAUL ── */
   @media (max-width: 600px) {
     header { flex-direction: column; align-items: stretch; padding: 16px 16px 12px; gap: 12px; }
-    .logo { align-items: center; text-align: center; width: 100%; }
-    .logo-main { font-size: 24px; padding-bottom: 6px; }
-    
-    .search-input { width: 100%; transition: none; }
-    .search-input:focus { width: 100%; }
-    
+    .logo { align-items: center; text-align: center; width: 100%; } .logo-main { font-size: 24px; padding-bottom: 6px; }
+    .search-input { width: 100%; transition: none; } .search-input:focus { width: 100%; }
     .header-actions { width: 100%; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-    .header-actions::-webkit-scrollbar { display: none; }
     .btn { white-space: nowrap; padding: 10px 14px; font-size: 13px; }
-    .sync-label { display: inline-block; }
-    .btn-icon { display: inline-block; }
+    .sync-label { display: inline-block; } .btn-icon { display: inline-block; }
 
     .stats-bar { padding: 0 16px; gap: 10px; }
+    .tab-content { padding: 16px 16px 100px; }
     
-    .tab-content { padding: 16px 16px 100px; } /* Mais espaço livre no final da rolagem no celular */
-    
-    /* Layout Horizontal do Card para Celular */
     .cards-grid { grid-template-columns: 1fr; gap: 14px; }
-    
     .anime-card { display: flex; flex-direction: row; min-height: 150px; align-items: stretch; }
     .card-cover { width: 128px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
     
-    .card-delete, .card-edit {
-      opacity: 1; width: 34px; height: 34px; font-size: 15px; 
-      background: var(--surface2); border: 1px solid var(--border); left: auto;
-    }
-    .card-delete { top: 10px; right: 10px; }
-    .card-edit { top: 52px; right: 10px; }
+    .card-delete, .card-edit { opacity: 1; width: 34px; height: 34px; font-size: 15px; background: var(--surface2); border: 1px solid var(--border); left: auto; }
+    .card-delete { top: 10px; right: 10px; } .card-edit { top: 52px; right: 10px; }
     
     .card-body { flex: 1; padding: 12px 8px; padding-right: 52px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
     .card-title { font-size: 14px; margin-bottom: 12px; min-height: auto; text-align: center; }
@@ -374,7 +294,7 @@
   </div>
 </div>
 
-<!-- MODAL SYNC (Unificado) -->
+<!-- MODAL SYNC -->
 <div class="modal-backdrop" id="settingsBackdrop" onclick="handleSettingsBackdrop(event)">
   <div class="modal settings-modal">
     <button class="modal-close" onclick="closeSettings()">✕</button>
@@ -423,6 +343,7 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
+// ── REGISTRO DO SERVICE WORKER (Para funcionar Offline e PWA) ──
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(e => console.log("SW falhou:", e));
@@ -453,6 +374,8 @@ function loadData() {
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+  // Bandeirinha: Avisa o sistema que temos mudanças pendentes para enviar ao Gist
+  localStorage.setItem('anime_pending_sync', 'true');
   scheduleGistSync();
 }
 
@@ -468,13 +391,11 @@ function filterAnimes() {
 // ── SCROLL NATIVO & OBSERVER ──────────────────────────
 const swipeArea = document.getElementById('swipeArea');
 
-// Ao rolar as abas manualmente com o dedo, atualiza as pills no menu em tempo real
 const tabObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       const tabName = entry.target.id.replace('tab-', '');
       activeTab = tabName;
-      
       document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active'));
       const activePill = document.querySelector(`[data-tab="${tabName}"]`);
       if (activePill) {
@@ -483,17 +404,13 @@ const tabObserver = new IntersectionObserver((entries) => {
       }
     }
   });
-}, { threshold: 0.6 }); // Só ativa quando 60% da aba estiver visível na tela
+}, { threshold: 0.6 });
 
-// Ao clicar numa pill, a tela rola nativamente para a aba correspondente
 function switchTab(tab, el) {
   activeTab = tab;
   document.getElementById('searchInput').value = ''; 
   filterAnimes();
-  
   const targetTab = document.getElementById('tab-' + tab);
-  
-  // Isso faz o carrossel rolar com CSS Scroll Behavior Smooth perfeitamente
   targetTab.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 }
 
@@ -515,9 +432,7 @@ function renderAll() {
     }
   });
   
-  // Observa todas as abas depois que são geradas
   document.querySelectorAll('.tab-content').forEach(t => tabObserver.observe(t));
-  
   filterAnimes();
 }
 
@@ -600,13 +515,8 @@ function changeValue(id, field, delta) { const anime = animes.find(a => a.id ===
 function updateStatus(id, newStatus) { const anime = animes.find(a => a.id === id); if (!anime) return; anime.status = newStatus; if (newStatus === 'concluido' && !anime.concludedAt) anime.concludedAt = new Date().toISOString(); if (newStatus !== 'concluido') anime.concludedAt = null; saveData(); renderAll(); switchTab(newStatus, document.querySelector(`[data-tab="${newStatus}"]`)); showToast(`Status atualizado!`); }
 
 function setFetchStatus(type, msg) {
-  const el = document.getElementById('fetchStatus');
-  el.className = 'fetch-status ' + type;
-  if (type === 'loading') {
-    el.innerHTML = `<div class="spinner"></div> ${msg}`;
-  } else {
-    el.textContent = msg;
-  }
+  const el = document.getElementById('fetchStatus'); el.className = 'fetch-status ' + type;
+  if (type === 'loading') { el.innerHTML = `<div class="spinner"></div> ${msg}`; } else { el.textContent = msg; }
 }
 
 // ── MODAL UI ──────────────────────────────────────────
@@ -625,6 +535,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 function onNameInput() { clearTimeout(nameInputTimer); fetchedImageUrl = ''; const name = document.getElementById('inputName').value.trim(); if (!name) { setFetchStatus('hidden', ''); return; } nameInputTimer = setTimeout(() => searchAnimeImage(), 900); }
 async function searchAnimeImage() {
+  if(!navigator.onLine) return setFetchStatus('error', 'Sem internet para buscar capa.'); // Regra offline extra
   const name = document.getElementById('inputName').value.trim(); if (!name || document.getElementById('inputImage').value.trim() || editingId) return;
   setFetchStatus('loading', 'Buscando capa...');
   try { const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(name)}&limit=1&sfw`); const data = await res.json(); const item = data.data?.[0]; if (item && item.images?.jpg?.large_image_url) { fetchedImageUrl = item.images.jpg.large_image_url; setFetchStatus('success', `✓ Encontrado!`); document.getElementById('imgPreview').src = fetchedImageUrl; document.getElementById('imgPreview').classList.add('visible'); } else { setFetchStatus('error', 'Capa não encontrada.'); } } catch { setFetchStatus('error', 'Erro ao buscar.'); }
@@ -640,7 +551,15 @@ function setSyncUI(state, label) { const el = document.getElementById('syncIndic
 function scheduleGistSync() { if (!getToken()) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => pushToGist(), 1500); }
 
 async function pushToGist(silent = false) {
-  const token = getToken(), gistId = getGistId(); if (!token || isSyncing) return; isSyncing = true; setSyncUI('ing', 'Sync...');
+  const token = getToken(), gistId = getGistId(); if (!token || isSyncing) return;
+  
+  // LOGICA OFFLINE: Impede envio se estiver sem net
+  if (!navigator.onLine) {
+    setSyncUI('off', 'Offline (Salvo local)');
+    return;
+  }
+
+  isSyncing = true; setSyncUI('ing', 'Sync...');
   const payload = JSON.stringify({ animes, savedAt: new Date().toISOString() }, null, 2);
   try {
     let res;
@@ -648,9 +567,30 @@ async function pushToGist(silent = false) {
     else { res = await fetch('https://api.github.com/gists', { method: 'POST', headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ description: 'Anime Backlog', public: false, files: { [GIST_FILENAME]: { content: payload } } }) }); }
     if (!res.ok) throw new Error(); const data = await res.json();
     if (!gistId) { localStorage.setItem(GIST_ID_KEY, data.id); if (!silent) showToast(`☁ Gist criado!`); }
+    
+    // Sucesso! Limpa a bandeirinha de alteração pendente
+    localStorage.removeItem('anime_pending_sync');
     setSyncUI('ok', 'Sincronizado');
-  } catch (e) { setSyncUI('err', 'Erro'); if (!silent) showToast('⚠ Erro no Gist', 'error'); } finally { isSyncing = false; }
+  } catch (e) { 
+    setSyncUI('err', 'Erro'); if (!silent) showToast('⚠ Erro no Gist', 'error'); 
+  } finally { isSyncing = false; }
 }
+
+// OLHEIROS DE REDE: O que fazer quando a internet cai ou volta
+window.addEventListener('online', () => {
+  if (getToken()) {
+    // Se a net voltar e houver uma pendência, empurra pro github automático
+    if (localStorage.getItem('anime_pending_sync') === 'true') {
+      pushToGist();
+    } else {
+      setSyncUI('ok', 'Sincronizado');
+    }
+  }
+});
+
+window.addEventListener('offline', () => {
+  if (getToken()) setSyncUI('off', 'Offline');
+});
 
 async function pullFromGist(token, gistId) {
   const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers: { Authorization: `token ${token}` } });
@@ -658,6 +598,8 @@ async function pullFromGist(token, gistId) {
 }
 
 async function connectGist() {
+  if (!navigator.onLine) return showToast('⚠️ Conecte-se à internet primeiro!', 'error');
+
   const token = document.getElementById('inputToken').value.trim(); if (!token) return;
   setGistFetchStatus('loading', 'Verificando...');
   try {
@@ -685,13 +627,11 @@ async function connectGist() {
   } catch (e) { setGistFetchStatus('error', `❌ ${e.message}`); }
 }
 
-function disconnectGist() { localStorage.removeItem(GIST_TOKEN_KEY); localStorage.removeItem(GIST_ID_KEY); setSyncUI('off', 'Sem sync'); updateSettingsUI(); closeSettings(); showToast('○ Desconectado.'); }
+function disconnectGist() { localStorage.removeItem(GIST_TOKEN_KEY); localStorage.removeItem(GIST_ID_KEY); localStorage.removeItem('anime_pending_sync'); setSyncUI('off', 'Sem sync'); updateSettingsUI(); closeSettings(); showToast('○ Desconectado.'); }
 
 function setGistFetchStatus(type, msg) {
-  const el = document.getElementById('gistFetchStatus'); 
-  el.className = 'fetch-status ' + type;
-  el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; 
-  el.classList.remove('hidden');
+  const el = document.getElementById('gistFetchStatus'); el.className = 'fetch-status ' + type;
+  el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; el.classList.remove('hidden');
 }
 
 function openSettings() { updateSettingsUI(); setGistFetchStatus('hidden', ''); document.getElementById('settingsBackdrop').classList.add('open'); }
@@ -700,12 +640,20 @@ function handleSettingsBackdrop(e) { if (e.target === document.getElementById('s
 
 function updateSettingsUI() {
   const token = getToken(), gistId = getGistId(), box = document.getElementById('gistStatusBox'), danger = document.getElementById('dangerZone');
-  if (token) { box.className = 'gist-status-box connected'; document.getElementById('gistStatusIcon').textContent = '✓'; document.getElementById('gistStatusText').textContent = 'Conectado'; danger.style.display = 'flex'; document.getElementById('inputToken').value = '●●●●●●●●●●●●●●●●'; setSyncUI('ok', 'Sincronizado'); } 
+  if (token) { 
+    box.className = 'gist-status-box connected'; document.getElementById('gistStatusIcon').textContent = '✓'; 
+    document.getElementById('gistStatusText').textContent = navigator.onLine ? 'Conectado' : 'Conectado (Offline agora)'; 
+    danger.style.display = 'flex'; document.getElementById('inputToken').value = '●●●●●●●●●●●●●●●●'; 
+    if (navigator.onLine) setSyncUI('ok', 'Sincronizado'); else setSyncUI('off', 'Offline');
+  } 
   else { box.className = 'gist-status-box disconnected'; document.getElementById('gistStatusIcon').textContent = '○'; document.getElementById('gistStatusText').textContent = 'Não configurado'; danger.style.display = 'none'; document.getElementById('inputToken').value = ''; setSyncUI('off', 'Sem sync'); }
 }
 
 async function initGistSync() {
-  const token = getToken(), gistId = getGistId(); if (!token || !gistId) return; setSyncUI('ing', 'Carregando...');
+  const token = getToken(), gistId = getGistId(); if (!token || !gistId) return; 
+  if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
+  
+  setSyncUI('ing', 'Carregando...');
   try {
     const remote = await pullFromGist(token, gistId);
     if (Array.isArray(remote.animes) && remote.animes.length > 0) {
@@ -714,7 +662,13 @@ async function initGistSync() {
         const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); const localOnly = animes.filter(a => !remoteMap[a.id]);
         animes = [...remote.animes, ...localOnly]; localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); renderAll();
       }
-    } setSyncUI('ok', 'Sincronizado');
+    } 
+    // Se tivermos inicializado online, vamos forçar o envio de pendências locais
+    if(localStorage.getItem('anime_pending_sync') === 'true') {
+      pushToGist();
+    } else {
+      setSyncUI('ok', 'Sincronizado');
+    }
   } catch { setSyncUI('err', 'Erro'); }
 }
 
@@ -722,7 +676,6 @@ function exportData() { const blob = new Blob([JSON.stringify(animes, null, 2)],
 function importData(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = ev => { try { const data = JSON.parse(ev.target.result); const existing = new Set(animes.map(a => a.id)); let added = 0; data.forEach(item => { if (!existing.has(item.id)) { animes.push(item); added++; } }); saveData(); renderAll(); showToast(`⬆ ${added} importado(s)!`); } catch { showToast('❌ Arquivo inválido!', 'error'); } e.target.value = ''; }; reader.readAsText(file); }
 function showToast(msg, type = 'default') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = msg; container.appendChild(toast); setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, 3000); }
 
-// Rola a aba correta pro centro no início de forma invisível
 setTimeout(() => { document.getElementById('tab-' + activeTab).scrollIntoView(); }, 0);
 
 // ── INIT ──────────────────────────────────────────────

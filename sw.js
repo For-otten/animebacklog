@@ -1,4 +1,5 @@
-const CACHE_NAME = 'anime-backlog-v2';
+// Mudei para v3 para forçar os celulares a baixarem o novo visual do app!
+const CACHE_NAME = 'anime-backlog-v3'; 
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
