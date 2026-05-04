@@ -215,7 +215,21 @@
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
 
     .modal-backdrop { align-items: flex-end; padding: 0; }
-    .modal { border-radius: 28px 28px 0 0; padding: 24px 20px 48px; animation: bottomSheetIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; max-height: 92vh; overflow-y: auto; border: none; border-top: 1px solid var(--border); }
+    .modal { 
+      border-radius: 28px 28px 0 0; 
+      padding: 24px 20px 48px; 
+      animation: bottomSheetIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; 
+      max-height: 92vh; 
+      overflow-y: auto; 
+      border: none; 
+      border-top: 1px solid var(--border);
+      /* LINHA-CHAVE: Adiciona uma transição para animar o retorno e a saída */
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    /* NOVA REGRA: Define como o modal se comporta ao fechar */
+    .modal.closing {
+      transform: translateY(100%);
+    }
     @keyframes bottomSheetIn { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
     .modal::before { content: ''; display: block; width: 40px; height: 5px; background: var(--surface3); border-radius: 5px; margin: 0 auto 24px; }
     .modal-close { top: 16px; right: 16px; border: none; background: transparent; font-size: 20px; color: var(--text-muted); }
@@ -723,6 +737,91 @@ setTimeout(() => { document.getElementById('tab-' + activeTab).scrollIntoView();
 
 // ── INIT ──────────────────────────────────────────────
 loadData(); renderAll(); updateSettingsUI(); initGistSync();
+// --- LÓGICA ATUALIZADA PARA ARRASTAR O MODAL E FECHAR ---
+
+function closeModal() {
+  const backdrop = document.getElementById('modalBackdrop');
+  const modal = backdrop.querySelector('.modal');
+  modal.classList.add('closing');
+  setTimeout(() => {
+    backdrop.classList.remove('open');
+    modal.classList.remove('closing');
+    editingId = null;
+  }, 300); // Espera a animação de saída terminar
+}
+
+function closeSettings() {
+  const backdrop = document.getElementById('settingsBackdrop');
+  const modal = backdrop.querySelector('.modal');
+  modal.classList.add('closing');
+  setTimeout(() => {
+    backdrop.classList.remove('open');
+    modal.classList.remove('closing');
+  }, 300);
+}
+
+function makeModalDraggable(backdropId, closeFunction) {
+  const backdrop = document.getElementById(backdropId);
+  if (!backdrop) return;
+  const modal = backdrop.querySelector('.modal');
+  
+  let isDragging = false, startY, currentY;
+
+  const onTouchStart = (e) => {
+    // Permite iniciar o arraste em qualquer lugar do modal,
+    // mas não em inputs ou botões para não atrapalhar a digitação/clique.
+    if (e.target.closest('input, button, select, a')) return;
+    
+    if (modal.scrollTop === 0) { // Só permite arrastar se o modal estiver no topo
+      isDragging = true;
+      startY = e.touches[0].clientY;
+      // CORREÇÃO CRÍTICA: Remove a animação de entrada para liberar o transform
+      modal.style.animation = 'none'; 
+      modal.style.transition = 'none';
+    }
+  };
+
+  const onTouchMove = (e) => {
+    if (!isDragging) return;
+    
+    currentY = e.touches[0].clientY;
+    const deltaY = currentY - startY;
+
+    if (deltaY > 0) {
+      // Impede o scroll da página enquanto arrasta o modal
+      e.preventDefault(); 
+      // AGORA VAI FUNCIONAR: O modal se moverá com o dedo
+      modal.style.transform = `translateY(${deltaY}px)`;
+    }
+  };
+
+  const onTouchEnd = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    
+    // Devolve a transição para animar o retorno ou a saída
+    modal.style.transition = ''; 
+    modal.style.transform = ''; // Limpa o transform inline
+
+    const deltaY = currentY - startY;
+    const threshold = modal.offsetHeight * 0.35; // Um pouco mais de 1/3
+
+    if (deltaY > threshold) {
+      closeFunction(); // Chama a função de fechar, que agora tem a animação
+    } 
+    // Se não atingiu o limite, o CSS cuida de fazer ele voltar sozinho
+    // para a posição original com a transição que acabamos de devolver.
+  };
+
+  modal.addEventListener('touchstart', onTouchStart, { passive: true });
+  document.addEventListener('touchmove', onTouchMove, { passive: false });
+  document.addEventListener('touchend', onTouchEnd);
+  document.addEventListener('touchcancel', onTouchEnd);
+}
+
+// Ativa a funcionalidade para os dois modais do app
+makeModalDraggable('modalBackdrop', closeModal);
+makeModalDraggable('settingsBackdrop', closeSettings);
 </script>
 </body>
 </html>
