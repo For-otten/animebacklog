@@ -14,8 +14,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
 <style>
   html, body {
-    background-color: var(--bg); /* Cor #0a0a12 */
-    overscroll-behavior-y: none; /* Desativa o 'puxar para atualizar' e o elástico no topo */
+    background-color: var(--bg);
+    overscroll-behavior-y: none;
 }
 :root {
     --bg: #0a0a12;
@@ -52,14 +52,14 @@ body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-i
 body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px); }
 
 header, .stats-bar { flex-shrink: 0; position: relative; z-index: 10; }
-header { padding: 32px 40px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); background: rgba(10,10,18,0.7); }
+header { padding: 32px 40px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; backdrop-filter: blur(12px); background: rgba(10,10,18,0.7); }
 
 .logo { display: flex; flex-direction: column; line-height: 1; }
 .logo-jp { font-family: 'Sawarabi Mincho', serif; font-size: 13px; color: var(--accent); letter-spacing: 6px; opacity: 0.8; }
 .logo-main { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; background: linear-gradient(135deg, var(--text) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; padding-bottom: 5px; }
 
 .search-input { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 10px 16px; font-family: inherit; font-size: 13px; transition: var(--transition); width: 250px; }
-.search-input:focus { outline: none; border-color: var(--accent); background: var(--surface2); width: 300px;}
+.search-input:focus { outline: none; border-color: var(--accent); background: var(--surface2);}
 .search-input::placeholder { color: var(--text-muted); }
 
 .header-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
@@ -99,21 +99,19 @@ main::-webkit-scrollbar { display: none; }
 .anime-card.status-acompanhando:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(64,224,160,0.2); }
 .anime-card.status-assistir { border-color: rgba(64,128,224,0.25); } .anime-card.status-esperando { border-color: rgba(240,192,64,0.4); } .anime-card.status-concluido { opacity: 0.65; } .anime-card.status-concluido:hover { opacity: 0.9; } .anime-card.status-dropado { opacity: 0.5; border-color: rgba(224,64,96,0.35); }
 
-.card-cover { position: relative; width: 100%; padding-top: 140%; overflow: hidden; background: var(--surface2); }
+/* CAPA AGORA É CLICÁVEL PARA EDITAR */
+.card-cover { position: relative; width: 100%; padding-top: 140%; overflow: hidden; background: var(--surface2); cursor: pointer; }
+.card-cover::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0); transition: var(--transition); z-index: 10; pointer-events: none; }
+.card-cover:hover::after { background: rgba(255,255,255,0.05); }
 .card-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
 .anime-card:hover .card-cover img { transform: scale(1.05); }
 
 .card-cover-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--surface2), var(--surface3)); color: var(--text-muted); font-size: 36px; }
 
-.status-badge { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; backdrop-filter: blur(8px); text-transform: uppercase; z-index: 5; white-space: nowrap; }
+.status-badge {filter: drop-shadow(0px 1px 1px black); position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; backdrop-filter: blur(8px); text-transform: uppercase; z-index: 5; white-space: nowrap; pointer-events: none; }
 .status-badge.badge-acompanhando { background: rgba(64,224,160,0.25); color: var(--green); border: 1px solid rgba(64,224,160,0.4); } .status-badge.badge-assistir { background: rgba(64,128,224,0.25); color: #80b0ff; border: 1px solid rgba(64,128,224,0.4); } .status-badge.badge-esperando { background: rgba(240,192,64,0.2); color: var(--yellow); border: 1px solid rgba(240,192,64,0.4); } .status-badge.badge-concluido { background: rgba(150,150,170,0.2); color: #aaaacc; border: 1px solid rgba(150,150,170,0.3); } .status-badge.badge-dropado { background: rgba(224,64,96,0.2); color: var(--red); border: 1px solid rgba(224,64,96,0.35); }
 
-.card-delete, .card-edit { position: absolute; width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: var(--transition); backdrop-filter: blur(4px); z-index: 5; }
-.card-delete { top: 10px; left: 10px; font-size: 12px; } .card-edit { top: 42px; left: 10px; font-size: 14px; }
-.anime-card:hover .card-delete, .anime-card:hover .card-edit { opacity: 1; }
-.card-delete:hover { background: var(--red); color: #fff; border-color: var(--red); } .card-edit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-.concluded-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); font-size: 10px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; }
+.concluded-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); font-size: 10px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; z-index: 5; }
 
 .card-body { padding: 14px; }
 .card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 36px; word-break: break-word; }
@@ -132,7 +130,7 @@ main::-webkit-scrollbar { display: none; }
 .empty-state { grid-column: 1/-1; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 80px 20px; color: var(--text-muted); text-align: center; }
 .empty-icon { font-size: 48px; opacity: 0.4; } .empty-title { font-size: 18px; font-weight: 700; } .empty-sub { font-size: 13px; opacity: 0.6; }
 
-/* ── MODAIS (Lógica Base e Desktop) ── */
+/* ── MODAIS ── */
 .modal-backdrop {
     position: fixed; inset: 0; background: rgba(0,0,0,0.7);
     z-index: 100; align-items: center; justify-content: center; padding: 20px;
@@ -144,37 +142,21 @@ main::-webkit-scrollbar { display: none; }
 .modal-backdrop.visible { opacity: 1; }
 
 .modal {
-        border-radius: 28px 28px 0 0;
-        padding: 24px 20px 48px;
-        max-height: 92vh;
-        overflow: hidden; /* Evita scrolls estranhos durante a subida */
-        border: none;
-        border-top: 1px solid var(--border);
-        contain: content; 
+    border-radius: 28px 28px 0 0;
+    padding: 24px 20px 48px;
+    max-height: 92vh;
+    overflow: hidden; 
+    border: none;
+    border-top: 1px solid var(--border);
+    contain: content; 
     background: var(--surface);
+    will-change: transform, opacity;
+    transform: translate3d(0, 100%, 0); 
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.modal-backdrop.visible .modal { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* Aceleração máxima de hardware */
-         will-change: transform, opacity;
-        transform: translate3d(0, 100%, 0); 
-        
-        /* Curva de animação ultra rápida e limpa */
-        transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-    
-}
-.modal-backdrop.visible .modal {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-.modal-title {
-    font-size: 20px;
-    font-weight: 900;
-    margin-bottom: 6px;
-    color: var(--text);
-    background: none;
-    -webkit-text-fill-color: initial;
-    background-clip: initial;
-}
+.modal-title { font-size: 20px; font-weight: 900; margin-bottom: 6px; color: var(--text); background: none; -webkit-text-fill-color: initial; background-clip: initial; }
 .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
 .form-group { margin-bottom: 18px; }
 .form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
@@ -182,25 +164,20 @@ main::-webkit-scrollbar { display: none; }
 .form-input:focus { outline: none; border-color: var(--accent); background: var(--surface3); box-shadow: 0 0 0 3px var(--accent-glow); }
 .form-row { display: flex; gap: 12px; } .form-row .form-group { flex: 1; }
 .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; opacity: 0.6; }
-.modal-footer { display: flex; gap: 10px; margin-top: 8.1px; } .modal-footer .btn { flex: 1; justify-content: center; padding: 12px; }
+.modal-footer { display: flex; gap: 10px; margin-top: 8.1px; flex-wrap: wrap;} 
+.modal-footer .btn { flex: 1; justify-content: center; padding: 12px; }
+#modalConfirmBtn { flex: 2; }
 .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
 
-.img-preview { 
-    width: 60px; height: 80px; border-radius: 6px; 
-    object-fit: cover; border: 2px solid var(--border); display: none; 
-    will-change: transform;
-    image-rendering: -webkit-optimize-contrast;
-}
-
-.img-preview.visible {
-    display: block !important;
-}
-.img-preview-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    min-height: 84px; 
-}
+.img-preview { width: 60px; height: 80px; border-radius: 6px; object-fit: cover; border: 2px solid var(--border); display: none; will-change: transform; image-rendering: -webkit-optimize-contrast; }
+.search-box { position: relative; width: 100%; max-width: 400px; }
+.search-input { width: 100%; padding: 12px 16px 12px 44px; border-radius: 12px; border: 1px solid #2a2a35; background: #0f0f17; color: #fff; font-size: 14px; outline: none; transition: all 0.2s ease; }
+.search-input::placeholder { color: #777; }
+.search-input:focus { border-color: #4da3ff; box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.15); background: #12121c; }
+.search-icon { position: absolute; top: 50%; left: 14px; width: 18px; height: 18px; stroke: #777; stroke-width: 2; fill: none; transform: translateY(-50%); transition: all 0.2s ease; }
+.search-box:focus-within .search-icon { stroke: #4da3ff; transform: translateY(-50%) scale(1.1); }
+.img-preview.visible { display: block !important; }
+.img-preview-row { display: flex; align-items: flex-start; gap: 12px; min-height: 84px; }
 .fetch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-top: 8px; }
 .fetch-status.loading { background: var(--blue-dim); color: #80b0ff; } .fetch-status.success { background: var(--green-dim); color: var(--green); } .fetch-status.error { background: var(--red-dim); color: var(--red); } .fetch-status.hidden { display: none; }
 .spinner { width: 14px; height: 14px; border: 2px solid rgba(64,128,224,0.3); border-top-color: #80b0ff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; } @keyframes spin { to { transform: rotate(360deg); } }
@@ -235,7 +212,9 @@ main::-webkit-scrollbar { display: none; }
 .danger-zone { margin-top: 12px; padding: 12px; border-radius: 10px; border: 1px solid rgba(224,64,96,0.25); background: rgba(224,64,96,0.05); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .danger-zone-text { font-size: 12px; color: var(--text-muted); } .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; }
 .btn-danger { background: rgba(224,64,96,0.15); color: var(--red); border: 1px solid rgba(224,64,96,0.3); white-space: nowrap; flex-shrink: 0; } .btn-danger:hover { background: var(--red); color: #fff; }
+
 .mobile-bottom-bar { display: none; }
+
 /* ── MOBILE OVERHAUL ── */
 @media (max-width: 600px) {
     header { flex-direction: column; align-items: stretch; padding: 16px 16px 12px; gap: 12px; }
@@ -248,108 +227,58 @@ main::-webkit-scrollbar { display: none; }
 
     .cards-grid { grid-template-columns: 1fr; gap: 14px; }
     .anime-card { display: flex; align-items: stretch; }
-    .card-cover { width: 128px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
+    
+    /* Aumentado o espaço da imagem agora que não temos os botões */
+    .card-cover { width: 145px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
 
-    .card-delete, .card-edit { opacity: 1; width: 34px; height: 34px; font-size: 15px; background: var(--surface2); border: 1px solid var(--border); left: auto; }
-    .card-delete { top: 10px; right: 10px; } .card-edit { top: 52px; right: 10px; }
+    /* Organizando o espaço recém libertado */
+    .card-body { flex: 1; padding: 11px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+    .card-title { font-size: 15px; margin-bottom: 12px; min-height: auto; text-align: center; }
 
-    .card-body { flex: 1; padding: 12px; padding-right: 52px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-    .card-title { font-size: 14px; margin-bottom: 12px; min-height: auto; text-align: center; }
-
-    .card-counters { gap: 8px; margin-bottom: 12px; }
-    .counter-label { font-size: 10px; width: 21px; }
-    .counter-btn { width: 34px; height: 34px; font-size: 18px; }
-    .counter-input { height: 34px; font-size: 14px; }
-    .status-select { height: 42px; font-size: 13px; }
+    .card-counters { gap: 10px; margin-bottom: 14px; }
+    .counter-label { font-size: 11px; width: 22px; }
+    
+    /* Inputs e botões consideravelmente maiores para facilitar o toque */
+    .counter-btn { width: 34px; height: 34px; font-size: 20px; }
+    .counter-input { height: 40px; font-size: 15px; }
+    .status-select { height: 46px; font-size: 13px; margin-top: 4px; }
 
     .status-badge { bottom: auto; top: 8px; left: 8px; right: auto; font-size: 9px; padding: 4px 8px; }
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
 
-    /* ── Mobile Modal Lógica Flúida e Corrigida ── */
-    .modal-backdrop { background: rgba(0, 0, 0, 0.85);align-items: flex-end; padding: 0; background: rgba(0,0,0,0.7); backdrop-filter: none; }
-/* Quando o modal está aberto, travamos o scroll do body */
-body.modal-is-open {
-    overflow: hidden;
-    height: 100vh;
-    position: fixed; /* Impede qualquer movimento elástico do navegador */
-    width: 100%;
-}
-/* 1. O Modal sobe como uma "concha" vazia e leve */
+    .modal-backdrop { background: rgba(0, 0, 0, 0.85); align-items: flex-end; padding: 0; backdrop-filter: none; }
+    body.modal-is-open { overflow: hidden; height: 100vh; position: fixed; width: 100%; }
+    
     .modal {
         border-radius: 28px 28px 0 0;
         padding: 24px 20px 48px;
         max-height: 92vh;
-        overflow: hidden; /* Evita scrolls estranhos durante a subida */
+        overflow: hidden; 
         border: none;
         border-top: 1px solid var(--border);
         contain: content; 
-
-        /* Aceleração máxima de hardware */
-         will-change: transform, opacity;
+        will-change: transform, opacity;
         transform: translate3d(0, 100%, 0); 
-        
-        /* Curva de animação ultra rápida e limpa */
         transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
-    .modal-backdrop.visible .modal {
-        transform: translate3d(0, 0, 0);
-    }
+    .modal-backdrop.visible .modal { transform: translate3d(0, 0, 0); }
 
-    /* 2. ESCONDEMOS TUDO durante o movimento */
-    /* Usamos visibility: hidden porque o navegador para de renderizar o que está dentro */
-    .modal .modal-title, 
-    .modal .modal-subtitle, 
-    .modal .form-group, 
-    .modal .img-preview-row, 
-    .modal .form-row, 
-    .modal .modal-footer {
-        opacity: 0;
-        visibility: hidden; 
-        transform: translateY(15px);
+    .modal .modal-title, .modal .modal-subtitle, .modal .form-group, .modal .img-preview-row, .modal .form-row, .modal .modal-footer {
+        opacity: 0; visibility: hidden; transform: translateY(15px);
         transition: opacity 0.2s ease, transform 0.25s ease, visibility 0s 0.25s;
     }
 
-    /* 3. REVELAÇÃO: Só acontece quando o backdrop ganha a classe .visible */
-    /* Adicionamos um delay estratégico para a animação de subida terminar primeiro */
-    .modal-backdrop.visible .modal .modal-title,
-    .modal-backdrop.visible .modal .modal-subtitle,
-    .modal-backdrop.visible .modal .form-group,
-    .modal-backdrop.visible .modal .img-preview-row,
-    .modal-backdrop.visible .modal .form-row,
-    .modal-backdrop.visible .modal .modal-footer {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
+    .modal-backdrop.visible .modal .modal-title, .modal-backdrop.visible .modal .modal-subtitle, .modal-backdrop.visible .modal .form-group,
+    .modal-backdrop.visible .modal .img-preview-row, .modal-backdrop.visible .modal .form-row, .modal-backdrop.visible .modal .modal-footer {
+        opacity: 1; visibility: visible; transform: translateY(0);
         transition: opacity 0.3s ease 0.25s, transform 0.3s ease 0.25s, visibility 0s 0.25s;
     }
 
-  
-
-
-    /* --- BOTÃO FLUTUANTE MOBILE --- */
     .header-actions .btn-primary { display: none; }
 
-    .mobile-bottom-bar {
-      display: flex;
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      padding: 24px 16px;
-      height: 120px;
-      background: linear-gradient(to top, var(--bg) 40%, transparent);
-      justify-content: flex-end;
-      align-items: flex-end;
-      z-index: 90;
-      pointer-events: none;
-    }
-
-    .btn-mobile-add {
-      pointer-events: auto;
-      width: 56px; height: 56px; padding: 0;
-      font-size: 22px; border-radius: 50%;
-      justify-content: center;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 4px 20px var(--accent-glow);
-    }
+    .mobile-bottom-bar { display: flex; position: fixed; bottom: 0; left: 0; right: 0; padding: 24px 16px; height: 120px; background: linear-gradient(to top, var(--bg) 40%, transparent); justify-content: flex-end; align-items: flex-end; z-index: 90; pointer-events: none; }
+    .btn-mobile-add { pointer-events: auto; width: 56px; height: 56px; padding: 0; font-size: 22px; border-radius: 50%; justify-content: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 4px 20px var(--accent-glow); }
     .btn-mobile-add:active { transform: scale(0.96); }
 
     .tab-content { padding: 16px 16px 120px; }
@@ -365,7 +294,13 @@ body.modal-is-open {
     <span class="logo-main">Backlog</span>
   </div>
   
-  <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar anime..." oninput="filterAnimes()">
+<div class="search-box">
+  <svg class="search-icon" viewBox="0 0 24 24">
+    <path d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
+  </svg>
+
+  <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar anime..." oninput="filterAnimes()">
+</div>
 
   <div class="header-actions">
     <div id="syncIndicator" class="sync-indicator sync-off" onclick="openSettings()" title="Configurar sincronização">
@@ -387,20 +322,19 @@ body.modal-is-open {
 </nav>
 
 <main id="swipeArea">
-  <div class="tab-content" id="tab-acompanhando"><div class="section-header"><span class="section-label">🎬 Acompanhando</span><div class="section-line"></div></div><div class="cards-grid" id="grid-acompanhando"></div></div>
-  <div class="tab-content" id="tab-assistir"><div class="section-header"><span class="section-label">📋 Backlog para assistir</span><div class="section-line"></div></div><div class="cards-grid" id="grid-assistir"></div></div>
-  <div class="tab-content" id="tab-esperando"><div class="section-header"><span class="section-label">⏳ Esperando nova temporada</span><div class="section-line"></div></div><div class="cards-grid" id="grid-esperando"></div></div>
-  <div class="tab-content" id="tab-concluido"><div class="section-header"><span class="section-label">✅ Concluídos</span><div class="section-line"></div></div><div class="cards-grid" id="grid-concluido"></div></div>
-  <div class="tab-content" id="tab-dropado"><div class="section-header"><span class="section-label">❌ Dropados</span><div class="section-line"></div></div><div class="cards-grid" id="grid-dropado"></div></div>
-</main>
+  <div class="tab-content" id="tab-acompanhando"><div class="section-header"><span class="section-label">Acompanhando</span><div class="section-line"></div></div><div class="cards-grid" id="grid-acompanhando"></div></div>
+  <div class="tab-content" id="tab-assistir"><div class="section-header"><span class="section-label">Backlog para assistir</span><div class="section-line"></div></div><div class="cards-grid" id="grid-assistir"></div></div>
+  <div class="tab-content" id="tab-esperando"><div class="section-header"><span class="section-label">Esperando nova temporada</span><div class="section-line"></div></div><div class="cards-grid" id="grid-esperando"></div></div>
+  <div class="tab-content" id="tab-concluido"><div class="section-header"><span class="section-label">Concluídos</span><div class="section-line"></div></div><div class="cards-grid" id="grid-concluido"></div></div>
+  <div class="tab-content" id="tab-dropado"><div class="section-header"><span class="section-label">Dropados</span><div class="section-line"></div></div><div class="cards-grid" id="grid-dropado"></div></div>
 </main>
 
-<!-- NOVA BARRA MOBILE COM O BOTÃO NOVO ANIME -->
 <div class="mobile-bottom-bar">
   <button class="btn btn-primary btn-mobile-add" onclick="openModal()">
     <span class="btn-icon">＋</span> 
   </button>
 </div>
+
 <!-- MODAL NOVO/EDITAR -->
 <div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
   <div class="modal">
@@ -426,10 +360,14 @@ body.modal-is-open {
     
     <div class="form-row">
       <div class="form-group"><label class="form-label">Capítulo (manga)</label><input type="number" class="form-input" id="inputChapter" placeholder="Opcional" min="0"></div>
-      <div class="form-group"><label class="form-label">Status inicial</label><select class="form-input status-select" id="inputStatus"><option value="assistir">📋 Backlog</option><option value="acompanhando">🟢 Acompanhando</option><option value="esperando">⏳ Esperando</option><option value="concluido">✅ Concluído</option><option value="dropado">❌ Dropado</option></select></div>
+      <div class="form-group"><label class="form-label">Status inicial</label><select class="form-input status-select" id="inputStatus"><option value="assistir"><span class="stat-dot dot-assistir"></span> Backlog</option><option value="acompanhando">🟢 Acompanhando</option><option value="esperando"><span class="stat-dot dot-esperando"></span> Esperando</option><option value="concluido"><span class="stat-dot dot-concluido"></span> Concluído</option><option value="dropado"><span class="stat-dot dot-dropado"></span> Dropado</option></select></div>
     </div>
     
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" id="modalConfirmBtn" onclick="saveAnime()">Adicionar</button></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="modalDeleteBtn" style="display: none; flex: 0 1 auto; padding: 12px 18px;" onclick="deleteAnimeFromModal()"><span class="btn-icon">🗑</span></button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="modalConfirmBtn" onclick="saveAnime()">Adicionar</button>
+    </div>
   </div>
 </div>
 
@@ -482,14 +420,10 @@ body.modal-is-open {
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-// ── REGISTRO DO SERVICE WORKER (Para funcionar Offline e PWA) ──
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(e => console.log("SW falhou:", e));
-  });
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(e => console.log("SW falhou:", e)); });
 }
 
-// ── DATA ──────────────────────────────────────────────
 const STORAGE_KEY = 'anime_backlog_v2';
 let animes = [];
 let nameInputTimer = null;
@@ -499,23 +433,15 @@ let editingId = null;
 
 const STATUS_MAP = {
   acompanhando: { label: 'Acompanhando', emoji: '🟢', badge: 'badge-acompanhando' },
-  assistir:     { label: 'Backlog',       emoji: '📋', badge: 'badge-assistir' },
-  esperando:    { label: 'Esperando',     emoji: '⏳', badge: 'badge-esperando' },
-  concluido:    { label: 'Concluído',     emoji: '✅', badge: 'badge-concluido' },
-  dropado:      { label: 'Dropado',       emoji: '❌', badge: 'badge-dropado' },
+  assistir:     { label: 'Backlog',       emoji: '🔵', badge: 'badge-assistir' },
+  esperando:    { label: 'Esperando',     emoji: '🟡', badge: 'badge-esperando' },
+  concluido:    { label: 'Concluído',     emoji: '⚫', badge: 'badge-concluido' },
+  dropado:      { label: 'Dropado',       emoji: '🔴', badge: 'badge-dropado' },
 };
 const TABS_ORDER = ['acompanhando', 'assistir', 'esperando', 'concluido', 'dropado'];
 
-function loadData() {
-  try { const raw = localStorage.getItem(STORAGE_KEY); animes = raw ? JSON.parse(raw) : []; } 
-  catch { animes = []; }
-}
-
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-  localStorage.setItem('anime_pending_sync', 'true');
-  scheduleGistSync();
-}
+function loadData() { try { const raw = localStorage.getItem(STORAGE_KEY); animes = raw ? JSON.parse(raw) : []; } catch { animes = []; } }
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); localStorage.setItem('anime_pending_sync', 'true'); scheduleGistSync(); }
 
 function filterAnimes() {
   const query = document.getElementById('searchInput').value.toLowerCase();
@@ -526,9 +452,7 @@ function filterAnimes() {
   });
 }
 
-// ── SCROLL NATIVO & OBSERVER ──────────────────────────
 const swipeArea = document.getElementById('swipeArea');
-
 const tabObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -536,23 +460,17 @@ const tabObserver = new IntersectionObserver((entries) => {
       activeTab = tabName;
       document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active'));
       const activePill = document.querySelector(`[data-tab="${tabName}"]`);
-      if (activePill) {
-        activePill.classList.add('active');
-        activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
+      if (activePill) { activePill.classList.add('active'); activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
     }
   });
 }, { threshold: 0.6 });
 
 function switchTab(tab, el) {
-  activeTab = tab;
-  document.getElementById('searchInput').value = ''; 
-  filterAnimes();
+  activeTab = tab; document.getElementById('searchInput').value = ''; filterAnimes();
   const targetTab = document.getElementById('tab-' + tab);
   targetTab.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 }
 
-// ── RENDER ────────────────────────────────────────────
 function renderAll() {
   TABS_ORDER.forEach(tab => {
     const grid = document.getElementById('grid-' + tab);
@@ -560,16 +478,11 @@ function renderAll() {
     document.getElementById('count-' + tab).textContent = items.length;
     grid.innerHTML = '';
     if (items.length === 0) {
-      grid.innerHTML = `<div class="empty-state">
-        <div class="empty-icon">${getEmptyIcon(tab)}</div>
-        <div class="empty-title">${getEmptyTitle(tab)}</div>
-        <div class="empty-sub">${getEmptySub(tab)}</div>
-      </div>`;
+      grid.innerHTML = `<div class="empty-state"><div class="empty-icon">${getEmptyIcon(tab)}</div><div class="empty-title">${getEmptyTitle(tab)}</div><div class="empty-sub">${getEmptySub(tab)}</div></div>`;
     } else {
       items.forEach(anime => grid.appendChild(buildCard(anime)));
     }
   });
-  
   document.querySelectorAll('.tab-content').forEach(t => tabObserver.observe(t));
   filterAnimes();
 }
@@ -594,16 +507,15 @@ function buildCard(anime) {
   const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
   const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
 
+  // A capa agora tem o onclick="openModal('${anime.id}')"
   card.innerHTML = `
-    <div class="card-cover">
+    <div class="card-cover" onclick="openModal('${anime.id}')" title="Clique para editar">
       ${coverHTML}
       <div class="card-cover-placeholder" ${placeholderStyle}>🎌</div>
       ${concludedBar}
     </div>
     
     <div class="status-badge ${sInfo.badge}">${sInfo.emoji} ${sInfo.label}</div>
-    <button class="card-delete" onclick="deleteAnime('${anime.id}')">✕</button>
-    <button class="card-edit" onclick="openModal('${anime.id}')">✎</button>
     
     <div class="card-body">
       <div class="card-title">${escHtml(anime.title)}</div>
@@ -628,7 +540,6 @@ function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&
 function formatDate(iso) { if (!iso) return ''; const d = new Date(iso); return d.toLocaleDateString('pt-BR'); }
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
-// ── CRUD ──────────────────────────────────────────────
 function saveAnime() {
   const name = document.getElementById('inputName').value.trim(); if (!name) return showToast('⚠️ Digite o nome do anime!', 'warning');
   const epVal = document.getElementById('inputEpisode').value, chVal = document.getElementById('inputChapter').value, seVal = document.getElementById('inputSeason').value;
@@ -647,7 +558,25 @@ function saveAnime() {
   saveData(); renderAll(); closeModal(); switchTab(status, document.querySelector(`[data-tab="${status}"]`));
 }
 
-function deleteAnime(id) { const idx = animes.findIndex(a => a.id === id); if (idx === -1) return; if(confirm("Tem certeza?")) { const name = animes[idx].title; animes.splice(idx, 1); saveData(); renderAll(); showToast(`🗑 ${name} removido.`); } }
+function deleteAnime(id) { 
+  const idx = animes.findIndex(a => a.id === id); 
+  if (idx === -1) return false; 
+  if(confirm("Tem certeza que deseja excluir?")) { 
+    const name = animes[idx].title; 
+    animes.splice(idx, 1); 
+    saveData(); renderAll(); 
+    showToast(`🗑 ${name} removido.`); 
+    return true;
+  }
+  return false;
+}
+
+function deleteAnimeFromModal() {
+  if (editingId && deleteAnime(editingId)) {
+    closeModal();
+  }
+}
+
 function updateField(id, field, val) { const anime = animes.find(a => a.id === id); if (!anime) return; const num = parseInt(val); const min = field === 'season' ? 1 : 0; anime[field] = isNaN(num) ? min : Math.max(min, num); saveData(); const card = document.getElementById('card-' + id); if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field]; }
 function changeValue(id, field, delta) { const anime = animes.find(a => a.id === id); if (!anime) return; const min = field === 'season' ? 1 : 0; const cur = parseInt(anime[field]) || min; anime[field] = Math.max(min, cur + delta); saveData(); const card = document.getElementById('card-' + id); if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field]; }
 function updateStatus(id, newStatus) { const anime = animes.find(a => a.id === id); if (!anime) return; anime.status = newStatus; if (newStatus === 'concluido' && !anime.concludedAt) anime.concludedAt = new Date().toISOString(); if (newStatus !== 'concluido') anime.concludedAt = null; saveData(); renderAll(); switchTab(newStatus, document.querySelector(`[data-tab="${newStatus}"]`)); showToast(`Status atualizado!`); }
@@ -657,79 +586,58 @@ function setFetchStatus(type, msg) {
   if (type === 'loading') { el.innerHTML = `<div class="spinner"></div> ${msg}`; } else { el.textContent = msg; }
 }
 
-// ── MODAL UI ──────────────────────────────────────────
-
 function openModal(id = null) {
   editingId = id; const isEdit = !!id; const anime = isEdit ? animes.find(a => a.id === id) : null;
   document.getElementById('modalTitle').textContent = isEdit ? 'Editar Anime' : 'Novo Anime';
   document.getElementById('modalConfirmBtn').textContent = isEdit ? 'Salvar' : 'Adicionar';
+  
+  // Mostra ou esconde o botão de Deletar baseado em se estamos editando ou criando
+  document.getElementById('modalDeleteBtn').style.display = isEdit ? 'inline-flex' : 'none';
+  
   document.getElementById('inputName').value = anime?.title ?? ''; document.getElementById('inputSeason').value = anime?.season ?? ''; document.getElementById('inputEpisode').value = anime?.episode ?? ''; document.getElementById('inputChapter').value = anime?.chapter ?? ''; document.getElementById('inputImage').value = anime?.image ?? ''; document.getElementById('inputStatus').value = anime?.status ?? 'assistir';
   fetchedImageUrl = ''; setFetchStatus('hidden', ''); const preview = document.getElementById('imgPreview');
   if (anime?.image) { preview.src = anime.image; preview.classList.add('visible'); } else { preview.src = ''; preview.classList.remove('visible'); }
 
   const backdrop = document.getElementById('modalBackdrop');
   backdrop.classList.add('open');
-  
   const modal = backdrop.querySelector('.modal');
-  
-  // Garante que o modal comece do zero e limpo
   modal.style.transform = ''; 
   backdrop.classList.add('open');
-  
-  // Força o "Reflow" para o navegador entender que o modal está em 100% (embaixo)
   void modal.offsetWidth; 
-
-  // Dispara a subida
-  requestAnimationFrame(() => {
-    backdrop.classList.add('visible');
-  });
-  
+  requestAnimationFrame(() => { backdrop.classList.add('visible'); });
 }
 
 function closeModal() {
   const backdrop = document.getElementById('modalBackdrop');
   backdrop.classList.remove('visible');
-  
-  // Removemos o foco de qualquer input para garantir que o teclado suma
   if (document.activeElement) document.activeElement.blur();
-
   setTimeout(() => {
     backdrop.classList.remove('open');
     const modal = backdrop.querySelector('.modal');
-    modal.style.transform = ''; // Só limpa o style DEPOIS que ele já sumiu da tela
+    modal.style.transform = ''; 
     editingId = null;
   }, 400);
 }
+
 function openSettings() {
   updateSettingsUI(); setGistFetchStatus('hidden', '');
   const backdrop = document.getElementById('settingsBackdrop');
   backdrop.classList.add('open');
-
-  requestAnimationFrame(() => {
-    backdrop.classList.add('visible');
-  });
+  requestAnimationFrame(() => { backdrop.classList.add('visible'); });
 }
 
 function closeSettings() {
   const backdrop = document.getElementById('settingsBackdrop');
   backdrop.classList.remove('visible');
-  
   if (document.activeElement) document.activeElement.blur();
-
-  setTimeout(() => {
-    backdrop.classList.remove('open');
-    const modal = backdrop.querySelector('.modal');
-    modal.style.transform = '';
-  }, 400);
+  setTimeout(() => { backdrop.classList.remove('open'); const modal = backdrop.querySelector('.modal'); modal.style.transform = ''; }, 400);
 }
-
 
 function handleBackdropClick(e) { if (e.target === document.getElementById('modalBackdrop')) closeModal(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 function onNameInput() { clearTimeout(nameInputTimer); fetchedImageUrl = ''; const name = document.getElementById('inputName').value.trim(); if (!name) { setFetchStatus('hidden', ''); return; } nameInputTimer = setTimeout(() => searchAnimeImage(), 900); }
 async function searchAnimeImage() {
-  
   if(!navigator.onLine) return setFetchStatus('error', 'Sem internet para buscar capa.'); 
   const name = document.getElementById('inputName').value.trim(); if (!name || document.getElementById('inputImage').value.trim() || editingId) return;
   setFetchStatus('loading', 'Buscando capa...');
@@ -737,7 +645,6 @@ async function searchAnimeImage() {
 }
 function onImageUrlInput() { const url = document.getElementById('inputImage').value.trim(); const p = document.getElementById('imgPreview'); if (url) { p.src = url; p.classList.add('visible'); fetchedImageUrl = ''; setFetchStatus('hidden', ''); } else { p.classList.remove('visible'); p.src = ''; } }
 
-// ── GIST SYNC LOGIC ───────────────────────────────────
 const GIST_TOKEN_KEY = 'anime_gist_token', GIST_ID_KEY = 'anime_gist_id', GIST_FILENAME = 'anime-backlog.json';
 let syncTimer = null, isSyncing = false;
 
@@ -765,69 +672,34 @@ async function pullFromGist(token, gistId) {
   const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers: { Authorization: `token ${token}` } });
   if (!res.ok) throw new Error(); const data = await res.json(); return JSON.parse(data.files?.[GIST_FILENAME]?.content);
 }
-document.addEventListener('DOMContentLoaded', () => {
 
-    // ── LÓGICA DE PRÉ-AQUECIMENTO (Warm-up) ──
+document.addEventListener('DOMContentLoaded', () => {
     const warmUp = () => {
         const modalBackdrop = document.getElementById('modalBackdrop');
         const settingsBackdrop = document.getElementById('settingsBackdrop');
-
-        // Mostra os modais por 1 frame mas com opacidade zero e sem interação
-        [modalBackdrop, settingsBackdrop].forEach(el => {
-            el.style.display = 'flex';
-            el.style.opacity = '0';
-            el.style.pointerEvents = 'none';
-        });
-
-        // Força o navegador a calcular o layout (Reflow)
-        void modalBackdrop.offsetWidth;
-        void settingsBackdrop.offsetWidth;
-
-        // Esconde novamente após o cálculo
-        requestAnimationFrame(() => {
-            [modalBackdrop, settingsBackdrop].forEach(el => {
-                el.style.display = '';
-                el.style.opacity = '';
-                el.style.pointerEvents = '';
-            });
-        });
+        [modalBackdrop, settingsBackdrop].forEach(el => { el.style.display = 'flex'; el.style.opacity = '0'; el.style.pointerEvents = 'none'; });
+        void modalBackdrop.offsetWidth; void settingsBackdrop.offsetWidth;
+        requestAnimationFrame(() => { [modalBackdrop, settingsBackdrop].forEach(el => { el.style.display = ''; el.style.opacity = ''; el.style.pointerEvents = ''; }); });
     };
-
-    // Executa o aquecimento 500ms após carregar (quando o celular estiver ocioso)
     setTimeout(warmUp, 500);
 });
-// ── EVENTOS DE CONEXÃO: O que fazer quando a internet cai ou volta ──
+
 window.addEventListener('online', () => {
-  updateSettingsUI();
-  initGistSync(); 
-  
-  // NOVA LÓGICA AQUI: Força o recarregamento das imagens que falharam com cache-busting
+  updateSettingsUI(); initGistSync(); 
   document.querySelectorAll('.anime-card img[data-src]').forEach(img => {
-    // A condição 'img.style.display === "none"' confirma que a imagem falhou (o 'onerror' foi ativado)
     if (img.style.display === 'none') {
       const originalSrc = img.getAttribute('data-src');
-      // Adicionamos ?t=... para enganar o cache do navegador e forçar uma nova requisição
       img.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
     }
   });
 });
 
-window.addEventListener('offline', () => {
-  updateSettingsUI();
-  if (getToken()) setSyncUI('off', 'Offline');
-});
+window.addEventListener('offline', () => { updateSettingsUI(); if (getToken()) setSyncUI('off', 'Offline'); });
 
-// A Função Principal de Inicialização
 async function initGistSync() {
   const token = getToken(), gistId = getGistId(); if (!token || !gistId) return; 
   if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
-  
-  if(localStorage.getItem('anime_pending_sync') === 'true') {
-    setSyncUI('ing', 'Enviando offline...');
-    await pushToGist();
-    return; 
-  }
-
+  if(localStorage.getItem('anime_pending_sync') === 'true') { setSyncUI('ing', 'Enviando offline...'); await pushToGist(); return; }
   setSyncUI('ing', 'Carregando...');
   try {
     const remote = await pullFromGist(token, gistId);
@@ -835,13 +707,10 @@ async function initGistSync() {
       const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); 
       const localOnly = animes.filter(a => !remoteMap[a.id]);
       animes = [...remote.animes, ...localOnly]; 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); 
-      renderAll();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); renderAll();
     } 
     setSyncUI('ok', 'Sincronizado');
-  } catch { 
-    setSyncUI('err', 'Erro'); 
-  }
+  } catch { setSyncUI('err', 'Erro'); }
 }
 
 async function connectGist() {
@@ -872,13 +741,7 @@ async function connectGist() {
 }
 
 function disconnectGist() { localStorage.removeItem(GIST_TOKEN_KEY); localStorage.removeItem(GIST_ID_KEY); localStorage.removeItem('anime_pending_sync'); setSyncUI('off', 'Sem sync'); updateSettingsUI(); closeSettings(); showToast('○ Desconectado.'); }
-
-function setGistFetchStatus(type, msg) {
-  const el = document.getElementById('gistFetchStatus'); el.className = 'fetch-status ' + type;
-  el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; el.classList.remove('hidden');
-}
-
-
+function setGistFetchStatus(type, msg) { const el = document.getElementById('gistFetchStatus'); el.className = 'fetch-status ' + type; el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; el.classList.remove('hidden'); }
 function handleSettingsBackdrop(e) { if (e.target === document.getElementById('settingsBackdrop')) closeSettings(); }
 
 function updateSettingsUI() {
@@ -897,80 +760,22 @@ function importData(e) { const file = e.target.files[0]; if (!file) return; cons
 function showToast(msg, type = 'default') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = msg; container.appendChild(toast); setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, 3000); }
 
 setTimeout(() => { document.getElementById('tab-' + activeTab).scrollIntoView(); }, 0);
-
-// ── INIT ──────────────────────────────────────────────
 loadData(); renderAll(); updateSettingsUI(); initGistSync();
 
-
-// --- VERSÃO FINAL E FLUIDA: Lógica do "Empurrão" ---
-
 function makeModalDraggable(backdropId, closeFunction) {
-  const backdrop = document.getElementById(backdropId);
-  if (!backdrop) return;
+  const backdrop = document.getElementById(backdropId); if (!backdrop) return;
   const modal = backdrop.querySelector('.modal');
   let isDragging = false, startY = 0, currentY = 0, hasMovedEnough = false;
-
-  modal.addEventListener('touchstart', (e) => {
-    if (modal.scrollTop > 0) return;
-    startY = e.touches[0].clientY;
-    isDragging = true;
-    hasMovedEnough = false;
-  }, { passive: true });
-modal.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    currentY = e.touches[0].clientY;
-    const deltaY = currentY - startY;
-
-    // 1. Quando o movimento é confirmado como um arrasto (mais de 12px)
-    if (!hasMovedEnough && deltaY > 12) {
-      hasMovedEnough = true;
-      modal.classList.add('dragging');
-
-      // MÁGICA AQUI: Removemos a classe .visible do BACKDROP.
-      // Isso faz o conteúdo interno (textos e imagens) sumir instantaneamente.
-      // Assim, o celular move apenas uma "caixa vazia", eliminando a barra branca.
-      backdrop.classList.remove('visible');
-
-      // Esconde o teclado para evitar que o espaço em branco dele cause bugs
-      if (document.activeElement) document.activeElement.blur();
-    }
-
-    // 2. Executa o movimento seguindo o dedo
-    if (hasMovedEnough && deltaY > 0) {
-      if (e.cancelable) e.preventDefault();
-      
-      // Mudamos de translateY para translate3d para forçar o uso da GPU
-      // Isso isola o modal em uma camada própria e mata o flicker branco
-      modal.style.transform = `translate3d(0, ${deltaY}px, 0)`;
-    }
+  modal.addEventListener('touchstart', (e) => { if (modal.scrollTop > 0) return; startY = e.touches[0].clientY; isDragging = true; hasMovedEnough = false; }, { passive: true });
+  modal.addEventListener('touchmove', (e) => {
+    if (!isDragging) return; currentY = e.touches[0].clientY; const deltaY = currentY - startY;
+    if (!hasMovedEnough && deltaY > 12) { hasMovedEnough = true; modal.classList.add('dragging'); backdrop.classList.remove('visible'); if (document.activeElement) document.activeElement.blur(); }
+    if (hasMovedEnough && deltaY > 0) { if (e.cancelable) e.preventDefault(); modal.style.transform = `translate3d(0, ${deltaY}px, 0)`; }
   }, { passive: false });
-
-  const onTouchEnd = () => {
-    if (!isDragging) return;
-    isDragging = false;
-    modal.classList.remove('dragging');
-    
-    const deltaY = currentY - startY;
-
-    // *** A CORREÇÃO ESTÁ AQUI ***
-    // Limpa o transform inline ANTES de decidir o que fazer.
-    // Isso devolve o controle para o CSS, garantindo que a animação de fechar ou de voltar para o lugar funcione.
-    modal.style.transform = '';
-
-    if (hasMovedEnough && deltaY > 100) {
-      // Agora, a função de fechar é chamada em um elemento limpo.
-      closeFunction();
-    }
-    // Não precisa de 'else', porque o transform já foi limpo. O modal vai animar de volta para o topo via CSS.
-  };
-  
-  modal.addEventListener('touchend', onTouchEnd);
-  modal.addEventListener('touchcancel', onTouchEnd);
+  const onTouchEnd = () => { if (!isDragging) return; isDragging = false; modal.classList.remove('dragging'); const deltaY = currentY - startY; modal.style.transform = ''; if (hasMovedEnough && deltaY > 100) { closeFunction(); } };
+  modal.addEventListener('touchend', onTouchEnd); modal.addEventListener('touchcancel', onTouchEnd);
 }
-
-// Ativa a funcionalidade nos dois modais
-makeModalDraggable('modalBackdrop', closeModal);
-makeModalDraggable('settingsBackdrop', closeSettings);
+makeModalDraggable('modalBackdrop', closeModal); makeModalDraggable('settingsBackdrop', closeSettings);
 </script>
 </body>
 </html>
