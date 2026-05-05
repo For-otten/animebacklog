@@ -114,9 +114,9 @@ main::-webkit-scrollbar { display: none; }
 .concluded-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); font-size: 10px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; z-index: 5; }
 
 .card-body { padding: 14px; }
-.card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 36px; word-break: break-word; }
+.card-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 36px; word-break: break-word; }
 
-.card-counters { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+.card-counters { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; }
 .counter-row { display: flex; align-items: center; gap: 6px; }
 .counter-label { font-size: 10px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; width: 28px; flex-shrink: 0; }
 .counter-btn { width: 24px; height: 24px; border-radius: 6px; background: var(--surface3); border: 1px solid var(--border); color: var(--text); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); flex-shrink: 0; line-height: 1; font-family: inherit; }
@@ -235,13 +235,13 @@ main::-webkit-scrollbar { display: none; }
     .card-body { flex: 1; padding: 11px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
     .card-title { font-size: 15px; margin-bottom: 12px; min-height: auto; text-align: center; }
 
-    .card-counters { gap: 10px; margin-bottom: 14px; }
+    .card-counters { gap: 10px; }
     .counter-label { font-size: 11px; width: 22px; }
     
     /* Inputs e botões consideravelmente maiores para facilitar o toque */
     .counter-btn { width: 34px; height: 34px; font-size: 20px; }
     .counter-input { height: 40px; font-size: 15px; }
-    .status-select { height: 46px; font-size: 13px; margin-top: 4px; }
+    .status-select { height: 42px; font-size: 13px; }
 
     .status-badge { bottom: auto; top: 8px; left: 8px; right: auto; font-size: 9px; padding: 4px 8px; }
     .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
@@ -307,6 +307,7 @@ main::-webkit-scrollbar { display: none; }
       <span class="sync-icon">☁</span>
       <span class="sync-label" id="syncLabel">Sem sync</span>
     </div>
+    
     <button class="btn btn-ghost" onclick="exportData()"><span class="btn-icon">⬇</span> Backup</button>
     <label class="btn btn-ghost" style="cursor:pointer"><span class="btn-icon">⬆</span> Importar<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
     <button class="btn btn-primary" onclick="openModal()"><span class="btn-icon">＋</span> Novo Anime</button>
@@ -519,6 +520,9 @@ function buildCard(anime) {
     
     <div class="card-body">
       <div class="card-title">${escHtml(anime.title)}</div>
+            <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
+        ${Object.entries(STATUS_MAP).map(([k,v]) => `<option value="${k}" ${k===anime.status?'selected':''}>${v.emoji} ${v.label}</option>`).join('')}
+      </select>
       <div class="card-counters">
         ${seasonRow}
         <div class="counter-row">
@@ -529,9 +533,7 @@ function buildCard(anime) {
         </div>
         ${chapterRow}
       </div>
-      <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
-        ${Object.entries(STATUS_MAP).map(([k,v]) => `<option value="${k}" ${k===anime.status?'selected':''}>${v.emoji} ${v.label}</option>`).join('')}
-      </select>
+
     </div>`;
   return card;
 }
