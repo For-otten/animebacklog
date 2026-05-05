@@ -68,7 +68,7 @@ header { padding: 32px 40px 20px; display: flex; align-items: center; justify-co
 .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 6px 28px var(--accent-glow); }
 .btn-ghost { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
 .btn-ghost:hover { background: var(--surface3); color: var(--text); }
-.btn-icon { font-size: 15px; }
+.btn-icon { font-size: 12px; }
 
 .stats-bar { display: flex; gap: 0; padding: 0 40px; border-bottom: 1px solid var(--border); background: rgba(10,10,18,0.5); backdrop-filter: blur(8px); overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
 .stats-bar::-webkit-scrollbar { display: none; }
@@ -217,10 +217,10 @@ main::-webkit-scrollbar { display: none; }
 
 /* ── MOBILE OVERHAUL ── */
 @media (max-width: 600px) {
-    header { flex-direction: column; align-items: stretch; padding: 16px 16px 12px; gap: 12px; }
+    header { flex-direction: column; align-items: stretch; padding: 11px 13px 7px; gap: 12px; }
     .logo { align-items: center; text-align: center; width: 100%; } .logo-main { font-size: 24px; padding-bottom: 6px; }
     .search-input { width: 100%; transition: none; } .search-input:focus { width: 100%; }
-    .header-actions { width: 100%; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .header-actions { width: 100%; justify-content: center; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 1px; scrollbar-width: none; }
     .btn { white-space: nowrap; padding: 10px 14px; font-size: 13px; }
 
     .stats-bar { padding: 0 16px; gap: 10px; }
