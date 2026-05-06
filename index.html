@@ -92,7 +92,7 @@ header {
 
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 16px; border-radius: var(--r);
+  padding: 9px 8px; border-radius: var(--r);
   font-family: var(--font); font-size: 11px; font-weight: 700;
   letter-spacing: 0.8px; text-transform: uppercase;
   cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap;
@@ -512,7 +512,12 @@ main::-webkit-scrollbar { display: none; }
   header { flex-wrap: wrap; padding: 12px 16px 10px; gap: 10px; }
   .logo-main { font-size: 19px; }
   .search-box { order: 3; flex: 1 0 100%; max-width: 100%; }
-  .header-actions { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 1px; gap: 6px; }
+  .header-actions {         flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 1px;
+        gap: 6px;
+        width: 100%; }
   .header-actions::-webkit-scrollbar { display: none; }
   .header-actions .btn-primary { display: none; }
 
