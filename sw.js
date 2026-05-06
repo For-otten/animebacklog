@@ -1,9 +1,11 @@
 // ── Anime Backlog Service Worker ──
-// v6: HTML nunca entra no cache — garante que mudanças no index.html chegam imediatamente.
+// v6: HTML sempre buscado da rede quando online (cache: no-store bypassa HTTP cache),
+//     mas salvo no SW cache para funcionar offline normalmente.
 const CACHE_NAME = 'anime-backlog-v6';
 
-// Só assets verdadeiramente estáticos ficam em cache (sem HTML!)
 const ASSETS_TO_CACHE = [
+  './',
+  './index.html',
   './manifest.json',
   './logo.png'
 ];
@@ -40,7 +42,6 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = event.request.url;
 
-  // Nunca interceptar APIs externas ou métodos não-GET
   if (
     url.includes('api.github.com') ||
     url.includes('api.jikan.moe') ||
@@ -49,16 +50,27 @@ self.addEventListener('fetch', event => {
     event.request.method !== 'GET'
   ) return;
 
-  // ── NAVEGAÇÃO (HTML): sempre busca da rede, sem cache ──
-  // Isso garante que mudanças no index.html chegam IMEDIATAMENTE,
-  // sem precisar de Ctrl+Shift+R. Offline: cai no cache se existir.
+  // ── NAVEGAÇÃO (HTML): Network First com cache: no-store ──
+  // cache: 'no-store' força o browser a ignorar o HTTP cache nativo
+  // e sempre buscar da rede — garante que mudanças no index.html chegam
+  // imediatamente sem Ctrl+Shift+R.
+  // Se a rede falhar (offline), serve o index.html do SW cache normalmente.
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request, { cache: 'no-store' }).catch(() =>
-        caches.match('./index.html').then(cached =>
-          cached || new Response('Offline', { status: 503 })
+      fetch(event.request, { cache: 'no-store' })
+        .then(networkResponse => {
+          // Online: atualiza o SW cache com a versão mais nova
+          if (networkResponse && networkResponse.status === 200) {
+            const cloned = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, cloned));
+          }
+          return networkResponse;
+        })
+        .catch(() =>
+          // Offline: serve do SW cache
+          caches.match(event.request)
+            .then(cached => cached || caches.match('./index.html'))
         )
-      )
     );
     return;
   }
