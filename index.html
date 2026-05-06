@@ -2150,12 +2150,14 @@
     }
 
     // ── SYNC: PUSH ──
-    async function pushToGist(silent = false) {
+// ── SYNC: PUSH ──
+    async function pushToGist(silent = false, background = false) {
       const token = getToken(), gistId = getGistId();
       if (!token) return;
       if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
 
-      setSyncUI('ing', 'Enviando...');
+      // Só mostra a animação se NÃO for um processo de background
+      if (!background) setSyncUI('ing', 'Enviando...');
       const payload = buildGistPayload();
 
       try {
@@ -2177,7 +2179,6 @@
         const data = await res.json();
         if (!gistId) { localStorage.setItem(GIST_ID_KEY, data.id); if (!silent) showToast('☁ Gist criado!'); }
 
-        // Extrai o savedAt que foi enviado para manter em sincronia
         const sent = JSON.parse(payload);
         lastKnownSavedAt = sent.savedAt;
         localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
@@ -2185,19 +2186,21 @@
         lastGistETag = '';
         setSyncUI('ok', 'Sincronizado');
       } catch (e) {
-        setSyncUI('err', 'Erro no envio');
+        // Só mostra o erro se não for background
+        if (!background) setSyncUI('err', 'Erro no envio');
         if (!silent) showToast('⚠ Erro ao enviar para o Gist', 'error');
         throw e;
       }
     }
 
     // ── SYNC: PULL + MERGE + PUSH (operação completa) ──
-    async function fullSync(silent = false) {
+// ── SYNC: PULL + MERGE + PUSH (operação completa) ──
+    async function fullSync(silent = false, background = false) {
       const token = getToken(), gistId = getGistId();
       if (!token || isSyncing || !navigator.onLine) return;
 
       isSyncing = true;
-      setSyncUI('ing', 'Sincronizando...');
+      if (!background) setSyncUI('ing', 'Sincronizando...');
 
       try {
         let needsPush = localStorage.getItem('anime_pending_sync') === 'true';
@@ -2205,9 +2208,8 @@
         if (gistId) {
           const remote = await pullFromGist(token, gistId);
 
-          // ✅ Bug 1 corrigido: null = 304, apenas sobe o dispositivo e sai
           if (!remote) {
-            await pushToGist(true);
+            await pushToGist(true, background);
             setSyncUI('ok', 'Sincronizado');
             return;
           }
@@ -2230,10 +2232,10 @@
           }
         }
 
-        await pushToGist(true);
+        await pushToGist(true, background);
         setSyncUI('ok', 'Sincronizado');
       } catch (e) {
-        setSyncUI('err', 'Erro de sync');
+        if (!background) setSyncUI('err', 'Erro de sync');
         console.error('Sync error:', e);
       } finally {
         isSyncing = false;
@@ -2241,13 +2243,16 @@
     }
 
     // ── SYNC AGENDADO (debounce após edição) ──
+// ── SYNC AGENDADO (debounce após edição) ──
     function scheduleGistSync() {
       if (!getToken()) return;
       clearTimeout(syncTimer);
-      syncTimer = setTimeout(() => fullSync(true), 500);
+      // Passamos false no segundo parâmetro para a animação aparecer quando VOCÊ edita algo
+      syncTimer = setTimeout(() => fullSync(true, false), 500); 
     }
 
     // ── POLL: checar atualizações em background ──
+// ── POLL: checar atualizações em background ──
     async function silentPoll() {
       if (
         document.getElementById('modalBackdrop').classList.contains('visible') ||
@@ -2258,14 +2263,14 @@
       if (!token || !gistId || !navigator.onLine || isSyncing) return;
 
       if (localStorage.getItem('anime_pending_sync') === 'true') {
-        await fullSync(true);
+        // Avisa que é background (passa true no segundo parâmetro)
+        await fullSync(true, true);
         return;
       }
 
       try {
         const remote = await pullFromGist(token, gistId);
 
-        // null = 304 Not Modified → Gist não mudou, nada a fazer
         if (!remote) return;
 
         if (remote.devices) mergeDeviceRegistry(remote.devices);
@@ -2285,8 +2290,8 @@
           localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
           setSyncUI('ok', 'Sincronizado');
 
-          // Sobe nosso dispositivo atualizado no Gist
-          await pushToGist(true);
+          // Avisa que é background para não girar o ícone
+          await pushToGist(true, true);
         }
       } catch (e) { /* silencioso */ }
     }
