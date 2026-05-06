@@ -1,11 +1,11 @@
 {
-  "name": "アニメ Log",
-  "short_name": "アニメ Log",
-  "start_url": "./index.html",
+  "name": "アニメ Backlog",
+  "short_name": "アニメLog",
+  "start_url": "/animebacklog/",
   "display": "standalone",
-  "background_color": "#0a0a12",
+  "background_color": "#000000",
   "theme_color": "#0a0a12",
-"icons": [
+  "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
@@ -30,5 +30,8 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "id": "/animebacklog/",
+  "description": "O seu diário pessoal e minimalista de animes. Organize seu backlog, acompanhe os episódios que está assistindo e sincronize seu progresso na nuvem de forma privada. Um tracker rápido, com modo offline, integração automática de capas e 100% sem anúncios.",
+  "lang": "pt"
 }
