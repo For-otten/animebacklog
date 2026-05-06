@@ -33,5 +33,6 @@
   ],
   "id": "/animebacklog/",
   "description": "O seu diário pessoal e minimalista de animes. Organize seu backlog, acompanhe os episódios que está assistindo e sincronize seu progresso na nuvem de forma privada. Um tracker rápido, com modo offline, integração automática de capas e 100% sem anúncios.",
-  "lang": "pt"
+  "lang": "pt",
+  "orientation": "portrait"
 }
