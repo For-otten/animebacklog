@@ -482,7 +482,7 @@ const GIST_FILENAME    = 'anime-backlog.json';
 const DEVICE_ID_KEY    = 'anime_device_id';
 const DEVICES_KEY      = 'anime_devices';
 const LAST_SAVED_KEY   = 'anime_gist_last_saved_at';
-const POLL_INTERVAL    = 15000; // ms
+const POLL_INTERVAL    = 2500; // ms
 
 let animes        = [];
 let nameInputTimer = null;
@@ -895,7 +895,7 @@ async function fullSync(silent = false) {
 function scheduleGistSync() {
   if (!getToken()) return;
   clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => fullSync(true), 1500);
+  syncTimer = setTimeout(() => fullSync(true), 500);
 }
 
 // ── POLL: checar atualizações em background ──
@@ -1193,7 +1193,7 @@ function onNameInput() {
   fetchedImageUrl = '';
   const name = document.getElementById('inputName').value.trim();
   if (!name) { setFetchStatus('hidden', ''); return; }
-  nameInputTimer = setTimeout(() => searchAnimeImage(), 900);
+  nameInputTimer = setTimeout(() => searchAnimeImage(), 700);
 }
 async function searchAnimeImage() {
   if (!navigator.onLine) return setFetchStatus('error', 'Sem internet para buscar capa.');
