@@ -423,21 +423,27 @@ main::-webkit-scrollbar { display: none; }
 <script>
 // ── INICIALIZAÇÃO AGRESSIVA DO SERVICE WORKER (AUTO-UPDATE APP) ──
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').then(reg => {
-      // Monitora se o navegador encontrou um novo arquivo html/js/css no GitHub
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js');
+      
+      // Força a checagem de novo SW sempre que a tela voltar a ficar visível
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          reg.update();
+        }
+      });
+
       reg.onupdatefound = () => {
         const installingWorker = reg.installing;
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // Manda o novo código assumir o controle IMEDIATAMENTE ignorando cache antigo
             installingWorker.postMessage({ type: 'SKIP_WAITING' });
           }
         };
       };
-    }).catch(e => console.log("SW falhou:", e));
+    } catch (e) { console.log("SW falhou:", e); }
 
-    // Assim que o novo service worker tomar controle, dá refresh na página
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!refreshing) {
@@ -680,9 +686,17 @@ async function pullFromGist(token, gistId) {
 
 // ── MONITOR AUTOMÁTICO DE DADOS DO GIST ──
 let gistMonitorTimer = null;
+
 async function silentCheckGistUpdates() {
+  // Pausa o sync se o usuário estiver com algum modal aberto para não atrapalhar a digitação
+  if (document.getElementById('modalBackdrop').classList.contains('visible') || 
+      document.getElementById('settingsBackdrop').classList.contains('visible')) {
+    return; 
+  }
+
   const token = getToken(), gistId = getGistId();
   if (!token || !gistId || !navigator.onLine || isSyncing) return;
+  
   try {
     const remote = await pullFromGist(token, gistId);
     if (remote && remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
@@ -695,7 +709,7 @@ async function silentCheckGistUpdates() {
         animes = [...remote.animes, ...localOnly]; 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
         renderAll();
-        showToast("☁️ Atualizado via nuvem");
+        showToast("☁️ Atualizado em tempo real!");
         setSyncUI('ok', 'Sincronizado');
       }
     }
@@ -703,18 +717,31 @@ async function silentCheckGistUpdates() {
 }
 
 function startSmartGistMonitor() {
-  // Dispara a checagem sempre que voltar para o app
+  const pollInterval = 15000; // Checa a cada 15 segundos
+
+  const startPolling = () => {
+    silentCheckGistUpdates(); // Checa imediatamente ao entrar
+    clearInterval(gistMonitorTimer);
+    gistMonitorTimer = setInterval(silentCheckGistUpdates, pollInterval);
+  };
+
+  const stopPolling = () => {
+    clearInterval(gistMonitorTimer);
+  };
+
+  // Quando troca de aba no celular/PC
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-      silentCheckGistUpdates();
-      clearInterval(gistMonitorTimer);
-      gistMonitorTimer = setInterval(silentCheckGistUpdates, 300000); // 5 min
-    } else {
-      clearInterval(gistMonitorTimer); // Pausa pra poupar bateria
-    }
+    if (document.visibilityState === 'visible') startPolling();
+    else stopPolling(); // Pausa pra poupar bateria quando escondido
   });
+
+  // Quando a janela ganha/perde foco no PC
+  window.addEventListener('focus', startPolling);
+  window.addEventListener('blur', stopPolling);
+
+  // Inicia se já estiver visível
   if (document.visibilityState === 'visible') {
-    gistMonitorTimer = setInterval(silentCheckGistUpdates, 300000);
+    startPolling();
   }
 }
 
@@ -730,22 +757,46 @@ document.addEventListener('DOMContentLoaded', () => {
     startSmartGistMonitor(); // Liga o monitoramento em segundo plano!
 });
 
-window.addEventListener('online', () => {
-  updateSettingsUI(); initGistSync(); 
+// Dispara EXATAMENTE no milissegundo em que o celular reconecta à internet
+window.addEventListener('online', async () => {
+  updateSettingsUI(); 
+  
+  // Atualiza imagens quebradas que falharam por falta de internet
   document.querySelectorAll('.anime-card img[data-src]').forEach(img => {
     if (img.style.display === 'none') {
       const originalSrc = img.getAttribute('data-src');
       img.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
     }
   });
+
+  // Se tem dados locais pendentes, manda subir pro Gist IMEDIATAMENTE
+  if(localStorage.getItem('anime_pending_sync') === 'true') { 
+    console.log("Internet voltou! Subindo dados offline para o Gist...");
+    setSyncUI('ing', 'Enviando offline...'); 
+    await pushToGist(); 
+  } else {
+    // Se não editou nada offline, apenas verifica se há novidades no Gist
+    initGistSync();
+  }
 });
 
-window.addEventListener('offline', () => { updateSettingsUI(); if (getToken()) setSyncUI('off', 'Offline'); });
+window.addEventListener('offline', () => { 
+  updateSettingsUI(); 
+  if (getToken()) setSyncUI('off', 'Offline (Salvo local)'); 
+});
 
 async function initGistSync() {
-  const token = getToken(), gistId = getGistId(); if (!token || !gistId) return; 
+  const token = getToken(), gistId = getGistId(); 
+  if (!token || !gistId) return; 
   if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
-  if(localStorage.getItem('anime_pending_sync') === 'true') { setSyncUI('ing', 'Enviando offline...'); await pushToGist(); return; }
+  
+  // Evita puxar dados do Gist se a gente acabou de ligar a internet e precisa subir nossos dados locais primeiro
+  if(localStorage.getItem('anime_pending_sync') === 'true') { 
+    setSyncUI('ing', 'Enviando pendentes...'); 
+    await pushToGist(); 
+    return; 
+  }
+  
   setSyncUI('ing', 'Carregando...');
   try {
     const remote = await pullFromGist(token, gistId);
@@ -756,10 +807,13 @@ async function initGistSync() {
       const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); 
       const localOnly = animes.filter(a => !remoteMap[a.id]);
       animes = [...remote.animes, ...localOnly]; 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); renderAll();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); 
+      renderAll();
     } 
     setSyncUI('ok', 'Sincronizado');
-  } catch { setSyncUI('err', 'Erro'); }
+  } catch { 
+    setSyncUI('err', 'Erro ao baixar do Gist'); 
+  }
 }
 
 async function connectGist() {
