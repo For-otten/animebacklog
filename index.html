@@ -2276,12 +2276,11 @@
     }
 
     // ── SYNC AGENDADO (debounce após edição) ──
-    // ── SYNC AGENDADO (debounce após edição) ──
     function scheduleGistSync() {
       if (!getToken()) return;
       clearTimeout(syncTimer);
       // Passamos false no segundo parâmetro para a animação aparecer quando VOCÊ edita algo
-      syncTimer = setTimeout(() => fullSync(true, false), 2000);
+      syncTimer = setTimeout(() => fullSync(true, false), 3500);
     }
 
     // ── POLL: checar atualizações em background ──
