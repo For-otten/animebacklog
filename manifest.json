@@ -2,7 +2,7 @@
   "name": "アニメ Backlog",
   "short_name": "アニメLog",
   "start_url": "/animebacklog/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#000000",
   "theme_color": "#0a0a12",
   "icons": [
