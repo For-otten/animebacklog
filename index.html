@@ -421,8 +421,31 @@ main::-webkit-scrollbar { display: none; }
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
+// ── INICIALIZAÇÃO AGRESSIVA DO SERVICE WORKER (AUTO-UPDATE APP) ──
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(e => console.log("SW falhou:", e)); });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      // Monitora se o navegador encontrou um novo arquivo html/js/css no GitHub
+      reg.onupdatefound = () => {
+        const installingWorker = reg.installing;
+        installingWorker.onstatechange = () => {
+          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // Manda o novo código assumir o controle IMEDIATAMENTE ignorando cache antigo
+            installingWorker.postMessage({ type: 'SKIP_WAITING' });
+          }
+        };
+      };
+    }).catch(e => console.log("SW falhou:", e));
+
+    // Assim que o novo service worker tomar controle, dá refresh na página
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
+  });
 }
 
 const STORAGE_KEY = 'anime_backlog_v2';
@@ -508,7 +531,6 @@ function buildCard(anime) {
   const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
   const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
 
-  // A capa agora tem o onclick="openModal('${anime.id}')"
   card.innerHTML = `
     <div class="card-cover" onclick="openModal('${anime.id}')" title="Clique para editar">
       ${coverHTML}
@@ -533,7 +555,6 @@ function buildCard(anime) {
         </div>
         ${chapterRow}
       </div>
-
     </div>`;
   return card;
 }
@@ -573,12 +594,7 @@ function deleteAnime(id) {
   return false;
 }
 
-function deleteAnimeFromModal() {
-  if (editingId && deleteAnime(editingId)) {
-    closeModal();
-  }
-}
-
+function deleteAnimeFromModal() { if (editingId && deleteAnime(editingId)) closeModal(); }
 function updateField(id, field, val) { const anime = animes.find(a => a.id === id); if (!anime) return; const num = parseInt(val); const min = field === 'season' ? 1 : 0; anime[field] = isNaN(num) ? min : Math.max(min, num); saveData(); const card = document.getElementById('card-' + id); if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field]; }
 function changeValue(id, field, delta) { const anime = animes.find(a => a.id === id); if (!anime) return; const min = field === 'season' ? 1 : 0; const cur = parseInt(anime[field]) || min; anime[field] = Math.max(min, cur + delta); saveData(); const card = document.getElementById('card-' + id); if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field]; }
 function updateStatus(id, newStatus) { const anime = animes.find(a => a.id === id); if (!anime) return; anime.status = newStatus; if (newStatus === 'concluido' && !anime.concludedAt) anime.concludedAt = new Date().toISOString(); if (newStatus !== 'concluido') anime.concludedAt = null; saveData(); renderAll(); switchTab(newStatus, document.querySelector(`[data-tab="${newStatus}"]`)); showToast(`Status atualizado!`); }
@@ -592,20 +608,14 @@ function openModal(id = null) {
   editingId = id; const isEdit = !!id; const anime = isEdit ? animes.find(a => a.id === id) : null;
   document.getElementById('modalTitle').textContent = isEdit ? 'Editar Anime' : 'Novo Anime';
   document.getElementById('modalConfirmBtn').textContent = isEdit ? 'Salvar' : 'Adicionar';
-  
-  // Mostra ou esconde o botão de Deletar baseado em se estamos editando ou criando
   document.getElementById('modalDeleteBtn').style.display = isEdit ? 'inline-flex' : 'none';
-  
   document.getElementById('inputName').value = anime?.title ?? ''; document.getElementById('inputSeason').value = anime?.season ?? ''; document.getElementById('inputEpisode').value = anime?.episode ?? ''; document.getElementById('inputChapter').value = anime?.chapter ?? ''; document.getElementById('inputImage').value = anime?.image ?? ''; document.getElementById('inputStatus').value = anime?.status ?? 'assistir';
   fetchedImageUrl = ''; setFetchStatus('hidden', ''); const preview = document.getElementById('imgPreview');
   if (anime?.image) { preview.src = anime.image; preview.classList.add('visible'); } else { preview.src = ''; preview.classList.remove('visible'); }
-
   const backdrop = document.getElementById('modalBackdrop');
   backdrop.classList.add('open');
-  const modal = backdrop.querySelector('.modal');
-  modal.style.transform = ''; 
-  backdrop.classList.add('open');
-  void modal.offsetWidth; 
+  const modal = backdrop.querySelector('.modal'); modal.style.transform = ''; 
+  backdrop.classList.add('open'); void modal.offsetWidth; 
   requestAnimationFrame(() => { backdrop.classList.add('visible'); });
 }
 
@@ -613,28 +623,11 @@ function closeModal() {
   const backdrop = document.getElementById('modalBackdrop');
   backdrop.classList.remove('visible');
   if (document.activeElement) document.activeElement.blur();
-  setTimeout(() => {
-    backdrop.classList.remove('open');
-    const modal = backdrop.querySelector('.modal');
-    modal.style.transform = ''; 
-    editingId = null;
-  }, 400);
+  setTimeout(() => { backdrop.classList.remove('open'); const modal = backdrop.querySelector('.modal'); modal.style.transform = ''; editingId = null; }, 400);
 }
 
-function openSettings() {
-  updateSettingsUI(); setGistFetchStatus('hidden', '');
-  const backdrop = document.getElementById('settingsBackdrop');
-  backdrop.classList.add('open');
-  requestAnimationFrame(() => { backdrop.classList.add('visible'); });
-}
-
-function closeSettings() {
-  const backdrop = document.getElementById('settingsBackdrop');
-  backdrop.classList.remove('visible');
-  if (document.activeElement) document.activeElement.blur();
-  setTimeout(() => { backdrop.classList.remove('open'); const modal = backdrop.querySelector('.modal'); modal.style.transform = ''; }, 400);
-}
-
+function openSettings() { updateSettingsUI(); setGistFetchStatus('hidden', ''); const backdrop = document.getElementById('settingsBackdrop'); backdrop.classList.add('open'); requestAnimationFrame(() => { backdrop.classList.add('visible'); }); }
+function closeSettings() { const backdrop = document.getElementById('settingsBackdrop'); backdrop.classList.remove('visible'); if (document.activeElement) document.activeElement.blur(); setTimeout(() => { backdrop.classList.remove('open'); const modal = backdrop.querySelector('.modal'); modal.style.transform = ''; }, 400); }
 function handleBackdropClick(e) { if (e.target === document.getElementById('modalBackdrop')) closeModal(); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
@@ -647,8 +640,10 @@ async function searchAnimeImage() {
 }
 function onImageUrlInput() { const url = document.getElementById('inputImage').value.trim(); const p = document.getElementById('imgPreview'); if (url) { p.src = url; p.classList.add('visible'); fetchedImageUrl = ''; setFetchStatus('hidden', ''); } else { p.classList.remove('visible'); p.src = ''; } }
 
+// ── SYNC LOGIC ──
 const GIST_TOKEN_KEY = 'anime_gist_token', GIST_ID_KEY = 'anime_gist_id', GIST_FILENAME = 'anime-backlog.json';
 let syncTimer = null, isSyncing = false;
+let lastKnownSavedAt = localStorage.getItem('anime_gist_last_saved_at') || ''; // Controle de versão do Gist
 
 function getToken() { return localStorage.getItem(GIST_TOKEN_KEY) || ''; } function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
 function setSyncUI(state, label) { const el = document.getElementById('syncIndicator'), lb = document.getElementById('syncLabel'); el.className = 'sync-indicator sync-' + state; lb.textContent = label; }
@@ -658,7 +653,10 @@ async function pushToGist(silent = false) {
   const token = getToken(), gistId = getGistId(); if (!token || isSyncing) return;
   if (!navigator.onLine) { setSyncUI('off', 'Offline (Salvo local)'); return; }
   isSyncing = true; setSyncUI('ing', 'Sync...');
-  const payload = JSON.stringify({ animes, savedAt: new Date().toISOString() }, null, 2);
+  
+  const nowStr = new Date().toISOString();
+  const payload = JSON.stringify({ animes, savedAt: nowStr }, null, 2);
+  
   try {
     let res;
     if (gistId) { res = await fetch(`https://api.github.com/gists/${gistId}`, { method: 'PATCH', headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ files: { [GIST_FILENAME]: { content: payload } } }) }); }
@@ -666,6 +664,11 @@ async function pushToGist(silent = false) {
     if (!res.ok) throw new Error(); const data = await res.json();
     if (!gistId) { localStorage.setItem(GIST_ID_KEY, data.id); if (!silent) showToast(`☁ Gist criado!`); }
     localStorage.removeItem('anime_pending_sync');
+    
+    // Atualiza nossa memoria local de quando subimos algo pra não baixar à toa
+    localStorage.setItem('anime_gist_last_saved_at', nowStr);
+    lastKnownSavedAt = nowStr;
+    
     setSyncUI('ok', 'Sincronizado');
   } catch (e) { setSyncUI('err', 'Erro'); if (!silent) showToast('⚠ Erro no Gist', 'error'); } finally { isSyncing = false; }
 }
@@ -673,6 +676,46 @@ async function pushToGist(silent = false) {
 async function pullFromGist(token, gistId) {
   const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers: { Authorization: `token ${token}` } });
   if (!res.ok) throw new Error(); const data = await res.json(); return JSON.parse(data.files?.[GIST_FILENAME]?.content);
+}
+
+// ── MONITOR AUTOMÁTICO DE DADOS DO GIST ──
+let gistMonitorTimer = null;
+async function silentCheckGistUpdates() {
+  const token = getToken(), gistId = getGistId();
+  if (!token || !gistId || !navigator.onLine || isSyncing) return;
+  try {
+    const remote = await pullFromGist(token, gistId);
+    if (remote && remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
+      lastKnownSavedAt = remote.savedAt;
+      localStorage.setItem('anime_gist_last_saved_at', lastKnownSavedAt);
+      
+      if (Array.isArray(remote.animes)) {
+        const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); 
+        const localOnly = animes.filter(a => !remoteMap[a.id]);
+        animes = [...remote.animes, ...localOnly]; 
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+        renderAll();
+        showToast("☁️ Atualizado via nuvem");
+        setSyncUI('ok', 'Sincronizado');
+      }
+    }
+  } catch (e) { console.log("Monitor: falha silenciosa.", e); }
+}
+
+function startSmartGistMonitor() {
+  // Dispara a checagem sempre que voltar para o app
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      silentCheckGistUpdates();
+      clearInterval(gistMonitorTimer);
+      gistMonitorTimer = setInterval(silentCheckGistUpdates, 300000); // 5 min
+    } else {
+      clearInterval(gistMonitorTimer); // Pausa pra poupar bateria
+    }
+  });
+  if (document.visibilityState === 'visible') {
+    gistMonitorTimer = setInterval(silentCheckGistUpdates, 300000);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -684,6 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(() => { [modalBackdrop, settingsBackdrop].forEach(el => { el.style.display = ''; el.style.opacity = ''; el.style.pointerEvents = ''; }); });
     };
     setTimeout(warmUp, 500);
+    startSmartGistMonitor(); // Liga o monitoramento em segundo plano!
 });
 
 window.addEventListener('online', () => {
@@ -706,6 +750,9 @@ async function initGistSync() {
   try {
     const remote = await pullFromGist(token, gistId);
     if (Array.isArray(remote.animes) && remote.animes.length > 0) {
+      lastKnownSavedAt = remote.savedAt || new Date().toISOString();
+      localStorage.setItem('anime_gist_last_saved_at', lastKnownSavedAt);
+
       const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); 
       const localOnly = animes.filter(a => !remoteMap[a.id]);
       animes = [...remote.animes, ...localOnly]; 
@@ -731,6 +778,9 @@ async function connectGist() {
       localStorage.setItem(GIST_ID_KEY, foundGistId); setGistFetchStatus('loading', 'Importando dados...');
       const remote = await pullFromGist(token, foundGistId);
       if (Array.isArray(remote.animes)) {
+        lastKnownSavedAt = remote.savedAt || new Date().toISOString();
+        localStorage.setItem('anime_gist_last_saved_at', lastKnownSavedAt);
+
         const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); const localOnly = animes.filter(a => !remoteMap[a.id]);
         animes = [...remote.animes, ...localOnly]; localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); renderAll();
       }
@@ -742,7 +792,7 @@ async function connectGist() {
   } catch (e) { setGistFetchStatus('error', `❌ ${e.message}`); }
 }
 
-function disconnectGist() { localStorage.removeItem(GIST_TOKEN_KEY); localStorage.removeItem(GIST_ID_KEY); localStorage.removeItem('anime_pending_sync'); setSyncUI('off', 'Sem sync'); updateSettingsUI(); closeSettings(); showToast('○ Desconectado.'); }
+function disconnectGist() { localStorage.removeItem(GIST_TOKEN_KEY); localStorage.removeItem(GIST_ID_KEY); localStorage.removeItem('anime_pending_sync'); localStorage.removeItem('anime_gist_last_saved_at'); setSyncUI('off', 'Sem sync'); updateSettingsUI(); closeSettings(); showToast('○ Desconectado.'); }
 function setGistFetchStatus(type, msg) { const el = document.getElementById('gistFetchStatus'); el.className = 'fetch-status ' + type; el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; el.classList.remove('hidden'); }
 function handleSettingsBackdrop(e) { if (e.target === document.getElementById('settingsBackdrop')) closeSettings(); }
 
