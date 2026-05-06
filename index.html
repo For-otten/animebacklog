@@ -2248,7 +2248,7 @@
       if (!getToken()) return;
       clearTimeout(syncTimer);
       // Passamos false no segundo parâmetro para a animação aparecer quando VOCÊ edita algo
-      syncTimer = setTimeout(() => fullSync(true, false), 500); 
+      syncTimer = setTimeout(() => fullSync(true, false), 2000); 
     }
 
     // ── POLL: checar atualizações em background ──
