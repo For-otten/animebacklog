@@ -530,7 +530,13 @@ function getDeviceInfo() {
 
 // ── DEVICE REGISTRY (lista de dispositivos conhecidos) ──
 function loadDeviceRegistry() {
-  try { return JSON.parse(localStorage.getItem(DEVICES_KEY) || '[]'); } catch { return []; }
+  try {
+    let list = JSON.parse(localStorage.getItem(DEVICES_KEY) || '[]');
+    // Remove dispositivos sem atividade nos últimos 30 dias
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    list = list.filter(d => !d.lastSeen || new Date(d.lastSeen).getTime() > cutoff);
+    return list;
+  } catch { return []; }
 }
 function saveDeviceRegistry(list) {
   localStorage.setItem(DEVICES_KEY, JSON.stringify(list));
@@ -789,11 +795,24 @@ function buildGistPayload() {
 }
 
 // ── SYNC: PULL ──
+let lastGistETag = '';
+ 
+// Substitui a função pullFromGist original:
 async function pullFromGist(token, gistId) {
-  const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-    headers: { Authorization: `token ${token}` }
-  });
+  const headers = { Authorization: `token ${token}` };
+  // Se temos ETag, manda no header — GitHub retorna 304 se não mudou nada,
+  // economizando banda e evitando processar dados desnecessariamente
+  if (lastGistETag) headers['If-None-Match'] = lastGistETag;
+ 
+  const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers });
+ 
+  if (res.status === 304) return null; // Nada mudou desde o último pull
+ 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
+ 
+  const etag = res.headers.get('ETag');
+  if (etag) lastGistETag = etag; // Salva para próxima comparação
+ 
   const data = await res.json();
   const content = data.files?.[GIST_FILENAME]?.content;
   if (!content) throw new Error('Arquivo não encontrado no Gist');
@@ -899,35 +918,43 @@ function scheduleGistSync() {
 
 // ── POLL: checar atualizações em background ──
 async function silentPoll() {
-  // Pausa se modal aberto (usuário digitando)
-  if (document.getElementById('modalBackdrop').classList.contains('visible') ||
-      document.getElementById('settingsBackdrop').classList.contains('visible')) return;
-
+  if (
+    document.getElementById('modalBackdrop').classList.contains('visible') ||
+    document.getElementById('settingsBackdrop').classList.contains('visible')
+  ) return;
+ 
   const token = getToken(), gistId = getGistId();
   if (!token || !gistId || !navigator.onLine || isSyncing) return;
-
-  // Se temos dados locais pendentes, prefere subir do que só checar
+ 
   if (localStorage.getItem('anime_pending_sync') === 'true') {
     await fullSync(true);
     return;
   }
-
+ 
   try {
     const remote = await pullFromGist(token, gistId);
-    if (remote && remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
-      if (remote.devices) mergeDeviceRegistry(remote.devices);
+ 
+    // null = 304 Not Modified → Gist não mudou, nada a fazer
+    if (!remote) return;
+ 
+    if (remote.devices) mergeDeviceRegistry(remote.devices);
+ 
+    if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
       const merged  = smartMerge(animes, remote.animes || []);
       const changed = JSON.stringify(merged) !== JSON.stringify(animes);
+ 
       if (changed) {
         animes = merged;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
         renderAll();
         showToast('☁ Atualizado em tempo real!');
       }
+ 
       lastKnownSavedAt = remote.savedAt;
       localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
       setSyncUI('ok', 'Sincronizado');
-      // Manda nosso dispositivo registrado no Gist
+ 
+      // Sobe nosso dispositivo atualizado no Gist
       await pushToGist(true);
     }
   } catch (e) { /* silencioso */ }
