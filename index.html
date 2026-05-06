@@ -1920,10 +1920,10 @@
       try { const raw = localStorage.getItem(STORAGE_KEY); animes = raw ? JSON.parse(raw) : []; }
       catch { animes = []; }
     }
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-  scheduleGistSync(); // hash calculado na hora de enviar
-}
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+      scheduleGistSync(); // hash calculado na hora de enviar
+    }
 
     // ── SMART MERGE: resolve conflitos por anime usando updatedAt ──
     function smartMerge(localList, remoteList) {
@@ -2147,184 +2147,184 @@ function saveData() {
       if (!content) throw new Error('Arquivo não encontrado no Gist');
       return JSON.parse(content);
     }
-// ── HASH DE CONTEÚDO (substitui anime_pending_sync) ──
-const LAST_HASH_KEY = 'anime_gist_last_hash';
+    // ── HASH DE CONTEÚDO (substitui anime_pending_sync) ──
+    const LAST_HASH_KEY = 'anime_gist_last_hash';
 
-function buildAnimeHash(list) {
-  // Normaliza: só os campos de dados, ordem fixa, sem devices/timestamps voláteis
-  const normalized = [...list]
-    .sort((a, b) => a.id.localeCompare(b.id))
-    .map(({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt }) =>
-      ({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt }));
-  return JSON.stringify(normalized);
-}
+    function buildAnimeHash(list) {
+      // Normaliza: só os campos de dados, ordem fixa, sem devices/timestamps voláteis
+      const normalized = [...list]
+        .sort((a, b) => a.id.localeCompare(b.id))
+        .map(({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt }) =>
+          ({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt }));
+      return JSON.stringify(normalized);
+    }
 
-function hasUnpushedChanges() {
-  return buildAnimeHash(animes) !== (localStorage.getItem(LAST_HASH_KEY) || '');
-}
+    function hasUnpushedChanges() {
+      return buildAnimeHash(animes) !== (localStorage.getItem(LAST_HASH_KEY) || '');
+    }
 
-function markAsPushed() {
-  localStorage.setItem(LAST_HASH_KEY, buildAnimeHash(animes));
-  localStorage.removeItem('anime_pending_sync'); // limpa flag legada se existir
-}
+    function markAsPushed() {
+      localStorage.setItem(LAST_HASH_KEY, buildAnimeHash(animes));
+      localStorage.removeItem('anime_pending_sync'); // limpa flag legada se existir
+    }
     // ── SYNC: PUSH ──
-async function pushToGist(silent = false, background = false) {
-  const token = getToken(), gistId = getGistId();
-  if (!token) return;
-  if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
+    async function pushToGist(silent = false, background = false) {
+      const token = getToken(), gistId = getGistId();
+      if (!token) return;
+      if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
 
-  // ← NOVA GUARDA: só prossegue se há mudança real
-  if (gistId && !hasUnpushedChanges()) {
-    setSyncUI('ok', 'Sincronizado');
-    return;
-  }
-
-  if (!background) setSyncUI('ing', 'Enviando...');
-  const payload = buildGistPayload();
-
-  try {
-    let res;
-    if (gistId) {
-      res = await fetch(`https://api.github.com/gists/${gistId}`, {
-        method: 'PATCH',
-        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ files: { [GIST_FILENAME]: { content: payload } } })
-      });
-    } else {
-      res = await fetch('https://api.github.com/gists', {
-        method: 'POST',
-        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: 'Anime Backlog', public: false, files: { [GIST_FILENAME]: { content: payload } } })
-      });
-    }
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (!gistId) {
-      localStorage.setItem(GIST_ID_KEY, data.id);
-      if (!silent) showToast('☁ Gist criado!');
-    }
-
-    const sent = JSON.parse(payload);
-    lastKnownSavedAt = sent.savedAt;
-    localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
-    markAsPushed(); // ← salva o hash do que foi enviado
-    lastGistETag = '';
-    setSyncUI('ok', 'Sincronizado');
-  } catch (e) {
-    if (!background) setSyncUI('err', 'Erro no envio');
-    if (!silent) showToast('⚠ Erro ao enviar para o Gist', 'error');
-    throw e;
-  }
-}
-
-// ── SYNC: PULL + MERGE + PUSH (operação completa) ──
-async function fullSync(silent = false, background = false) {
-  const token = getToken(), gistId = getGistId();
-  if (!token || isSyncing || !navigator.onLine) return;
-
-  isSyncing = true;
-  if (!background) setSyncUI('ing', 'Sincronizando...');
-
-  try {
-    let needsPush = hasUnpushedChanges();
-
-    if (gistId) {
-      const remote = await pullFromGist(token, gistId);
-
-      // 304 → nada mudou remotamente
-      if (!remote) {
-        if (needsPush) {
-          await pushToGist(true, background);
-        } else {
-          setSyncUI('ok', 'Sincronizado'); // ← sem push, só atualiza o ícone
-        }
+      // ← NOVA GUARDA: só prossegue se há mudança real
+      if (gistId && !hasUnpushedChanges()) {
+        setSyncUI('ok', 'Sincronizado');
         return;
       }
 
-      if (remote.devices) mergeDeviceRegistry(remote.devices);
-      checkDeviceConflict(remote.devices);
+      if (!background) setSyncUI('ing', 'Enviando...');
+      const payload = buildGistPayload();
 
-      if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
-        const merged = smartMerge(animes, remote.animes || []);
-        const changed = JSON.stringify(merged) !== JSON.stringify(animes);
-        if (changed) {
-          animes = merged;
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-          renderAll();
-          if (!silent) showToast('☁ Atualizado com dados remotos!');
-          needsPush = true; // merge gerou dados novos → precisa reenviar
+      try {
+        let res;
+        if (gistId) {
+          res = await fetch(`https://api.github.com/gists/${gistId}`, {
+            method: 'PATCH',
+            headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: { [GIST_FILENAME]: { content: payload } } })
+          });
+        } else {
+          res = await fetch('https://api.github.com/gists', {
+            method: 'POST',
+            headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ description: 'Anime Backlog', public: false, files: { [GIST_FILENAME]: { content: payload } } })
+          });
         }
-        lastKnownSavedAt = remote.savedAt;
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!gistId) {
+          localStorage.setItem(GIST_ID_KEY, data.id);
+          if (!silent) showToast('☁ Gist criado!');
+        }
+
+        const sent = JSON.parse(payload);
+        lastKnownSavedAt = sent.savedAt;
         localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+        markAsPushed(); // ← salva o hash do que foi enviado
+        lastGistETag = '';
+        setSyncUI('ok', 'Sincronizado');
+      } catch (e) {
+        if (!background) setSyncUI('err', 'Erro no envio');
+        if (!silent) showToast('⚠ Erro ao enviar para o Gist', 'error');
+        throw e;
       }
-    } else {
-      // Primeiro uso: sem gistId ainda, sempre precisa criar
-      needsPush = true;
     }
 
-    if (needsPush) {
-      await pushToGist(true, background);
-    } else {
-      setSyncUI('ok', 'Sincronizado'); // ← abre o app 100x = 0 writes
+    // ── SYNC: PULL + MERGE + PUSH (operação completa) ──
+    async function fullSync(silent = false, background = false) {
+      const token = getToken(), gistId = getGistId();
+      if (!token || isSyncing || !navigator.onLine) return;
+
+      isSyncing = true;
+      if (!background) setSyncUI('ing', 'Sincronizando...');
+
+      try {
+        let needsPush = hasUnpushedChanges();
+
+        if (gistId) {
+          const remote = await pullFromGist(token, gistId);
+
+          // 304 → nada mudou remotamente
+          if (!remote) {
+            if (needsPush) {
+              await pushToGist(true, background);
+            } else {
+              setSyncUI('ok', 'Sincronizado'); // ← sem push, só atualiza o ícone
+            }
+            return;
+          }
+
+          if (remote.devices) mergeDeviceRegistry(remote.devices);
+          checkDeviceConflict(remote.devices);
+
+          if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
+            const merged = smartMerge(animes, remote.animes || []);
+            const changed = JSON.stringify(merged) !== JSON.stringify(animes);
+            if (changed) {
+              animes = merged;
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+              renderAll();
+              if (!silent) showToast('☁ Atualizado com dados remotos!');
+              needsPush = true; // merge gerou dados novos → precisa reenviar
+            }
+            lastKnownSavedAt = remote.savedAt;
+            localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+          }
+        } else {
+          // Primeiro uso: sem gistId ainda, sempre precisa criar
+          needsPush = true;
+        }
+
+        if (needsPush) {
+          await pushToGist(true, background);
+        } else {
+          setSyncUI('ok', 'Sincronizado'); // ← abre o app 100x = 0 writes
+        }
+      } catch (e) {
+        if (!background) setSyncUI('err', 'Erro de sync');
+        console.error('Sync error:', e);
+      } finally {
+        isSyncing = false;
+      }
     }
-  } catch (e) {
-    if (!background) setSyncUI('err', 'Erro de sync');
-    console.error('Sync error:', e);
-  } finally {
-    isSyncing = false;
-  }
-}
 
     // ── SYNC AGENDADO (debounce após edição) ──
-// ── SYNC AGENDADO (debounce após edição) ──
+    // ── SYNC AGENDADO (debounce após edição) ──
     function scheduleGistSync() {
       if (!getToken()) return;
       clearTimeout(syncTimer);
       // Passamos false no segundo parâmetro para a animação aparecer quando VOCÊ edita algo
-      syncTimer = setTimeout(() => fullSync(true, false), 2000); 
+      syncTimer = setTimeout(() => fullSync(true, false), 2000);
     }
 
     // ── POLL: checar atualizações em background ──
-async function silentPoll() {
-  if (
-    document.getElementById('modalBackdrop').classList.contains('visible') ||
-    document.getElementById('settingsBackdrop').classList.contains('visible')
-  ) return;
+    async function silentPoll() {
+      if (
+        document.getElementById('modalBackdrop').classList.contains('visible') ||
+        document.getElementById('settingsBackdrop').classList.contains('visible')
+      ) return;
 
-  const token = getToken(), gistId = getGistId();
-  if (!token || !gistId || !navigator.onLine || isSyncing) return;
+      const token = getToken(), gistId = getGistId();
+      if (!token || !gistId || !navigator.onLine || isSyncing) return;
 
-  if (localStorage.getItem('anime_pending_sync') === 'true') {
-    await fullSync(true, true);
-    return;
-  }
-
-  try {
-    const remote = await pullFromGist(token, gistId);
-    if (!remote) return; // 304 → nada mudou, zero writes
-
-    if (remote.devices) mergeDeviceRegistry(remote.devices);
-
-    if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
-      const merged = smartMerge(animes, remote.animes || []);
-      const changed = JSON.stringify(merged) !== JSON.stringify(animes);
-
-      if (changed) {
-        animes = merged;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-        renderAll();
-        showToast('☁ Atualizado em tempo real!');
+      if (localStorage.getItem('anime_pending_sync') === 'true') {
+        await fullSync(true, true);
+        return;
       }
 
-      lastKnownSavedAt = remote.savedAt;
-      localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
-      setSyncUI('ok', 'Sincronizado');
+      try {
+        const remote = await pullFromGist(token, gistId);
+        if (!remote) return; // 304 → nada mudou, zero writes
 
-      // Só faz push se o merge trouxe dados novos (para atualizar o devices no Gist)
-      if (changed) await pushToGist(true, true);
+        if (remote.devices) mergeDeviceRegistry(remote.devices);
+
+        if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
+          const merged = smartMerge(animes, remote.animes || []);
+          const changed = JSON.stringify(merged) !== JSON.stringify(animes);
+
+          if (changed) {
+            animes = merged;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+            renderAll();
+            showToast('☁ Atualizado em tempo real!');
+          }
+
+          lastKnownSavedAt = remote.savedAt;
+          localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+          setSyncUI('ok', 'Sincronizado');
+
+          // Só faz push se o merge trouxe dados novos (para atualizar o devices no Gist)
+          if (changed) await pushToGist(true, true);
+        }
+      } catch (e) { /* silencioso */ }
     }
-  } catch (e) { /* silencioso */ }
-}
 
     function startPolling() {
       silentPoll();
@@ -2417,6 +2417,7 @@ async function silentPoll() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
             lastKnownSavedAt = remote.savedAt || '';
             localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+            markAsPushed();
             renderAll();
           }
           checkDeviceConflict(remote.devices);
@@ -2441,6 +2442,7 @@ async function silentPoll() {
       localStorage.removeItem(GIST_ID_KEY);
       localStorage.removeItem('anime_pending_sync');
       localStorage.removeItem(LAST_SAVED_KEY);
+      localStorage.removeItem(LAST_HASH_KEY); 
       lastKnownSavedAt = '';
       stopPolling();
       setSyncUI('off', 'Sem sync');
