@@ -223,7 +223,17 @@ main::-webkit-scrollbar { display: none; }
 .device-card.is-current {
   background: var(--green-dim); border-color: rgba(64,224,160,0.3);
 }
-.device-emoji { font-size: 22px; flex-shrink: 0; line-height: 1; }
+.device-icon-wrap {
+  width: 36px; height: 36px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface3); border-radius: 10px;
+  color: var(--text-muted);
+}
+.device-card.is-current .device-icon-wrap {
+  background: rgba(64,224,160,0.15);
+  color: var(--green);
+}
+.device-icon-wrap svg { width: 18px; height: 18px; }
 .device-info { flex: 1; min-width: 0; }
 .device-name { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .device-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -1080,7 +1090,13 @@ function renderDeviceList() {
     return;
   }
 
-  // Ordena: atual primeiro, depois por lastSeen desc
+  const ICONS = {
+    mobile: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
+    tablet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
+    desktop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`,
+    pwa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
+  };
+
   list.sort((a, b) => {
     if (a.id === currentId) return -1;
     if (b.id === currentId) return 1;
@@ -1089,18 +1105,19 @@ function renderDeviceList() {
 
   el.innerHTML = list.map(dev => {
     const isCurrent = dev.id === currentId;
-    const typeLabel = dev.deviceType === 'mobile' ? 'Celular' : dev.deviceType === 'tablet' ? 'Tablet' : 'Desktop';
+    const typeKey   = dev.deviceType === 'mobile' ? 'mobile' : dev.deviceType === 'tablet' ? 'tablet' : 'desktop';
+    const typeLabel = typeKey === 'mobile' ? 'Celular' : typeKey === 'tablet' ? 'Tablet' : 'Desktop';
+    const icon      = dev.isPWA ? ICONS.pwa : ICONS[typeKey];
     const pwaBadge  = dev.isPWA ? '<span class="device-tag pwa">PWA</span>' : '';
     const curBadge  = isCurrent ? '<span class="device-tag current">Este dispositivo</span>' : '';
     return `
       <div class="device-card ${isCurrent ? 'is-current' : ''}">
-        <div class="device-emoji">${dev.emoji || '💻'}</div>
+        <div class="device-icon-wrap">${icon}</div>
         <div class="device-info">
           <div class="device-name">${escHtml(dev.name || 'Desconhecido')}</div>
           <div class="device-meta">
             <span class="device-tag">${escHtml(typeLabel)}</span>
-            ${pwaBadge}
-            ${curBadge}
+            ${pwaBadge}${curBadge}
           </div>
         </div>
         <div class="device-lastseen">${timeAgo(dev.lastSeen)}</div>
