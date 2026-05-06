@@ -2193,54 +2193,63 @@
       }
     }
 
-    // ── SYNC: PULL + MERGE + PUSH (operação completa) ──
 // ── SYNC: PULL + MERGE + PUSH (operação completa) ──
-    async function fullSync(silent = false, background = false) {
-      const token = getToken(), gistId = getGistId();
-      if (!token || isSyncing || !navigator.onLine) return;
+async function fullSync(silent = false, background = false) {
+  const token = getToken(), gistId = getGistId();
+  if (!token || isSyncing || !navigator.onLine) return;
 
-      isSyncing = true;
-      if (!background) setSyncUI('ing', 'Sincronizando...');
+  isSyncing = true;
+  if (!background) setSyncUI('ing', 'Sincronizando...');
 
-      try {
-        let needsPush = localStorage.getItem('anime_pending_sync') === 'true';
+  try {
+    let needsPush = localStorage.getItem('anime_pending_sync') === 'true';
 
-        if (gistId) {
-          const remote = await pullFromGist(token, gistId);
+    if (gistId) {
+      const remote = await pullFromGist(token, gistId);
 
-          if (!remote) {
-            await pushToGist(true, background);
-            setSyncUI('ok', 'Sincronizado');
-            return;
-          }
-
-          if (remote.devices) mergeDeviceRegistry(remote.devices);
-          checkDeviceConflict(remote.devices);
-
-          if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
-            const merged = smartMerge(animes, remote.animes || []);
-            const changed = JSON.stringify(merged) !== JSON.stringify(animes);
-            if (changed) {
-              animes = merged;
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-              renderAll();
-              if (!silent) showToast('☁ Atualizado com dados remotos!');
-            }
-            lastKnownSavedAt = remote.savedAt;
-            localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
-            if (needsPush || changed) needsPush = true;
-          }
+      // 304 → nada mudou remotamente
+      if (!remote) {
+        if (needsPush) {
+          await pushToGist(true, background);
+        } else {
+          setSyncUI('ok', 'Sincronizado'); // ← sem push, só atualiza o ícone
         }
-
-        await pushToGist(true, background);
-        setSyncUI('ok', 'Sincronizado');
-      } catch (e) {
-        if (!background) setSyncUI('err', 'Erro de sync');
-        console.error('Sync error:', e);
-      } finally {
-        isSyncing = false;
+        return;
       }
+
+      if (remote.devices) mergeDeviceRegistry(remote.devices);
+      checkDeviceConflict(remote.devices);
+
+      if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
+        const merged = smartMerge(animes, remote.animes || []);
+        const changed = JSON.stringify(merged) !== JSON.stringify(animes);
+        if (changed) {
+          animes = merged;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+          renderAll();
+          if (!silent) showToast('☁ Atualizado com dados remotos!');
+          needsPush = true; // merge gerou dados novos → precisa reenviar
+        }
+        lastKnownSavedAt = remote.savedAt;
+        localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+      }
+    } else {
+      // Primeiro uso: sem gistId ainda, sempre precisa criar
+      needsPush = true;
     }
+
+    if (needsPush) {
+      await pushToGist(true, background);
+    } else {
+      setSyncUI('ok', 'Sincronizado'); // ← abre o app 100x = 0 writes
+    }
+  } catch (e) {
+    if (!background) setSyncUI('err', 'Erro de sync');
+    console.error('Sync error:', e);
+  } finally {
+    isSyncing = false;
+  }
+}
 
     // ── SYNC AGENDADO (debounce após edição) ──
 // ── SYNC AGENDADO (debounce após edição) ──
@@ -2252,49 +2261,46 @@
     }
 
     // ── POLL: checar atualizações em background ──
-// ── POLL: checar atualizações em background ──
-    async function silentPoll() {
-      if (
-        document.getElementById('modalBackdrop').classList.contains('visible') ||
-        document.getElementById('settingsBackdrop').classList.contains('visible')
-      ) return;
+async function silentPoll() {
+  if (
+    document.getElementById('modalBackdrop').classList.contains('visible') ||
+    document.getElementById('settingsBackdrop').classList.contains('visible')
+  ) return;
 
-      const token = getToken(), gistId = getGistId();
-      if (!token || !gistId || !navigator.onLine || isSyncing) return;
+  const token = getToken(), gistId = getGistId();
+  if (!token || !gistId || !navigator.onLine || isSyncing) return;
 
-      if (localStorage.getItem('anime_pending_sync') === 'true') {
-        // Avisa que é background (passa true no segundo parâmetro)
-        await fullSync(true, true);
-        return;
+  if (localStorage.getItem('anime_pending_sync') === 'true') {
+    await fullSync(true, true);
+    return;
+  }
+
+  try {
+    const remote = await pullFromGist(token, gistId);
+    if (!remote) return; // 304 → nada mudou, zero writes
+
+    if (remote.devices) mergeDeviceRegistry(remote.devices);
+
+    if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
+      const merged = smartMerge(animes, remote.animes || []);
+      const changed = JSON.stringify(merged) !== JSON.stringify(animes);
+
+      if (changed) {
+        animes = merged;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+        renderAll();
+        showToast('☁ Atualizado em tempo real!');
       }
 
-      try {
-        const remote = await pullFromGist(token, gistId);
+      lastKnownSavedAt = remote.savedAt;
+      localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+      setSyncUI('ok', 'Sincronizado');
 
-        if (!remote) return;
-
-        if (remote.devices) mergeDeviceRegistry(remote.devices);
-
-        if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
-          const merged = smartMerge(animes, remote.animes || []);
-          const changed = JSON.stringify(merged) !== JSON.stringify(animes);
-
-          if (changed) {
-            animes = merged;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-            renderAll();
-            showToast('☁ Atualizado em tempo real!');
-          }
-
-          lastKnownSavedAt = remote.savedAt;
-          localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
-          setSyncUI('ok', 'Sincronizado');
-
-          // Avisa que é background para não girar o ícone
-          await pushToGist(true, true);
-        }
-      } catch (e) { /* silencioso */ }
+      // Só faz push se o merge trouxe dados novos (para atualizar o devices no Gist)
+      if (changed) await pushToGist(true, true);
     }
+  } catch (e) { /* silencioso */ }
+}
 
     function startPolling() {
       silentPoll();
