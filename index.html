@@ -99,7 +99,6 @@ main::-webkit-scrollbar { display: none; }
 .anime-card.status-acompanhando:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(64,224,160,0.2); }
 .anime-card.status-assistir { border-color: rgba(64,128,224,0.25); } .anime-card.status-esperando { border-color: rgba(240,192,64,0.4); } .anime-card.status-concluido { opacity: 0.65; } .anime-card.status-concluido:hover { opacity: 0.9; } .anime-card.status-dropado { opacity: 0.5; border-color: rgba(224,64,96,0.35); }
 
-/* CAPA AGORA É CLICÁVEL PARA EDITAR */
 .card-cover { position: relative; width: 100%; padding-top: 140%; overflow: hidden; background: var(--surface2); cursor: pointer; }
 .card-cover::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0); transition: var(--transition); z-index: 10; pointer-events: none; }
 .card-cover:hover::after { background: rgba(255,255,255,0.05); }
@@ -213,6 +212,27 @@ main::-webkit-scrollbar { display: none; }
 .danger-zone-text { font-size: 12px; color: var(--text-muted); } .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; }
 .btn-danger { background: rgba(224,64,96,0.15); color: var(--red); border: 1px solid rgba(224,64,96,0.3); white-space: nowrap; flex-shrink: 0; } .btn-danger:hover { background: var(--red); color: #fff; }
 
+/* ── DEVICE CARDS ── */
+.devices-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+.device-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-radius: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  transition: var(--transition);
+}
+.device-card.is-current {
+  background: var(--green-dim); border-color: rgba(64,224,160,0.3);
+}
+.device-emoji { font-size: 22px; flex-shrink: 0; line-height: 1; }
+.device-info { flex: 1; min-width: 0; }
+.device-name { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.device-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.device-tag { padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 700; background: var(--surface3); color: var(--text-muted); }
+.device-tag.pwa { background: rgba(160,64,224,0.15); color: #c080ff; }
+.device-tag.current { background: rgba(64,224,160,0.15); color: var(--green); }
+.device-lastseen { font-size: 10px; color: var(--text-muted); opacity: 0.6; margin-left: auto; flex-shrink: 0; }
+.devices-empty { font-size: 12px; color: var(--text-muted); text-align: center; padding: 16px; opacity: 0.5; }
+
 .mobile-bottom-bar { display: none; }
 
 /* ── MOBILE OVERHAUL ── */
@@ -228,17 +248,11 @@ main::-webkit-scrollbar { display: none; }
     .cards-grid { grid-template-columns: 1fr; gap: 14px; }
     .anime-card { display: flex; align-items: stretch; }
     
-    /* Aumentado o espaço da imagem agora que não temos os botões */
     .card-cover { width: 145px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
-
-    /* Organizando o espaço recém libertado */
     .card-body { flex: 1; padding: 11px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
     .card-title { font-size: 15px; margin-bottom: 12px; min-height: auto; text-align: center; }
-
     .card-counters { gap: 10px; }
     .counter-label { font-size: 11px; width: 22px; }
-    
-    /* Inputs e botões consideravelmente maiores para facilitar o toque */
     .counter-btn { width: 34px; height: 34px; font-size: 20px; }
     .counter-input { height: 40px; font-size: 15px; }
     .status-select { height: 42px; font-size: 13px; }
@@ -298,7 +312,6 @@ main::-webkit-scrollbar { display: none; }
   <svg class="search-icon" viewBox="0 0 24 24">
     <path d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
   </svg>
-
   <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar anime..." oninput="filterAnimes()">
 </div>
 
@@ -361,7 +374,7 @@ main::-webkit-scrollbar { display: none; }
     
     <div class="form-row">
       <div class="form-group"><label class="form-label">Capítulo (manga)</label><input type="number" class="form-input" id="inputChapter" placeholder="Opcional" min="0"></div>
-      <div class="form-group"><label class="form-label">Status inicial</label><select class="form-input status-select" id="inputStatus"><option value="assistir"><span class="stat-dot dot-assistir"></span> Backlog</option><option value="acompanhando">🟢 Acompanhando</option><option value="esperando"><span class="stat-dot dot-esperando"></span> Esperando</option><option value="concluido"><span class="stat-dot dot-concluido"></span> Concluído</option><option value="dropado"><span class="stat-dot dot-dropado"></span> Dropado</option></select></div>
+      <div class="form-group"><label class="form-label">Status inicial</label><select class="form-input status-select" id="inputStatus"><option value="assistir">🔵 Backlog</option><option value="acompanhando">🟢 Acompanhando</option><option value="esperando">🟡 Esperando</option><option value="concluido">⚫ Concluído</option><option value="dropado">🔴 Dropado</option></select></div>
     </div>
     
     <div class="modal-footer">
@@ -382,6 +395,12 @@ main::-webkit-scrollbar { display: none; }
     <div id="gistStatusBox" class="gist-status-box disconnected">
       <span id="gistStatusIcon">○</span>
       <span id="gistStatusText">Não configurado</span>
+    </div>
+
+    <!-- PAINEL DE DISPOSITIVOS (visível só quando conectado) -->
+    <div class="settings-section" id="devicesSection" style="display:none">
+      <div class="settings-section-title">📱 Dispositivos Sincronizados</div>
+      <div class="devices-list" id="devicesList"></div>
     </div>
 
     <div class="settings-section">
@@ -421,46 +440,129 @@ main::-webkit-scrollbar { display: none; }
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-// ── INICIALIZAÇÃO AGRESSIVA DO SERVICE WORKER (AUTO-UPDATE APP) ──
+// ── SERVICE WORKER ──
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
       const reg = await navigator.serviceWorker.register('sw.js');
-      
-      // Força a checagem de novo SW sempre que a tela voltar a ficar visível
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          reg.update();
-        }
+        if (document.visibilityState === 'visible') reg.update();
       });
-
       reg.onupdatefound = () => {
-        const installingWorker = reg.installing;
-        installingWorker.onstatechange = () => {
-          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            installingWorker.postMessage({ type: 'SKIP_WAITING' });
+        const w = reg.installing;
+        w.onstatechange = () => {
+          if (w.state === 'installed' && navigator.serviceWorker.controller) {
+            w.postMessage({ type: 'SKIP_WAITING' });
           }
         };
       };
-    } catch (e) { console.log("SW falhou:", e); }
-
+    } catch (e) { console.log('SW falhou:', e); }
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) {
-        refreshing = true;
-        window.location.reload();
-      }
+      if (!refreshing) { refreshing = true; window.location.reload(); }
     });
   });
 }
 
-const STORAGE_KEY = 'anime_backlog_v2';
-let animes = [];
+// ── CONSTANTES & ESTADO GLOBAL ──
+const STORAGE_KEY      = 'anime_backlog_v2';
+const GIST_TOKEN_KEY   = 'anime_gist_token';
+const GIST_ID_KEY      = 'anime_gist_id';
+const GIST_FILENAME    = 'anime-backlog.json';
+const DEVICE_ID_KEY    = 'anime_device_id';
+const DEVICES_KEY      = 'anime_devices';
+const LAST_SAVED_KEY   = 'anime_gist_last_saved_at';
+const POLL_INTERVAL    = 15000; // ms
+
+let animes        = [];
 let nameInputTimer = null;
 let fetchedImageUrl = '';
-let activeTab = 'acompanhando';
-let editingId = null;
+let activeTab     = 'acompanhando';
+let editingId     = null;
+let isSyncing     = false;
+let syncTimer     = null;
+let pollTimer     = null;
+let lastKnownSavedAt = localStorage.getItem(LAST_SAVED_KEY) || '';
 
+// ── DEVICE IDENTITY ──
+function getDeviceId() {
+  let id = localStorage.getItem(DEVICE_ID_KEY);
+  if (!id) { id = 'dev_' + genId(); localStorage.setItem(DEVICE_ID_KEY, id); }
+  return id;
+}
+
+function getDeviceInfo() {
+  const ua = navigator.userAgent;
+  let browser = 'Navegador', os = 'Sistema', deviceType = 'desktop', emoji = '💻';
+
+  if (/Firefox\/[\d.]+/.test(ua))         browser = 'Firefox';
+  else if (/Edg\/[\d.]+/.test(ua))        browser = 'Edge';
+  else if (/OPR\/|Opera\//.test(ua))      browser = 'Opera';
+  else if (/Chrome\/[\d.]+/.test(ua))     browser = 'Chrome';
+  else if (/Version\/[\d.]+ Safari/.test(ua)) browser = 'Safari';
+
+  if (/Windows NT/.test(ua))              os = 'Windows';
+  else if (/Macintosh/.test(ua))          os = 'macOS';
+  else if (/Android/.test(ua))           { os = 'Android'; deviceType = 'mobile'; emoji = '📱'; }
+  else if (/iPhone/.test(ua))            { os = 'iPhone';  deviceType = 'mobile'; emoji = '📱'; }
+  else if (/iPad/.test(ua))              { os = 'iPad';    deviceType = 'tablet'; emoji = '📱'; }
+  else if (/Linux/.test(ua))              os = 'Linux';
+
+  const isPWA = !!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone);
+  if (isPWA) emoji = '📲';
+
+  return {
+    id: getDeviceId(),
+    name: `${browser} · ${os}`,
+    browser, os, deviceType, emoji, isPWA,
+    lastSeen: new Date().toISOString()
+  };
+}
+
+// ── DEVICE REGISTRY (lista de dispositivos conhecidos) ──
+function loadDeviceRegistry() {
+  try { return JSON.parse(localStorage.getItem(DEVICES_KEY) || '[]'); } catch { return []; }
+}
+function saveDeviceRegistry(list) {
+  localStorage.setItem(DEVICES_KEY, JSON.stringify(list));
+}
+function registerCurrentDevice() {
+  const info  = getDeviceInfo();
+  const list  = loadDeviceRegistry();
+  const idx   = list.findIndex(d => d.id === info.id);
+  if (idx >= 0) list[idx] = info; else list.push(info);
+  saveDeviceRegistry(list);
+  return list;
+}
+function mergeDeviceRegistry(remoteDevices) {
+  if (!Array.isArray(remoteDevices)) return;
+  const local   = loadDeviceRegistry();
+  const map     = Object.fromEntries(local.map(d => [d.id, d]));
+  remoteDevices.forEach(rd => {
+    const ld = map[rd.id];
+    if (!ld || new Date(rd.lastSeen) > new Date(ld.lastSeen)) map[rd.id] = rd;
+  });
+  // Sempre atualiza o dispositivo atual com hora real
+  const current = getDeviceInfo();
+  map[current.id] = current;
+  const merged = Object.values(map).sort((a,b) => new Date(b.lastSeen) - new Date(a.lastSeen));
+  saveDeviceRegistry(merged);
+}
+
+// ── HELPERS DE TEMPO ──
+function timeAgo(iso) {
+  if (!iso) return 'nunca';
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1)  return 'agora mesmo';
+  if (m < 60) return `${m} min atrás`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h atrás`;
+  const d = Math.floor(h / 24);
+  return `${d}d atrás`;
+}
+
+// ── STATUS MAP ──
 const STATUS_MAP = {
   acompanhando: { label: 'Acompanhando', emoji: '🟢', badge: 'badge-acompanhando' },
   assistir:     { label: 'Backlog',       emoji: '🔵', badge: 'badge-assistir' },
@@ -470,9 +572,37 @@ const STATUS_MAP = {
 };
 const TABS_ORDER = ['acompanhando', 'assistir', 'esperando', 'concluido', 'dropado'];
 
-function loadData() { try { const raw = localStorage.getItem(STORAGE_KEY); animes = raw ? JSON.parse(raw) : []; } catch { animes = []; } }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); localStorage.setItem('anime_pending_sync', 'true'); scheduleGistSync(); }
+// ── STORAGE LOCAL ──
+function loadData() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); animes = raw ? JSON.parse(raw) : []; }
+  catch { animes = []; }
+}
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+  localStorage.setItem('anime_pending_sync', 'true');
+  scheduleGistSync();
+}
 
+// ── SMART MERGE: resolve conflitos por anime usando updatedAt ──
+function smartMerge(localList, remoteList) {
+  const map = new Map();
+  // Baseline com animes locais
+  localList.forEach(a => map.set(a.id, a));
+  // Para cada remote, ganha quem tem updatedAt mais recente
+  remoteList.forEach(remote => {
+    const local = map.get(remote.id);
+    if (!local) {
+      map.set(remote.id, remote);
+    } else {
+      const lt = new Date(local.updatedAt  || local.addedAt  || 0).getTime();
+      const rt = new Date(remote.updatedAt || remote.addedAt || 0).getTime();
+      if (rt > lt) map.set(remote.id, remote);
+    }
+  });
+  return Array.from(map.values());
+}
+
+// ── FILTRO / RENDER ──
 function filterAnimes() {
   const query = document.getElementById('searchInput').value.toLowerCase();
   const displayType = window.innerWidth <= 600 ? 'flex' : 'block';
@@ -482,28 +612,29 @@ function filterAnimes() {
   });
 }
 
-const swipeArea = document.getElementById('swipeArea');
+const swipeArea   = document.getElementById('swipeArea');
 const tabObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       const tabName = entry.target.id.replace('tab-', '');
       activeTab = tabName;
       document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active'));
-      const activePill = document.querySelector(`[data-tab="${tabName}"]`);
-      if (activePill) { activePill.classList.add('active'); activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+      const pill = document.querySelector(`[data-tab="${tabName}"]`);
+      if (pill) { pill.classList.add('active'); pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
     }
   });
 }, { threshold: 0.6 });
 
 function switchTab(tab, el) {
-  activeTab = tab; document.getElementById('searchInput').value = ''; filterAnimes();
-  const targetTab = document.getElementById('tab-' + tab);
-  targetTab.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+  activeTab = tab;
+  document.getElementById('searchInput').value = '';
+  filterAnimes();
+  document.getElementById('tab-' + tab).scrollIntoView({ behavior: 'smooth', inline: 'center' });
 }
 
 function renderAll() {
   TABS_ORDER.forEach(tab => {
-    const grid = document.getElementById('grid-' + tab);
+    const grid  = document.getElementById('grid-' + tab);
     const items = animes.filter(a => a.status === tab);
     document.getElementById('count-' + tab).textContent = items.length;
     grid.innerHTML = '';
@@ -517,38 +648,32 @@ function renderAll() {
   filterAnimes();
 }
 
-function getEmptyIcon(tab) { return { acompanhando:'🎌', assistir:'📚', esperando:'🌸', concluido:'🏆', dropado:'💔' }[tab]; }
-function getEmptyTitle(tab) { return { acompanhando:'Nenhum anime aqui', assistir:'Backlog vazio', esperando:'Nenhum em espera', concluido:'Nenhum concluído ainda', dropado:'Nenhum dropado' }[tab]; }
-function getEmptySub(tab) { return { acompanhando:'Adicione um anime que está assistindo agora.', assistir:'Adicione animes que quer assistir no futuro.', esperando:'Animes aguardando nova temporada aparecem aqui.', concluido:'Seus animes finalizados aparecem aqui.', dropado:'Animes que você desistiu aparecem aqui.' }[tab]; }
+function getEmptyIcon(t)  { return { acompanhando:'🎌', assistir:'📚', esperando:'🌸', concluido:'🏆', dropado:'💔' }[t]; }
+function getEmptyTitle(t) { return { acompanhando:'Nenhum anime aqui', assistir:'Backlog vazio', esperando:'Nenhum em espera', concluido:'Nenhum concluído ainda', dropado:'Nenhum dropado' }[t]; }
+function getEmptySub(t)   { return { acompanhando:'Adicione um anime que está assistindo agora.', assistir:'Adicione animes que quer assistir no futuro.', esperando:'Animes aguardando nova temporada aparecem aqui.', concluido:'Seus animes finalizados aparecem aqui.', dropado:'Animes que você desistiu aparecem aqui.' }[t]; }
 
 function buildCard(anime) {
   const card = document.createElement('div');
   card.className = `anime-card status-${anime.status}`;
   card.id = 'card-' + anime.id;
-
   const sInfo = STATUS_MAP[anime.status];
-  const hasManga = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
-  const hasSeason = anime.season !== null && anime.season !== undefined && anime.season !== '';
-
+  const hasManga  = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
+  const hasSeason = anime.season  !== null && anime.season  !== undefined && anime.season  !== '';
   const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onload="this.style.display='';this.nextElementSibling.style.display='none'">` : '';
   const placeholderStyle = anime.image ? 'style="display:none"' : '';
   const concludedBar = anime.status === 'concluido' && anime.concludedAt ? `<div class="concluded-overlay">✅ ${formatDate(anime.concludedAt)}</div>` : '';
-
-  const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
-  const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
-
+  const seasonRow  = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
+  const chapterRow = hasManga  ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
   card.innerHTML = `
     <div class="card-cover" onclick="openModal('${anime.id}')" title="Clique para editar">
       ${coverHTML}
       <div class="card-cover-placeholder" ${placeholderStyle}>🎌</div>
       ${concludedBar}
     </div>
-    
     <div class="status-badge ${sInfo.badge}">${sInfo.emoji} ${sInfo.label}</div>
-    
     <div class="card-body">
       <div class="card-title">${escHtml(anime.title)}</div>
-            <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
+      <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
         ${Object.entries(STATUS_MAP).map(([k,v]) => `<option value="${k}" ${k===anime.status?'selected':''}>${v.emoji} ${v.label}</option>`).join('')}
       </select>
       <div class="card-counters">
@@ -565,323 +690,602 @@ function buildCard(anime) {
   return card;
 }
 
-function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function formatDate(iso) { if (!iso) return ''; const d = new Date(iso); return d.toLocaleDateString('pt-BR'); }
-function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function escHtml(str)  { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(iso) { if (!iso) return ''; return new Date(iso).toLocaleDateString('pt-BR'); }
+function genId()       { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function now()         { return new Date().toISOString(); }
+
+// ── CRUD ──
+function touchAnime(anime) { anime.updatedAt = now(); }
 
 function saveAnime() {
-  const name = document.getElementById('inputName').value.trim(); if (!name) return showToast('⚠️ Digite o nome do anime!', 'warning');
-  const epVal = document.getElementById('inputEpisode').value, chVal = document.getElementById('inputChapter').value, seVal = document.getElementById('inputSeason').value;
-  const status = document.getElementById('inputStatus').value, imageUrl = document.getElementById('inputImage').value.trim() || fetchedImageUrl || '';
+  const name = document.getElementById('inputName').value.trim();
+  if (!name) return showToast('⚠️ Digite o nome do anime!', 'warning');
+  const epVal  = document.getElementById('inputEpisode').value;
+  const chVal  = document.getElementById('inputChapter').value;
+  const seVal  = document.getElementById('inputSeason').value;
+  const status = document.getElementById('inputStatus').value;
+  const imgUrl = document.getElementById('inputImage').value.trim() || fetchedImageUrl || '';
 
   if (editingId) {
     const anime = animes.find(a => a.id === editingId); if (!anime) return;
-    anime.title = name; anime.image = imageUrl; anime.season = seVal !== '' ? parseInt(seVal) : null; anime.episode = epVal !== '' ? parseInt(epVal) : 1; anime.chapter = chVal !== '' ? parseInt(chVal) : null;
-    if (status === 'concluido' && !anime.concludedAt) anime.concludedAt = new Date().toISOString();
+    anime.title   = name; anime.image   = imgUrl;
+    anime.season  = seVal !== '' ? parseInt(seVal) : null;
+    anime.episode = epVal !== '' ? parseInt(epVal) : 1;
+    anime.chapter = chVal !== '' ? parseInt(chVal) : null;
+    if (status === 'concluido' && !anime.concludedAt) anime.concludedAt = now();
     if (status !== 'concluido') anime.concludedAt = null;
-    anime.status = status; showToast(`✏️ ${name} atualizado!`);
+    anime.status  = status;
+    touchAnime(anime);
+    showToast(`✏️ ${name} atualizado!`);
   } else {
-    animes.push({ id: genId(), title: name, image: imageUrl, season: seVal !== '' ? parseInt(seVal) : null, episode: epVal !== '' ? parseInt(epVal) : 1, chapter: chVal !== '' ? parseInt(chVal) : null, status: status, concludedAt: status === 'concluido' ? new Date().toISOString() : null, addedAt: new Date().toISOString() });
+    const ts = now();
+    animes.push({ id: genId(), title: name, image: imgUrl,
+      season:  seVal !== '' ? parseInt(seVal) : null,
+      episode: epVal !== '' ? parseInt(epVal) : 1,
+      chapter: chVal !== '' ? parseInt(chVal) : null,
+      status, concludedAt: status === 'concluido' ? ts : null,
+      addedAt: ts, updatedAt: ts });
     showToast(`✨ ${name} adicionado!`);
   }
-  saveData(); renderAll(); closeModal(); switchTab(status, document.querySelector(`[data-tab="${status}"]`));
+  saveData(); renderAll(); closeModal();
+  switchTab(status, document.querySelector(`[data-tab="${status}"]`));
 }
 
-function deleteAnime(id) { 
-  const idx = animes.findIndex(a => a.id === id); 
-  if (idx === -1) return false; 
-  if(confirm("Tem certeza que deseja excluir?")) { 
-    const name = animes[idx].title; 
-    animes.splice(idx, 1); 
-    saveData(); renderAll(); 
-    showToast(`🗑 ${name} removido.`); 
+function deleteAnime(id) {
+  const idx = animes.findIndex(a => a.id === id);
+  if (idx === -1) return false;
+  if (confirm('Tem certeza que deseja excluir?')) {
+    const name = animes[idx].title;
+    animes.splice(idx, 1);
+    saveData(); renderAll();
+    showToast(`🗑 ${name} removido.`);
     return true;
   }
   return false;
 }
-
 function deleteAnimeFromModal() { if (editingId && deleteAnime(editingId)) closeModal(); }
-function updateField(id, field, val) { const anime = animes.find(a => a.id === id); if (!anime) return; const num = parseInt(val); const min = field === 'season' ? 1 : 0; anime[field] = isNaN(num) ? min : Math.max(min, num); saveData(); const card = document.getElementById('card-' + id); if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field]; }
-function changeValue(id, field, delta) { const anime = animes.find(a => a.id === id); if (!anime) return; const min = field === 'season' ? 1 : 0; const cur = parseInt(anime[field]) || min; anime[field] = Math.max(min, cur + delta); saveData(); const card = document.getElementById('card-' + id); if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field]; }
-function updateStatus(id, newStatus) { const anime = animes.find(a => a.id === id); if (!anime) return; anime.status = newStatus; if (newStatus === 'concluido' && !anime.concludedAt) anime.concludedAt = new Date().toISOString(); if (newStatus !== 'concluido') anime.concludedAt = null; saveData(); renderAll(); switchTab(newStatus, document.querySelector(`[data-tab="${newStatus}"]`)); showToast(`Status atualizado!`); }
 
-function setFetchStatus(type, msg) {
-  const el = document.getElementById('fetchStatus'); el.className = 'fetch-status ' + type;
-  if (type === 'loading') { el.innerHTML = `<div class="spinner"></div> ${msg}`; } else { el.textContent = msg; }
+function updateField(id, field, val) {
+  const anime = animes.find(a => a.id === id); if (!anime) return;
+  const num = parseInt(val), min = field === 'season' ? 1 : 0;
+  anime[field] = isNaN(num) ? min : Math.max(min, num);
+  touchAnime(anime); saveData();
+  const card = document.getElementById('card-' + id);
+  if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field];
+}
+function changeValue(id, field, delta) {
+  const anime = animes.find(a => a.id === id); if (!anime) return;
+  const min = field === 'season' ? 1 : 0;
+  const cur = parseInt(anime[field]) || min;
+  anime[field] = Math.max(min, cur + delta);
+  touchAnime(anime); saveData();
+  const card = document.getElementById('card-' + id);
+  if (card) card.querySelector(`[data-field="${field}"]`).value = anime[field];
+}
+function updateStatus(id, newStatus) {
+  const anime = animes.find(a => a.id === id); if (!anime) return;
+  anime.status = newStatus;
+  if (newStatus === 'concluido' && !anime.concludedAt) anime.concludedAt = now();
+  if (newStatus !== 'concluido') anime.concludedAt = null;
+  touchAnime(anime); saveData(); renderAll();
+  switchTab(newStatus, document.querySelector(`[data-tab="${newStatus}"]`));
+  showToast('Status atualizado!');
 }
 
+// ── SYNC: PAYLAOD ──
+function buildGistPayload() {
+  const devices = registerCurrentDevice();
+  return JSON.stringify({ animes, savedAt: now(), savedBy: getDeviceId(), devices }, null, 2);
+}
+
+// ── SYNC: PULL ──
+async function pullFromGist(token, gistId) {
+  const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+    headers: { Authorization: `token ${token}` }
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const content = data.files?.[GIST_FILENAME]?.content;
+  if (!content) throw new Error('Arquivo não encontrado no Gist');
+  return JSON.parse(content);
+}
+
+// ── SYNC: PUSH ──
+async function pushToGist(silent = false) {
+  const token = getToken(), gistId = getGistId();
+  if (!token) return;
+  if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
+
+  setSyncUI('ing', 'Enviando...');
+  const payload = buildGistPayload();
+
+  try {
+    let res;
+    if (gistId) {
+      res = await fetch(`https://api.github.com/gists/${gistId}`, {
+        method: 'PATCH',
+        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: { [GIST_FILENAME]: { content: payload } } })
+      });
+    } else {
+      res = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: 'Anime Backlog', public: false, files: { [GIST_FILENAME]: { content: payload } } })
+      });
+    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!gistId) { localStorage.setItem(GIST_ID_KEY, data.id); if (!silent) showToast('☁ Gist criado!'); }
+
+    // Extrai o savedAt que foi enviado para manter em sincronia
+    const sent = JSON.parse(payload);
+    lastKnownSavedAt = sent.savedAt;
+    localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+    localStorage.removeItem('anime_pending_sync');
+    setSyncUI('ok', 'Sincronizado');
+  } catch (e) {
+    setSyncUI('err', 'Erro no envio');
+    if (!silent) showToast('⚠ Erro ao enviar para o Gist', 'error');
+    throw e;
+  }
+}
+
+// ── SYNC: PULL + MERGE + PUSH (operação completa) ──
+async function fullSync(silent = false) {
+  const token = getToken(), gistId = getGistId();
+  if (!token || isSyncing || !navigator.onLine) return;
+
+  isSyncing = true;
+  setSyncUI('ing', 'Sincronizando...');
+
+  try {
+    let needsPush = localStorage.getItem('anime_pending_sync') === 'true';
+
+    if (gistId) {
+      const remote = await pullFromGist(token, gistId);
+
+      // Merge device registries
+      if (remote.devices) mergeDeviceRegistry(remote.devices);
+
+      // Só faz merge se o remoto tem dados mais recentes
+      if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
+        const merged = smartMerge(animes, remote.animes || []);
+        const changed = JSON.stringify(merged) !== JSON.stringify(animes);
+
+        if (changed) {
+          animes = merged;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+          renderAll();
+          if (!silent) showToast('☁ Atualizado com dados remotos!');
+        }
+
+        lastKnownSavedAt = remote.savedAt;
+        localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+
+        // Se houve merge com mudanças locais pendentes, precisamos subir o resultado
+        if (needsPush || changed) needsPush = true;
+      }
+    }
+
+    // Sempre faz push para atualizar lastSeen do dispositivo e possível merge
+    await pushToGist(true);
+    setSyncUI('ok', 'Sincronizado');
+
+  } catch (e) {
+    setSyncUI('err', 'Erro de sync');
+    console.error('Sync error:', e);
+  } finally {
+    isSyncing = false;
+  }
+}
+
+// ── SYNC AGENDADO (debounce após edição) ──
+function scheduleGistSync() {
+  if (!getToken()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => fullSync(true), 1500);
+}
+
+// ── POLL: checar atualizações em background ──
+async function silentPoll() {
+  // Pausa se modal aberto (usuário digitando)
+  if (document.getElementById('modalBackdrop').classList.contains('visible') ||
+      document.getElementById('settingsBackdrop').classList.contains('visible')) return;
+
+  const token = getToken(), gistId = getGistId();
+  if (!token || !gistId || !navigator.onLine || isSyncing) return;
+
+  // Se temos dados locais pendentes, prefere subir do que só checar
+  if (localStorage.getItem('anime_pending_sync') === 'true') {
+    await fullSync(true);
+    return;
+  }
+
+  try {
+    const remote = await pullFromGist(token, gistId);
+    if (remote && remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
+      if (remote.devices) mergeDeviceRegistry(remote.devices);
+      const merged  = smartMerge(animes, remote.animes || []);
+      const changed = JSON.stringify(merged) !== JSON.stringify(animes);
+      if (changed) {
+        animes = merged;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+        renderAll();
+        showToast('☁ Atualizado em tempo real!');
+      }
+      lastKnownSavedAt = remote.savedAt;
+      localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+      setSyncUI('ok', 'Sincronizado');
+      // Manda nosso dispositivo registrado no Gist
+      await pushToGist(true);
+    }
+  } catch (e) { /* silencioso */ }
+}
+
+function startPolling() {
+  silentPoll();
+  clearInterval(pollTimer);
+  pollTimer = setInterval(silentPoll, POLL_INTERVAL);
+}
+function stopPolling() { clearInterval(pollTimer); }
+
+function startSmartMonitor() {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') startPolling();
+    else stopPolling();
+  });
+  window.addEventListener('focus', startPolling);
+  window.addEventListener('blur', stopPolling);
+  if (document.visibilityState === 'visible') startPolling();
+}
+
+// ── RECONEXÃO ──
+window.addEventListener('online', async () => {
+  updateSettingsUI();
+  document.querySelectorAll('.anime-card img[data-src]').forEach(img => {
+    if (img.style.display === 'none') {
+      const src = img.getAttribute('data-src');
+      img.src = src + (src.includes('?') ? '&' : '?') + 't=' + Date.now();
+    }
+  });
+  setSyncUI('ing', 'Reconectando...');
+  await fullSync();
+  startPolling();
+});
+window.addEventListener('offline', () => {
+  updateSettingsUI();
+  stopPolling();
+  if (getToken()) setSyncUI('off', 'Offline (salvo local)');
+});
+
+// ── INIT GIST SYNC ──
+async function initGistSync() {
+  const token = getToken(), gistId = getGistId();
+  if (!token) return;
+  if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
+  await fullSync();
+}
+
+// ── CONNECT GIST ──
+async function connectGist() {
+  if (!navigator.onLine) return showToast('⚠️ Conecte-se à internet primeiro!', 'error');
+  const token = document.getElementById('inputToken').value.trim();
+  if (!token) return;
+
+  setGistFetchStatus('loading', 'Verificando token...');
+  try {
+    const meRes = await fetch('https://api.github.com/user', { headers: { Authorization: `token ${token}` } });
+    if (!meRes.ok) throw new Error('Token inválido');
+    localStorage.setItem(GIST_TOKEN_KEY, token);
+
+    let foundGistId = null;
+    setGistFetchStatus('loading', 'Buscando Gist existente...');
+    for (let page = 1; page <= 3; page++) {
+      const listRes = await fetch(`https://api.github.com/gists?page=${page}`, { headers: { Authorization: `token ${token}` } });
+      if (!listRes.ok) break;
+      const gists = await listRes.json();
+      const g = gists.find(x => x.files?.[GIST_FILENAME]);
+      if (g) { foundGistId = g.id; break; }
+      if (gists.length < 30) break;
+    }
+
+    if (foundGistId) {
+      localStorage.setItem(GIST_ID_KEY, foundGistId);
+      setGistFetchStatus('loading', 'Importando dados do Gist...');
+      const remote = await pullFromGist(token, foundGistId);
+      if (remote.devices) mergeDeviceRegistry(remote.devices);
+      if (Array.isArray(remote.animes)) {
+        const merged = smartMerge(animes, remote.animes);
+        animes = merged;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+        lastKnownSavedAt = remote.savedAt || '';
+        localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
+        renderAll();
+      }
+      showToast('☁ Conectado! Dados sincronizados.');
+    } else {
+      setGistFetchStatus('loading', 'Criando novo Gist...');
+      await pushToGist(true);
+      showToast('☁ Novo Gist criado!');
+    }
+
+    updateSettingsUI();
+    setGistFetchStatus('hidden', '');
+    closeSettings();
+    startPolling();
+  } catch (e) {
+    setGistFetchStatus('error', `❌ ${e.message}`);
+  }
+}
+
+function disconnectGist() {
+  localStorage.removeItem(GIST_TOKEN_KEY);
+  localStorage.removeItem(GIST_ID_KEY);
+  localStorage.removeItem('anime_pending_sync');
+  localStorage.removeItem(LAST_SAVED_KEY);
+  lastKnownSavedAt = '';
+  stopPolling();
+  setSyncUI('off', 'Sem sync');
+  updateSettingsUI();
+  closeSettings();
+  showToast('○ Desconectado do Gist.');
+}
+
+// ── SETTINGS UI ──
+function getToken()  { return localStorage.getItem(GIST_TOKEN_KEY) || ''; }
+function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
+
+function setSyncUI(state, label) {
+  const el = document.getElementById('syncIndicator');
+  const lb = document.getElementById('syncLabel');
+  el.className = 'sync-indicator sync-' + state;
+  lb.textContent = label;
+}
+
+function updateSettingsUI() {
+  const token   = getToken();
+  const box     = document.getElementById('gistStatusBox');
+  const danger  = document.getElementById('dangerZone');
+  const devsec  = document.getElementById('devicesSection');
+
+  if (token) {
+    box.className = 'gist-status-box connected';
+    document.getElementById('gistStatusIcon').textContent = '✓';
+    document.getElementById('gistStatusText').textContent = navigator.onLine ? 'Conectado' : 'Conectado (offline agora)';
+    danger.style.display = 'flex';
+    devsec.style.display = 'block';
+    document.getElementById('inputToken').value = '●●●●●●●●●●●●●●●●';
+    renderDeviceList();
+    setSyncUI(navigator.onLine ? 'ok' : 'off', navigator.onLine ? 'Sincronizado' : 'Offline');
+  } else {
+    box.className = 'gist-status-box disconnected';
+    document.getElementById('gistStatusIcon').textContent = '○';
+    document.getElementById('gistStatusText').textContent = 'Não configurado';
+    danger.style.display = 'none';
+    devsec.style.display = 'none';
+    document.getElementById('inputToken').value = '';
+    setSyncUI('off', 'Sem sync');
+  }
+}
+
+function renderDeviceList() {
+  const list      = loadDeviceRegistry();
+  const currentId = getDeviceId();
+  const el        = document.getElementById('devicesList');
+
+  if (list.length === 0) {
+    el.innerHTML = '<div class="devices-empty">Nenhum dispositivo registrado ainda.</div>';
+    return;
+  }
+
+  // Ordena: atual primeiro, depois por lastSeen desc
+  list.sort((a, b) => {
+    if (a.id === currentId) return -1;
+    if (b.id === currentId) return 1;
+    return new Date(b.lastSeen) - new Date(a.lastSeen);
+  });
+
+  el.innerHTML = list.map(dev => {
+    const isCurrent = dev.id === currentId;
+    const typeLabel = dev.deviceType === 'mobile' ? 'Celular' : dev.deviceType === 'tablet' ? 'Tablet' : 'Desktop';
+    const pwaBadge  = dev.isPWA ? '<span class="device-tag pwa">PWA</span>' : '';
+    const curBadge  = isCurrent ? '<span class="device-tag current">Este dispositivo</span>' : '';
+    return `
+      <div class="device-card ${isCurrent ? 'is-current' : ''}">
+        <div class="device-emoji">${dev.emoji || '💻'}</div>
+        <div class="device-info">
+          <div class="device-name">${escHtml(dev.name || 'Desconhecido')}</div>
+          <div class="device-meta">
+            <span class="device-tag">${escHtml(typeLabel)}</span>
+            ${pwaBadge}
+            ${curBadge}
+          </div>
+        </div>
+        <div class="device-lastseen">${timeAgo(dev.lastSeen)}</div>
+      </div>`;
+  }).join('');
+}
+
+function setGistFetchStatus(type, msg) {
+  const el = document.getElementById('gistFetchStatus');
+  el.className = 'fetch-status ' + type;
+  el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg;
+  if (type !== 'hidden') el.classList.remove('hidden');
+}
+
+// ── MODAIS ──
 function openModal(id = null) {
-  editingId = id; const isEdit = !!id; const anime = isEdit ? animes.find(a => a.id === id) : null;
-  document.getElementById('modalTitle').textContent = isEdit ? 'Editar Anime' : 'Novo Anime';
+  editingId     = id;
+  const isEdit  = !!id;
+  const anime   = isEdit ? animes.find(a => a.id === id) : null;
+  document.getElementById('modalTitle').textContent      = isEdit ? 'Editar Anime' : 'Novo Anime';
   document.getElementById('modalConfirmBtn').textContent = isEdit ? 'Salvar' : 'Adicionar';
   document.getElementById('modalDeleteBtn').style.display = isEdit ? 'inline-flex' : 'none';
-  document.getElementById('inputName').value = anime?.title ?? ''; document.getElementById('inputSeason').value = anime?.season ?? ''; document.getElementById('inputEpisode').value = anime?.episode ?? ''; document.getElementById('inputChapter').value = anime?.chapter ?? ''; document.getElementById('inputImage').value = anime?.image ?? ''; document.getElementById('inputStatus').value = anime?.status ?? 'assistir';
-  fetchedImageUrl = ''; setFetchStatus('hidden', ''); const preview = document.getElementById('imgPreview');
-  if (anime?.image) { preview.src = anime.image; preview.classList.add('visible'); } else { preview.src = ''; preview.classList.remove('visible'); }
+  document.getElementById('inputName').value    = anime?.title   ?? '';
+  document.getElementById('inputSeason').value  = anime?.season  ?? '';
+  document.getElementById('inputEpisode').value = anime?.episode ?? '';
+  document.getElementById('inputChapter').value = anime?.chapter ?? '';
+  document.getElementById('inputImage').value   = anime?.image   ?? '';
+  document.getElementById('inputStatus').value  = anime?.status  ?? 'assistir';
+  fetchedImageUrl = '';
+  setFetchStatus('hidden', '');
+  const preview = document.getElementById('imgPreview');
+  if (anime?.image) { preview.src = anime.image; preview.classList.add('visible'); }
+  else { preview.src = ''; preview.classList.remove('visible'); }
   const backdrop = document.getElementById('modalBackdrop');
   backdrop.classList.add('open');
-  const modal = backdrop.querySelector('.modal'); modal.style.transform = ''; 
-  backdrop.classList.add('open'); void modal.offsetWidth; 
-  requestAnimationFrame(() => { backdrop.classList.add('visible'); });
+  requestAnimationFrame(() => backdrop.classList.add('visible'));
 }
 
 function closeModal() {
   const backdrop = document.getElementById('modalBackdrop');
   backdrop.classList.remove('visible');
   if (document.activeElement) document.activeElement.blur();
-  setTimeout(() => { backdrop.classList.remove('open'); const modal = backdrop.querySelector('.modal'); modal.style.transform = ''; editingId = null; }, 400);
+  setTimeout(() => { backdrop.classList.remove('open'); editingId = null; }, 400);
 }
 
-function openSettings() { updateSettingsUI(); setGistFetchStatus('hidden', ''); const backdrop = document.getElementById('settingsBackdrop'); backdrop.classList.add('open'); requestAnimationFrame(() => { backdrop.classList.add('visible'); }); }
-function closeSettings() { const backdrop = document.getElementById('settingsBackdrop'); backdrop.classList.remove('visible'); if (document.activeElement) document.activeElement.blur(); setTimeout(() => { backdrop.classList.remove('open'); const modal = backdrop.querySelector('.modal'); modal.style.transform = ''; }, 400); }
+function openSettings() {
+  updateSettingsUI();
+  setGistFetchStatus('hidden', '');
+  const backdrop = document.getElementById('settingsBackdrop');
+  backdrop.classList.add('open');
+  requestAnimationFrame(() => backdrop.classList.add('visible'));
+}
+function closeSettings() {
+  const backdrop = document.getElementById('settingsBackdrop');
+  backdrop.classList.remove('visible');
+  if (document.activeElement) document.activeElement.blur();
+  setTimeout(() => backdrop.classList.remove('open'), 400);
+}
+
 function handleBackdropClick(e) { if (e.target === document.getElementById('modalBackdrop')) closeModal(); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-function onNameInput() { clearTimeout(nameInputTimer); fetchedImageUrl = ''; const name = document.getElementById('inputName').value.trim(); if (!name) { setFetchStatus('hidden', ''); return; } nameInputTimer = setTimeout(() => searchAnimeImage(), 900); }
-async function searchAnimeImage() {
-  if(!navigator.onLine) return setFetchStatus('error', 'Sem internet para buscar capa.'); 
-  const name = document.getElementById('inputName').value.trim(); if (!name || document.getElementById('inputImage').value.trim() || editingId) return;
-  setFetchStatus('loading', 'Buscando capa...');
-  try { const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(name)}&limit=1&sfw`); const data = await res.json(); const item = data.data?.[0]; if (item && item.images?.jpg?.large_image_url) { fetchedImageUrl = item.images.jpg.large_image_url; setFetchStatus('success', `✓ Encontrado!`); document.getElementById('imgPreview').src = fetchedImageUrl; document.getElementById('imgPreview').classList.add('visible'); } else { setFetchStatus('error', 'Capa não encontrada.'); } } catch { setFetchStatus('error', 'Erro ao buscar.'); }
-}
-function onImageUrlInput() { const url = document.getElementById('inputImage').value.trim(); const p = document.getElementById('imgPreview'); if (url) { p.src = url; p.classList.add('visible'); fetchedImageUrl = ''; setFetchStatus('hidden', ''); } else { p.classList.remove('visible'); p.src = ''; } }
-
-// ── SYNC LOGIC ──
-const GIST_TOKEN_KEY = 'anime_gist_token', GIST_ID_KEY = 'anime_gist_id', GIST_FILENAME = 'anime-backlog.json';
-let syncTimer = null, isSyncing = false;
-let lastKnownSavedAt = localStorage.getItem('anime_gist_last_saved_at') || ''; // Controle de versão do Gist
-
-function getToken() { return localStorage.getItem(GIST_TOKEN_KEY) || ''; } function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
-function setSyncUI(state, label) { const el = document.getElementById('syncIndicator'), lb = document.getElementById('syncLabel'); el.className = 'sync-indicator sync-' + state; lb.textContent = label; }
-function scheduleGistSync() { if (!getToken()) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => pushToGist(), 1500); }
-
-async function pushToGist(silent = false) {
-  const token = getToken(), gistId = getGistId(); if (!token || isSyncing) return;
-  if (!navigator.onLine) { setSyncUI('off', 'Offline (Salvo local)'); return; }
-  isSyncing = true; setSyncUI('ing', 'Sync...');
-  
-  const nowStr = new Date().toISOString();
-  const payload = JSON.stringify({ animes, savedAt: nowStr }, null, 2);
-  
-  try {
-    let res;
-    if (gistId) { res = await fetch(`https://api.github.com/gists/${gistId}`, { method: 'PATCH', headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ files: { [GIST_FILENAME]: { content: payload } } }) }); }
-    else { res = await fetch('https://api.github.com/gists', { method: 'POST', headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ description: 'Anime Backlog', public: false, files: { [GIST_FILENAME]: { content: payload } } }) }); }
-    if (!res.ok) throw new Error(); const data = await res.json();
-    if (!gistId) { localStorage.setItem(GIST_ID_KEY, data.id); if (!silent) showToast(`☁ Gist criado!`); }
-    localStorage.removeItem('anime_pending_sync');
-    
-    // Atualiza nossa memoria local de quando subimos algo pra não baixar à toa
-    localStorage.setItem('anime_gist_last_saved_at', nowStr);
-    lastKnownSavedAt = nowStr;
-    
-    setSyncUI('ok', 'Sincronizado');
-  } catch (e) { setSyncUI('err', 'Erro'); if (!silent) showToast('⚠ Erro no Gist', 'error'); } finally { isSyncing = false; }
-}
-
-async function pullFromGist(token, gistId) {
-  const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers: { Authorization: `token ${token}` } });
-  if (!res.ok) throw new Error(); const data = await res.json(); return JSON.parse(data.files?.[GIST_FILENAME]?.content);
-}
-
-// ── MONITOR AUTOMÁTICO DE DADOS DO GIST ──
-let gistMonitorTimer = null;
-
-async function silentCheckGistUpdates() {
-  // Pausa o sync se o usuário estiver com algum modal aberto para não atrapalhar a digitação
-  if (document.getElementById('modalBackdrop').classList.contains('visible') || 
-      document.getElementById('settingsBackdrop').classList.contains('visible')) {
-    return; 
-  }
-
-  const token = getToken(), gistId = getGistId();
-  if (!token || !gistId || !navigator.onLine || isSyncing) return;
-  
-  try {
-    const remote = await pullFromGist(token, gistId);
-    if (remote && remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
-      lastKnownSavedAt = remote.savedAt;
-      localStorage.setItem('anime_gist_last_saved_at', lastKnownSavedAt);
-      
-      if (Array.isArray(remote.animes)) {
-        const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); 
-        const localOnly = animes.filter(a => !remoteMap[a.id]);
-        animes = [...remote.animes, ...localOnly]; 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-        renderAll();
-        showToast("☁️ Atualizado em tempo real!");
-        setSyncUI('ok', 'Sincronizado');
-      }
-    }
-  } catch (e) { console.log("Monitor: falha silenciosa.", e); }
-}
-
-function startSmartGistMonitor() {
-  const pollInterval = 15000; // Checa a cada 15 segundos
-
-  const startPolling = () => {
-    silentCheckGistUpdates(); // Checa imediatamente ao entrar
-    clearInterval(gistMonitorTimer);
-    gistMonitorTimer = setInterval(silentCheckGistUpdates, pollInterval);
-  };
-
-  const stopPolling = () => {
-    clearInterval(gistMonitorTimer);
-  };
-
-  // Quando troca de aba no celular/PC
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') startPolling();
-    else stopPolling(); // Pausa pra poupar bateria quando escondido
-  });
-
-  // Quando a janela ganha/perde foco no PC
-  window.addEventListener('focus', startPolling);
-  window.addEventListener('blur', stopPolling);
-
-  // Inicia se já estiver visível
-  if (document.visibilityState === 'visible') {
-    startPolling();
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const warmUp = () => {
-        const modalBackdrop = document.getElementById('modalBackdrop');
-        const settingsBackdrop = document.getElementById('settingsBackdrop');
-        [modalBackdrop, settingsBackdrop].forEach(el => { el.style.display = 'flex'; el.style.opacity = '0'; el.style.pointerEvents = 'none'; });
-        void modalBackdrop.offsetWidth; void settingsBackdrop.offsetWidth;
-        requestAnimationFrame(() => { [modalBackdrop, settingsBackdrop].forEach(el => { el.style.display = ''; el.style.opacity = ''; el.style.pointerEvents = ''; }); });
-    };
-    setTimeout(warmUp, 500);
-    startSmartGistMonitor(); // Liga o monitoramento em segundo plano!
-});
-
-// Dispara EXATAMENTE no milissegundo em que o celular reconecta à internet
-window.addEventListener('online', async () => {
-  updateSettingsUI(); 
-  
-  // Atualiza imagens quebradas que falharam por falta de internet
-  document.querySelectorAll('.anime-card img[data-src]').forEach(img => {
-    if (img.style.display === 'none') {
-      const originalSrc = img.getAttribute('data-src');
-      img.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
-    }
-  });
-
-  // Se tem dados locais pendentes, manda subir pro Gist IMEDIATAMENTE
-  if(localStorage.getItem('anime_pending_sync') === 'true') { 
-    console.log("Internet voltou! Subindo dados offline para o Gist...");
-    setSyncUI('ing', 'Enviando offline...'); 
-    await pushToGist(); 
-  } else {
-    // Se não editou nada offline, apenas verifica se há novidades no Gist
-    initGistSync();
-  }
-});
-
-window.addEventListener('offline', () => { 
-  updateSettingsUI(); 
-  if (getToken()) setSyncUI('off', 'Offline (Salvo local)'); 
-});
-
-async function initGistSync() {
-  const token = getToken(), gistId = getGistId(); 
-  if (!token || !gistId) return; 
-  if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
-  
-  // Evita puxar dados do Gist se a gente acabou de ligar a internet e precisa subir nossos dados locais primeiro
-  if(localStorage.getItem('anime_pending_sync') === 'true') { 
-    setSyncUI('ing', 'Enviando pendentes...'); 
-    await pushToGist(); 
-    return; 
-  }
-  
-  setSyncUI('ing', 'Carregando...');
-  try {
-    const remote = await pullFromGist(token, gistId);
-    if (Array.isArray(remote.animes) && remote.animes.length > 0) {
-      lastKnownSavedAt = remote.savedAt || new Date().toISOString();
-      localStorage.setItem('anime_gist_last_saved_at', lastKnownSavedAt);
-
-      const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); 
-      const localOnly = animes.filter(a => !remoteMap[a.id]);
-      animes = [...remote.animes, ...localOnly]; 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); 
-      renderAll();
-    } 
-    setSyncUI('ok', 'Sincronizado');
-  } catch { 
-    setSyncUI('err', 'Erro ao baixar do Gist'); 
-  }
-}
-
-async function connectGist() {
-  if (!navigator.onLine) return showToast('⚠️ Conecte-se à internet primeiro!', 'error');
-  const token = document.getElementById('inputToken').value.trim(); if (!token) return;
-  setGistFetchStatus('loading', 'Verificando...');
-  try {
-    const meRes = await fetch('https://api.github.com/user', { headers: { Authorization: `token ${token}` } }); if (!meRes.ok) throw new Error('Token inválido');
-    localStorage.setItem(GIST_TOKEN_KEY, token); let foundGistId = null;
-    setGistFetchStatus('loading', 'Buscando Gist...');
-    for (let page = 1; page <= 3; page++) {
-      const listRes = await fetch(`https://api.github.com/gists?page=${page}`, { headers: { Authorization: `token ${token}` } }); if (!listRes.ok) break;
-      const gists = await listRes.json(); const g = gists.find(x => x.files?.[GIST_FILENAME]); if (g) { foundGistId = g.id; break; } if (gists.length < 30) break;
-    }
-    if (foundGistId) {
-      localStorage.setItem(GIST_ID_KEY, foundGistId); setGistFetchStatus('loading', 'Importando dados...');
-      const remote = await pullFromGist(token, foundGistId);
-      if (Array.isArray(remote.animes)) {
-        lastKnownSavedAt = remote.savedAt || new Date().toISOString();
-        localStorage.setItem('anime_gist_last_saved_at', lastKnownSavedAt);
-
-        const remoteMap = Object.fromEntries(remote.animes.map(a => [a.id, a])); const localOnly = animes.filter(a => !remoteMap[a.id]);
-        animes = [...remote.animes, ...localOnly]; localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); renderAll();
-      }
-      showToast(`☁ Conectado! Gist sincronizado.`);
-    } else {
-      setGistFetchStatus('loading', 'Criando Gist...'); await pushToGist(true); showToast(`☁ Novo Gist criado!`);
-    }
-    updateSettingsUI(); setGistFetchStatus('hidden', ''); closeSettings();
-  } catch (e) { setGistFetchStatus('error', `❌ ${e.message}`); }
-}
-
-function disconnectGist() { localStorage.removeItem(GIST_TOKEN_KEY); localStorage.removeItem(GIST_ID_KEY); localStorage.removeItem('anime_pending_sync'); localStorage.removeItem('anime_gist_last_saved_at'); setSyncUI('off', 'Sem sync'); updateSettingsUI(); closeSettings(); showToast('○ Desconectado.'); }
-function setGistFetchStatus(type, msg) { const el = document.getElementById('gistFetchStatus'); el.className = 'fetch-status ' + type; el.innerHTML = type === 'loading' ? `<div class="spinner"></div> ${msg}` : msg; el.classList.remove('hidden'); }
 function handleSettingsBackdrop(e) { if (e.target === document.getElementById('settingsBackdrop')) closeSettings(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSettings(); } });
 
-function updateSettingsUI() {
-  const token = getToken(), gistId = getGistId(), box = document.getElementById('gistStatusBox'), danger = document.getElementById('dangerZone');
-  if (token) { 
-    box.className = 'gist-status-box connected'; document.getElementById('gistStatusIcon').textContent = '✓'; 
-    document.getElementById('gistStatusText').textContent = navigator.onLine ? 'Conectado' : 'Conectado (Offline agora)'; 
-    danger.style.display = 'flex'; document.getElementById('inputToken').value = '●●●●●●●●●●●●●●●●'; 
-    if (navigator.onLine) setSyncUI('ok', 'Sincronizado'); else setSyncUI('off', 'Offline');
-  } 
-  else { box.className = 'gist-status-box disconnected'; document.getElementById('gistStatusIcon').textContent = '○'; document.getElementById('gistStatusText').textContent = 'Não configurado'; danger.style.display = 'none'; document.getElementById('inputToken').value = ''; setSyncUI('off', 'Sem sync'); }
+// ── BUSCA DE IMAGEM ──
+function setFetchStatus(type, msg) {
+  const el = document.getElementById('fetchStatus');
+  el.className = 'fetch-status ' + type;
+  if (type === 'loading') el.innerHTML = `<div class="spinner"></div> ${msg}`;
+  else el.textContent = msg;
+}
+function onNameInput() {
+  clearTimeout(nameInputTimer);
+  fetchedImageUrl = '';
+  const name = document.getElementById('inputName').value.trim();
+  if (!name) { setFetchStatus('hidden', ''); return; }
+  nameInputTimer = setTimeout(() => searchAnimeImage(), 900);
+}
+async function searchAnimeImage() {
+  if (!navigator.onLine) return setFetchStatus('error', 'Sem internet para buscar capa.');
+  const name = document.getElementById('inputName').value.trim();
+  if (!name || document.getElementById('inputImage').value.trim() || editingId) return;
+  setFetchStatus('loading', 'Buscando capa...');
+  try {
+    const res  = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(name)}&limit=1&sfw`);
+    const data = await res.json();
+    const item = data.data?.[0];
+    if (item?.images?.jpg?.large_image_url) {
+      fetchedImageUrl = item.images.jpg.large_image_url;
+      setFetchStatus('success', '✓ Capa encontrada!');
+      const p = document.getElementById('imgPreview');
+      p.src = fetchedImageUrl; p.classList.add('visible');
+    } else { setFetchStatus('error', 'Capa não encontrada.'); }
+  } catch { setFetchStatus('error', 'Erro ao buscar.'); }
+}
+function onImageUrlInput() {
+  const url = document.getElementById('inputImage').value.trim();
+  const p   = document.getElementById('imgPreview');
+  if (url) { p.src = url; p.classList.add('visible'); fetchedImageUrl = ''; setFetchStatus('hidden', ''); }
+  else { p.classList.remove('visible'); p.src = ''; }
 }
 
-function exportData() { const blob = new Blob([JSON.stringify(animes, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `anime-backlog.json`; a.click(); showToast('⬇ Backup exportado!'); }
-function importData(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = ev => { try { const data = JSON.parse(ev.target.result); const existing = new Set(animes.map(a => a.id)); let added = 0; data.forEach(item => { if (!existing.has(item.id)) { animes.push(item); added++; } }); saveData(); renderAll(); showToast(`⬆ ${added} importado(s)!`); } catch { showToast('❌ Arquivo inválido!', 'error'); } e.target.value = ''; }; reader.readAsText(file); }
-function showToast(msg, type = 'default') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = msg; container.appendChild(toast); setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, 3000); }
+// ── EXPORT / IMPORT ──
+function exportData() {
+  const blob = new Blob([JSON.stringify(animes, null, 2)], { type: 'application/json' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'anime-backlog.json';
+  a.click();
+  showToast('⬇ Backup exportado!');
+}
+function importData(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const existing = new Set(animes.map(a => a.id));
+      let added = 0;
+      data.forEach(item => { if (!existing.has(item.id)) { animes.push(item); added++; } });
+      saveData(); renderAll();
+      showToast(`⬆ ${added} importado(s)!`);
+    } catch { showToast('❌ Arquivo inválido!', 'error'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
 
-setTimeout(() => { document.getElementById('tab-' + activeTab).scrollIntoView(); }, 0);
-loadData(); renderAll(); updateSettingsUI(); initGistSync();
+// ── TOAST ──
+function showToast(msg) {
+  const container = document.getElementById('toastContainer');
+  const toast     = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, 3000);
+}
 
-function makeModalDraggable(backdropId, closeFunction) {
+// ── SWIPE PARA FECHAR MODAL ──
+function makeModalDraggable(backdropId, closeFn) {
   const backdrop = document.getElementById(backdropId); if (!backdrop) return;
-  const modal = backdrop.querySelector('.modal');
+  const modal    = backdrop.querySelector('.modal');
   let isDragging = false, startY = 0, currentY = 0, hasMovedEnough = false;
-  modal.addEventListener('touchstart', (e) => { if (modal.scrollTop > 0) return; startY = e.touches[0].clientY; isDragging = true; hasMovedEnough = false; }, { passive: true });
-  modal.addEventListener('touchmove', (e) => {
-    if (!isDragging) return; currentY = e.touches[0].clientY; const deltaY = currentY - startY;
-    if (!hasMovedEnough && deltaY > 12) { hasMovedEnough = true; modal.classList.add('dragging'); backdrop.classList.remove('visible'); if (document.activeElement) document.activeElement.blur(); }
-    if (hasMovedEnough && deltaY > 0) { if (e.cancelable) e.preventDefault(); modal.style.transform = `translate3d(0, ${deltaY}px, 0)`; }
+  modal.addEventListener('touchstart', e => {
+    if (modal.scrollTop > 0) return;
+    startY = e.touches[0].clientY; isDragging = true; hasMovedEnough = false;
+  }, { passive: true });
+  modal.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    currentY = e.touches[0].clientY;
+    const dy = currentY - startY;
+    if (!hasMovedEnough && dy > 12) { hasMovedEnough = true; backdrop.classList.remove('visible'); if (document.activeElement) document.activeElement.blur(); }
+    if (hasMovedEnough && dy > 0) { if (e.cancelable) e.preventDefault(); modal.style.transform = `translate3d(0,${dy}px,0)`; }
   }, { passive: false });
-  const onTouchEnd = () => { if (!isDragging) return; isDragging = false; modal.classList.remove('dragging'); const deltaY = currentY - startY; modal.style.transform = ''; if (hasMovedEnough && deltaY > 100) { closeFunction(); } };
-  modal.addEventListener('touchend', onTouchEnd); modal.addEventListener('touchcancel', onTouchEnd);
+  const onEnd = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    modal.style.transform = '';
+    if (hasMovedEnough && (currentY - startY) > 100) closeFn();
+  };
+  modal.addEventListener('touchend', onEnd);
+  modal.addEventListener('touchcancel', onEnd);
 }
-makeModalDraggable('modalBackdrop', closeModal); makeModalDraggable('settingsBackdrop', closeSettings);
+makeModalDraggable('modalBackdrop', closeModal);
+makeModalDraggable('settingsBackdrop', closeSettings);
+
+// ── PRÉ-AQUECIMENTO DOS MODAIS ──
+document.addEventListener('DOMContentLoaded', () => {
+  const warm = () => {
+    ['modalBackdrop','settingsBackdrop'].forEach(id => {
+      const el = document.getElementById(id);
+      el.style.cssText = 'display:flex;opacity:0;pointer-events:none';
+      void el.offsetWidth;
+      requestAnimationFrame(() => el.style.cssText = '');
+    });
+  };
+  setTimeout(warm, 500);
+  startSmartMonitor();
+});
+
+// ── INICIALIZAÇÃO ──
+setTimeout(() => document.getElementById('tab-' + activeTab).scrollIntoView(), 0);
+loadData();
+renderAll();
+updateSettingsUI();
+initGistSync();
 </script>
 </body>
 </html>

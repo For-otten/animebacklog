@@ -1,56 +1,97 @@
-// Aumentamos a versão para forçar o navegador a descartar o cache antigo
-const CACHE_NAME = 'anime-backlog-v4'; 
+// ── Anime Backlog Service Worker ──
+// Incrementar a versão força o navegador a descartar o cache antigo e instalar o novo imediatamente.
+const CACHE_NAME = 'anime-backlog-v5';
+
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './logo.png'  
+  './logo.png'
 ];
 
-// Instalação: guarda a interface base em cache e força a ativação imediata
+// ── INSTALL: faz cache dos assets e pula a fila de espera imediatamente ──
 self.addEventListener('install', event => {
+  // skipWaiting() aqui garante que o novo SW não fica esperando
+  // as abas antigas fecharem – ele assume controle ao instalar.
   self.skipWaiting();
+
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
+    caches.open(CACHE_NAME).then(cache => {
+      // addAll() falha se qualquer asset não for baixado.
+      // Usamos um loop com catch individual para ser resiliente.
+      return Promise.allSettled(
+        ASSETS_TO_CACHE.map(url =>
+          cache.add(url).catch(err => console.warn(`[SW] Falha ao cachear ${url}:`, err))
+        )
+      );
+    })
   );
 });
 
-// Ativação: limpa caches antigos (ex: v3, v2) e assume o controle de todas as abas abertas
+// ── ACTIVATE: remove caches antigos e assume controle de TODAS as abas ──
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    ))
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => {
+            console.log('[SW] Deletando cache antigo:', key);
+            return caches.delete(key);
+          })
+      )
+    ).then(() => {
+      // clients.claim() faz o novo SW assumir o controle das abas abertas
+      // sem precisar que o usuário feche e reabra o app.
+      return self.clients.claim();
+    })
   );
-  self.clients.claim();
 });
 
-// Intercepta requisições usando a estratégia NETWORK FIRST (Rede Primeiro)
+// ── FETCH: estratégia Network First com fallback para Cache ──
 self.addEventListener('fetch', event => {
-  // Ignora chamadas de API (Jikan e GitHub) para não dar conflito com seus dados
-  if (event.request.url.includes('api.github.com') || event.request.url.includes('api.jikan.moe')) {
+  const url = event.request.url;
+
+  // Ignora chamadas de API externas – nunca interceptar GitHub ou Jikan
+  // pois elas precisam de rede real e não fazem sentido em cache.
+  if (
+    url.includes('api.github.com') ||
+    url.includes('api.jikan.moe') ||
+    url.includes('fonts.googleapis.com') ||
+    url.includes('fonts.gstatic.com') ||
+    // Ignora requisições que não são GET (POST, PATCH etc.)
+    event.request.method !== 'GET'
+  ) {
     return;
   }
 
-  // Responde com a Rede primeiro. Se falhar (offline), usa o Cache.
   event.respondWith(
     fetch(event.request)
-      .then(response => {
-        // Se deu certo baixar da rede, atualiza o cache silenciosamente com a versão mais nova do código
-        const resClone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
-        return response;
+      .then(networkResponse => {
+        // Requisição bem-sucedida: atualiza o cache com a versão mais nova
+        // de forma silenciosa (sem bloquear a resposta ao usuário).
+        if (networkResponse && networkResponse.status === 200) {
+          const cloned = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, cloned));
+        }
+        return networkResponse;
       })
       .catch(() => {
-        // Se a internet caiu ou o GitHub Pages falhou, puxa a tela salva do cache
-        return caches.match(event.request);
+        // Sem rede: entrega o que tiver em cache.
+        return caches.match(event.request).then(cached => {
+          if (cached) return cached;
+          // Fallback final: retorna index.html para rotas desconhecidas (SPA behavior).
+          return caches.match('./index.html');
+        });
       })
   );
 });
 
-// Comunicação com o index.html para pular a espera se necessário
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+// ── MENSAGENS: comunicação com o index.html ──
+self.addEventListener('message', event => {
+  // O index.html envia SKIP_WAITING quando detecta um novo SW disponível.
+  // Isso permite forçar a atualização sem esperar o usuário fechar o app.
+  if (event.data?.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
