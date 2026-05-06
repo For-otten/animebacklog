@@ -1723,7 +1723,7 @@
     const DEVICE_ID_KEY = 'anime_device_id';
     const DEVICES_KEY = 'anime_devices';
     const LAST_SAVED_KEY = 'anime_gist_last_saved_at';
-    const POLL_INTERVAL = 3000; // ms
+    const POLL_INTERVAL = 8000; // ms
 
     let animes = [];
     let nameInputTimer = null;
@@ -2304,13 +2304,25 @@
     function stopPolling() { clearInterval(pollTimer); }
 
     function startSmartMonitor() {
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') startPolling();
-        else stopPolling();
-      });
-      window.addEventListener('focus', startPolling);
-      window.addEventListener('blur', stopPolling);
-      if (document.visibilityState === 'visible') startPolling();
+      // Quando a aba fica visível ou ganha foco (clicou nela)
+      const triggerSync = () => {
+        if (document.visibilityState === 'visible') {
+          console.log("App focado: checando atualizações...");
+          silentPoll(); // Checa na hora!
+          startPolling(); // Reinicia o timer
+        } else {
+          stopPolling(); // Para de gastar se a aba estiver escondida
+        }
+      };
+
+      document.addEventListener('visibilitychange', triggerSync);
+      window.addEventListener('focus', triggerSync);
+
+      // Inicia o primeiro ciclo
+      if (document.visibilityState === 'visible') {
+        silentPoll();
+        startPolling();
+      }
     }
 
     // ── RECONEXÃO ──
