@@ -631,6 +631,7 @@
 
       <div id="gistStatusBox" class="gist-status-box disconnected">
         <span id="gistStatusIcon">
+          <!-- icon swapped by JS -->
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
@@ -1132,11 +1133,11 @@
     }
 
     // ── SYNC: PUSH ──
-    async function pushToGist(silent = false, background = false, force = false) {
+    async function pushToGist(silent = false, background = false) {
       const token = getToken(), gistId = getGistId();
       if (!token) return;
       if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
-      if (!force && gistId && !hasUnpushedChanges()) { setSyncUI('ok', 'Sincronizado'); return; }
+      if (gistId && !hasUnpushedChanges()) { setSyncUI('ok', 'Sincronizado'); return; }
       if (!background) setSyncUI('ing', 'Enviando...');
       const payload = buildGistPayload();
       try {
@@ -1318,9 +1319,7 @@
       localStorage.removeItem('anime_pending_sync');
       localStorage.removeItem(LAST_SAVED_KEY);
       localStorage.removeItem(LAST_HASH_KEY);
-      localStorage.setItem('anime_device_is_new', 'true');
       lastKnownSavedAt = '';
-      lastGistETag = '';
       stopPolling();
       setSyncUI('off', 'Sem sync');
       updateSettingsUI();
@@ -1358,7 +1357,7 @@
         document.getElementById('gistStatusText').textContent = navigator.onLine ? 'Conectado' : 'Conectado (offline agora)';
         danger.style.display = 'flex';
         devsec.style.display = 'block';
-        howTo.style.display  = 'none';
+        howTo.style.display  = 'none';   // ← oculta tutorial
         document.getElementById('inputToken').value = '●●●●●●●●●●●●●●●●';
         renderDeviceList();
         setSyncUI(navigator.onLine ? 'ok' : 'off', navigator.onLine ? 'Sincronizado' : 'Offline');
@@ -1368,7 +1367,7 @@
         document.getElementById('gistStatusText').textContent = 'Não configurado';
         danger.style.display = 'none';
         devsec.style.display = 'none';
-        howTo.style.display  = 'block';
+        howTo.style.display  = 'block';  // ← mostra tutorial
         document.getElementById('inputToken').value = '';
         setSyncUI('off', 'Sem sync');
       }
@@ -1409,20 +1408,6 @@
           ${deleteBtn}
         </div>`;
       }).join('');
-    }
-
-    // ── DELETE DEVICE ──
-    async function deleteDevice(id) {
-      if (!confirm('Remover este dispositivo da lista?')) return;
-      const list = loadDeviceRegistry().filter(d => d.id !== id);
-      saveDeviceRegistry(list);
-      renderDeviceList();
-      showToast('Dispositivo removido.');
-      // Força o push mesmo que os animes não tenham mudado
-      const token = getToken(), gistId = getGistId();
-      if (token && gistId && navigator.onLine) {
-        try { await pushToGist(true, true, true); } catch(e) { /* silencioso */ }
-      }
     }
 
     function setGistFetchStatus(type, msg) {
