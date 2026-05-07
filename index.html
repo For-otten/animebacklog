@@ -1132,11 +1132,11 @@
     }
 
     // ── SYNC: PUSH ──
-    async function pushToGist(silent = false, background = false) {
+    async function pushToGist(silent = false, background = false, force = false) {
       const token = getToken(), gistId = getGistId();
       if (!token) return;
       if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
-      if (gistId && !hasUnpushedChanges()) { setSyncUI('ok', 'Sincronizado'); return; }
+      if (!force && gistId && !hasUnpushedChanges()) { setSyncUI('ok', 'Sincronizado'); return; }
       if (!background) setSyncUI('ing', 'Enviando...');
       const payload = buildGistPayload();
       try {
@@ -1418,10 +1418,10 @@
       saveDeviceRegistry(list);
       renderDeviceList();
       showToast('Dispositivo removido.');
-      // Propaga a remoção ao Gist
+      // Força o push mesmo que os animes não tenham mudado
       const token = getToken(), gistId = getGistId();
       if (token && gistId && navigator.onLine) {
-        try { await pushToGist(true, true); } catch(e) { /* silencioso */ }
+        try { await pushToGist(true, true, true); } catch(e) { /* silencioso */ }
       }
     }
 
