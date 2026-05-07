@@ -17,11 +17,7 @@
     href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Sawarabi+Mincho&display=swap"
     rel="stylesheet">
   <style>
-    html,
-    body {
-      background-color: var(--bg);
-      overscroll-behavior-y: none;
-    }
+    html, body { background-color: var(--bg); overscroll-behavior-y: none; }
 
     :root {
       --bg: #0a0a12;
@@ -47,12 +43,7 @@
       --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
       background: var(--bg);
@@ -70,7 +61,8 @@
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      background: radial-gradient(ellipse 60% 40% at 80% 10%, rgba(160, 64, 224, 0.12) 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 10% 80%, rgba(224, 64, 160, 0.10) 0%, transparent 60%);
+      background: radial-gradient(ellipse 60% 40% at 80% 10%, rgba(160, 64, 224, 0.12) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 30% at 10% 80%, rgba(224, 64, 160, 0.10) 0%, transparent 60%);
     }
 
     body::after {
@@ -79,15 +71,10 @@
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.04) 3px, rgba(0, 0, 0, 0.04) 4px);
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
     }
 
-    header,
-    .stats-bar {
-      flex-shrink: 0;
-      position: relative;
-      z-index: 10;
-    }
+    header, .stats-bar { flex-shrink: 0; position: relative; z-index: 10; }
 
     header {
       padding: 32px 40px 20px;
@@ -100,722 +87,16 @@
       background: rgba(10, 10, 18, 0.7);
     }
 
-    .logo {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
-
-    .logo-jp {
-      font-family: 'Sawarabi Mincho', serif;
-      font-size: 13px;
-      color: var(--accent);
-      letter-spacing: 6px;
-      opacity: 0.8;
-    }
-
+    .logo { display: flex; flex-direction: column; line-height: 1; }
+    .logo-jp { font-family: 'Sawarabi Mincho', serif; font-size: 13px; color: var(--accent); letter-spacing: 6px; opacity: 0.8; }
     .logo-main {
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
+      font-size: 28px; font-weight: 900; letter-spacing: -0.5px;
       background: linear-gradient(135deg, var(--text) 40%, var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       padding-bottom: 5px;
     }
 
-    .search-input {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-family: inherit;
-      font-size: 13px;
-      transition: var(--transition);
-      width: 250px;
-    }
-
-    .search-input:focus {
-      outline: none;
-      border-color: var(--accent);
-      background: var(--surface2);
-    }
-
-    .search-input::placeholder {
-      color: var(--text-muted);
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: var(--transition);
-      border: none;
-      letter-spacing: 0.3px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff;
-      box-shadow: 0 4px 20px var(--accent-glow);
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.15);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 28px var(--accent-glow);
-    }
-
-    .btn-ghost {
-      background: var(--surface2);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
-    .btn-ghost:hover {
-      background: var(--surface3);
-      color: var(--text);
-    }
-
-    .btn-icon {
-      font-size: 12px;
-    }
-
-    .stats-bar {
-      display: flex;
-      gap: 0;
-      padding: 0 40px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(10, 10, 18, 0.5);
-      backdrop-filter: blur(8px);
-      overflow-x: auto;
-      scrollbar-width: none;
-      scroll-behavior: smooth;
-    }
-
-    .stats-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .stat-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 18px;
-      font-size: 12px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      border-bottom: 2px solid transparent;
-      transition: var(--transition);
-      cursor: pointer;
-      user-select: none;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
-    .stat-pill:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    .stat-pill.active {
-      color: var(--text);
-      border-bottom-color: var(--accent);
-    }
-
-    .stat-pill.active .stat-dot {
-      opacity: 1;
-    }
-
-    .stat-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      opacity: 0.5;
-    }
-
-    .dot-acompanhando {
-      background: var(--green);
-    }
-
-    .dot-assistir {
-      background: var(--blue);
-    }
-
-    .dot-esperando {
-      background: var(--yellow);
-    }
-
-    .dot-concluido {
-      background: var(--text-muted);
-    }
-
-    .dot-dropado {
-      background: var(--red);
-    }
-
-    .stat-count {
-      background: var(--surface3);
-      color: var(--text-muted);
-      padding: 2px 7px;
-      border-radius: 20px;
-      font-size: 11px;
-    }
-
-    main {
-      position: relative;
-      z-index: 5;
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      width: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    main::-webkit-scrollbar {
-      display: none;
-    }
-
-    .tab-content {
-      flex: 0 0 100%;
-      width: 100%;
-      height: 100%;
-      scroll-snap-align: center;
-      scroll-snap-stop: always;
-      overflow-y: auto;
-      padding: 32px 40px 60px;
-    }
-
-    .tab-content::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .tab-content::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .tab-content::-webkit-scrollbar-thumb {
-      background: var(--surface3);
-      border-radius: 99px;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .section-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
-      gap: 20px;
-      padding-bottom: 40px;
-    }
-
-    .anime-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      transition: var(--transition);
-      position: relative;
-      animation: cardIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
-    }
-
-    @keyframes cardIn {
-      from {
-        opacity: 0;
-        transform: translateY(16px) scale(0.97);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    .anime-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .anime-card.status-acompanhando {
-      border-color: rgba(64, 224, 160, 0.3);
-    }
-
-    .anime-card.status-acompanhando:hover {
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(64, 224, 160, 0.2);
-    }
-
-    .anime-card.status-assistir {
-      border-color: rgba(64, 128, 224, 0.25);
-    }
-
-    .anime-card.status-esperando {
-      border-color: rgba(240, 192, 64, 0.4);
-    }
-
-    .anime-card.status-concluido {
-      opacity: 0.65;
-    }
-
-    .anime-card.status-concluido:hover {
-      opacity: 0.9;
-    }
-
-    .anime-card.status-dropado {
-      opacity: 0.5;
-      border-color: rgba(224, 64, 96, 0.35);
-    }
-
-    .card-cover {
-      position: relative;
-      width: 100%;
-      padding-top: 140%;
-      overflow: hidden;
-      background: var(--surface2);
-      cursor: pointer;
-    }
-
-    .card-cover::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 255, 255, 0);
-      transition: var(--transition);
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .card-cover:hover::after {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .card-cover img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .anime-card:hover .card-cover img {
-      transform: scale(1.05);
-    }
-
-    .card-cover-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(145deg, var(--surface2), var(--surface3));
-      color: var(--text-muted);
-      font-size: 36px;
-    }
-
-    .status-badge {
-      filter: drop-shadow(0px 1px 1px black);
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      backdrop-filter: blur(8px);
-      text-transform: uppercase;
-      z-index: 5;
-      white-space: nowrap;
-      pointer-events: none;
-    }
-
-    .status-badge.badge-acompanhando {
-      background: rgba(64, 224, 160, 0.25);
-      color: var(--green);
-      border: 1px solid rgba(64, 224, 160, 0.4);
-    }
-
-    .status-badge.badge-assistir {
-      background: rgba(64, 128, 224, 0.25);
-      color: #80b0ff;
-      border: 1px solid rgba(64, 128, 224, 0.4);
-    }
-
-    .status-badge.badge-esperando {
-      background: rgba(240, 192, 64, 0.2);
-      color: var(--yellow);
-      border: 1px solid rgba(240, 192, 64, 0.4);
-    }
-
-    .status-badge.badge-concluido {
-      background: rgba(150, 150, 170, 0.2);
-      color: #aaaacc;
-      border: 1px solid rgba(150, 150, 170, 0.3);
-    }
-
-    .status-badge.badge-dropado {
-      background: rgba(224, 64, 96, 0.2);
-      color: var(--red);
-      border: 1px solid rgba(224, 64, 96, 0.35);
-    }
-
-    .concluded-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 8px 10px;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.6);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      z-index: 5;
-    }
-
-    .card-body {
-      padding: 14px;
-    }
-
-    .card-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.35;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      min-height: 36px;
-      word-break: break-word;
-    }
-
-    .card-counters {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      margin-top: 12px;
-    }
-
-    .counter-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .counter-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      width: 28px;
-      flex-shrink: 0;
-    }
-
-    .counter-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      background: var(--surface3);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition);
-      flex-shrink: 0;
-      line-height: 1;
-      font-family: inherit;
-    }
-
-    .counter-btn:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .counter-input {
-      flex: 1;
-      background: var(--surface3);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 6px;
-      padding: 3px 6px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      text-align: center;
-      min-width: 0;
-      transition: var(--transition);
-    }
-
-    .counter-input:focus {
-      outline: none;
-      border-color: var(--accent);
-      background: var(--surface2);
-    }
-
-    .status-select {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 8px;
-      padding: 7px 10px;
-      font-family: inherit;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: var(--transition);
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      padding-right: 28px;
-    }
-
-    .status-select:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .status-select option {
-      background: #1a1a2e;
-    }
-
-    .empty-state {
-      grid-column: 1/-1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      padding: 80px 20px;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .empty-icon {
-      font-size: 48px;
-      opacity: 0.4;
-    }
-
-    .empty-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .empty-sub {
-      font-size: 13px;
-      opacity: 0.6;
-    }
-
-    /* ── MODAIS ── */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.35s ease;
-      background: rgba(0, 0, 0, 0.85);
-      top: -100px;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-backdrop.visible {
-      opacity: 1;
-    }
-
-    .modal {
-      border-radius: 28px 28px 0 0;
-      padding: 24px 20px 48px;
-      max-height: 92vh;
-      border: none;
-      border-top: 1px solid var(--border);
-      contain: content;
-      background: var(--surface);
-      will-change: transform, opacity;
-      transform: translate3d(0, 100%, 0);
-      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-
-    .modal-backdrop.visible .modal {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
-    .modal-title {
-      font-size: 20px;
-      font-weight: 900;
-      margin-bottom: 6px;
-      color: var(--text);
-      background: none;
-      -webkit-text-fill-color: initial;
-      background-clip: initial;
-    }
-
-    .modal-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 7px;
-    }
-
-    .form-input {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 11px 14px;
-      font-family: inherit;
-      font-size: 14px;
-      transition: var(--transition);
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--accent);
-      background: var(--surface3);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .form-row {
-      display: flex;
-      gap: 12px;
-    }
-
-    .form-row .form-group {
-      flex: 1;
-    }
-
-    .form-hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 5px;
-      opacity: 0.6;
-    }
-
-    .modal-footer {
-      display: flex;
-      gap: 10px;
-      margin-top: 8.1px;
-      flex-wrap: wrap;
-    }
-
-    .modal-footer .btn {
-      flex: 1;
-      justify-content: center;
-      padding: 12px;
-    }
-
-    #modalConfirmBtn {
-      flex: 2;
-    }
-
-    .modal-close {
-      z-index: 99;
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition);
-    }
-
-    .img-preview {
-      width: 60px;
-      height: 80px;
-      border-radius: 6px;
-      object-fit: cover;
-      border: 2px solid var(--border);
-      display: none;
-      will-change: transform;
-      image-rendering: -webkit-optimize-contrast;
-    }
-
-    .search-box {
-      position: relative;
-      width: 100%;
-      max-width: 400px;
-    }
-
+    .search-box { position: relative; width: 100%; max-width: 400px; }
     .search-input {
       width: 100%;
       padding: 12px 16px 12px 44px;
@@ -826,653 +107,344 @@
       font-size: 14px;
       outline: none;
       transition: all 0.2s ease;
+      font-family: inherit;
     }
-
-    .search-input::placeholder {
-      color: #777;
-    }
-
-    .search-input:focus {
-      border-color: #4da3ff;
-      box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.15);
-      background: #12121c;
-    }
-
+    .search-input::placeholder { color: #777; }
+    .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: #12121c; }
     .search-icon {
-      position: absolute;
-      top: 50%;
-      left: 14px;
-      width: 18px;
-      height: 18px;
-      stroke: #777;
-      stroke-width: 2;
-      fill: none;
-      transform: translateY(-50%);
-      transition: all 0.2s ease;
+      position: absolute; top: 50%; left: 14px;
+      width: 18px; height: 18px;
+      stroke: #777; stroke-width: 2; fill: none;
+      transform: translateY(-50%); transition: all 0.2s ease;
+    }
+    .search-box:focus-within .search-icon { stroke: var(--accent); transform: translateY(-50%) scale(1.1); }
+
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 18px; border-radius: 10px;
+      font-family: inherit; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: var(--transition); border: none; letter-spacing: 0.3px;
+    }
+    .btn svg { flex-shrink: 0; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 4px 20px var(--accent-glow); }
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 6px 28px var(--accent-glow); }
+    .btn-ghost { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--surface3); color: var(--text); }
+
+    .stats-bar {
+      display: flex; gap: 0; padding: 0 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 10, 18, 0.5); backdrop-filter: blur(8px);
+      overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth;
+    }
+    .stats-bar::-webkit-scrollbar { display: none; }
+
+    .stat-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 18px; font-size: 12px; color: var(--text-muted);
+      white-space: nowrap; border-bottom: 2px solid transparent;
+      transition: var(--transition); cursor: pointer; user-select: none;
+      font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .stat-pill:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .stat-pill.active { color: var(--text); border-bottom-color: var(--accent); }
+    .stat-pill.active .stat-dot { opacity: 1; }
+
+    .stat-dot { width: 7px; height: 7px; border-radius: 50%; opacity: 0.5; }
+    .dot-acompanhando { background: var(--green); }
+    .dot-assistir { background: var(--blue); }
+    .dot-esperando { background: var(--yellow); }
+    .dot-concluido { background: var(--text-muted); }
+    .dot-dropado { background: var(--red); }
+
+    .stat-count { background: var(--surface3); color: var(--text-muted); padding: 2px 7px; border-radius: 20px; font-size: 11px; }
+
+    main {
+      position: relative; z-index: 5; flex: 1; min-height: 0;
+      display: flex; width: 100%; overflow-x: auto; overflow-y: hidden;
+      scroll-snap-type: x mandatory; scrollbar-width: none;
+      scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+    }
+    main::-webkit-scrollbar { display: none; }
+
+    .tab-content {
+      flex: 0 0 100%; width: 100%; height: 100%;
+      scroll-snap-align: center; scroll-snap-stop: always;
+      overflow-y: auto; padding: 32px 40px 60px;
+    }
+    .tab-content::-webkit-scrollbar { width: 6px; }
+    .tab-content::-webkit-scrollbar-track { background: transparent; }
+    .tab-content::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 99px; }
+
+    .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr)); gap: 20px; padding-bottom: 40px; }
+
+    .anime-card {
+      background: var(--surface); border-radius: var(--radius);
+      border: 1px solid var(--border); overflow: hidden;
+      transition: var(--transition); position: relative;
+      animation: cardIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+    .anime-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.15); }
+    .anime-card.status-acompanhando { border-color: rgba(64, 224, 160, 0.3); }
+    .anime-card.status-acompanhando:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(64, 224, 160, 0.2); }
+    .anime-card.status-assistir { border-color: rgba(64, 128, 224, 0.25); }
+    .anime-card.status-esperando { border-color: rgba(240, 192, 64, 0.4); }
+    .anime-card.status-concluido { opacity: 0.65; }
+    .anime-card.status-concluido:hover { opacity: 0.9; }
+    .anime-card.status-dropado { opacity: 0.5; border-color: rgba(224, 64, 96, 0.35); }
+
+    .card-cover { position: relative; width: 100%; padding-top: 140%; overflow: hidden; background: var(--surface2); cursor: pointer; }
+    .card-cover::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0); transition: var(--transition); z-index: 10; pointer-events: none; }
+    .card-cover:hover::after { background: rgba(255,255,255,0.05); }
+    .card-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .anime-card:hover .card-cover img { transform: scale(1.05); }
+    .card-cover-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--surface2), var(--surface3)); color: var(--text-muted); }
+    .card-cover-placeholder svg { width: 40px; height: 40px; opacity: 0.4; }
+
+    .status-badge {
+      filter: drop-shadow(0px 1px 1px black);
+      position: absolute; top: 10px; right: 10px;
+      display: flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      backdrop-filter: blur(8px); text-transform: uppercase;
+      z-index: 5; white-space: nowrap; pointer-events: none;
+    }
+    .status-badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .status-badge.badge-acompanhando { background: rgba(64,224,160,0.25); color: var(--green); border: 1px solid rgba(64,224,160,0.4); }
+    .status-badge.badge-acompanhando .status-badge-dot { background: var(--green); }
+    .status-badge.badge-assistir { background: rgba(64,128,224,0.25); color: #80b0ff; border: 1px solid rgba(64,128,224,0.4); }
+    .status-badge.badge-assistir .status-badge-dot { background: #80b0ff; }
+    .status-badge.badge-esperando { background: rgba(240,192,64,0.2); color: var(--yellow); border: 1px solid rgba(240,192,64,0.4); }
+    .status-badge.badge-esperando .status-badge-dot { background: var(--yellow); }
+    .status-badge.badge-concluido { background: rgba(150,150,170,0.2); color: #aaaacc; border: 1px solid rgba(150,150,170,0.3); }
+    .status-badge.badge-concluido .status-badge-dot { background: #aaaacc; }
+    .status-badge.badge-dropado { background: rgba(224,64,96,0.2); color: var(--red); border: 1px solid rgba(224,64,96,0.35); }
+    .status-badge.badge-dropado .status-badge-dot { background: var(--red); }
+
+    .concluded-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 8px 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      font-size: 10px; color: rgba(255,255,255,0.5);
+      display: flex; align-items: center; gap: 5px; z-index: 5;
+    }
+    .concluded-overlay svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+    .card-body { padding: 14px; }
+    .card-title {
+      font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden; min-height: 36px; word-break: break-word;
     }
 
-    .search-box:focus-within .search-icon {
-      stroke: #4da3ff;
-      transform: translateY(-50%) scale(1.1);
+    .card-counters { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; }
+    .counter-row { display: flex; align-items: center; gap: 6px; }
+    .counter-label { font-size: 10px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; width: 28px; flex-shrink: 0; }
+    .counter-btn {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: var(--surface3); border: 1px solid var(--border);
+      color: var(--text); font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition); flex-shrink: 0; line-height: 1; font-family: inherit;
     }
-
-    .img-preview.visible {
-      display: block !important;
+    .counter-btn:hover { background: var(--accent); border-color: var(--accent); }
+    .counter-input {
+      flex: 1; background: var(--surface3); border: 1px solid var(--border);
+      color: var(--text); border-radius: 6px; padding: 3px 6px;
+      font-family: inherit; font-size: 13px; font-weight: 700;
+      text-align: center; min-width: 0; transition: var(--transition);
     }
+    .counter-input:focus { outline: none; border-color: var(--accent); background: var(--surface2); }
 
-    .img-preview-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      min-height: 84px;
+    .status-select {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 8px; padding: 7px 10px;
+      font-family: inherit; font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: var(--transition); appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
     }
+    .status-select:focus { outline: none; border-color: var(--accent); }
+    .status-select option { background: #1a1a2e; }
 
-    .fetch-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      margin-top: 8px;
+    .empty-state { grid-column: 1/-1; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 80px 20px; color: var(--text-muted); text-align: center; }
+    .empty-icon { opacity: 0.25; }
+    .empty-icon svg { width: 52px; height: 52px; }
+    .empty-title { font-size: 18px; font-weight: 700; }
+    .empty-sub { font-size: 13px; opacity: 0.6; }
+
+    /* ── MODAIS ── */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
+      align-items: center; justify-content: center; padding: 20px;
+      display: none; opacity: 0; transition: opacity 0.35s ease;
+      background: rgba(0,0,0,0.85); top: -100px;
     }
+    .modal-backdrop.open { display: flex; }
+    .modal-backdrop.visible { opacity: 1; }
 
-    .fetch-status.loading {
-      background: var(--blue-dim);
-      color: #80b0ff;
+    .modal {
+      border-radius: 28px 28px 0 0; padding: 24px 20px 48px;
+      max-height: 92vh; border: none; border-top: 1px solid var(--border);
+      contain: content; background: var(--surface); will-change: transform, opacity;
+      transform: translate3d(0, 100%, 0); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
+    .modal-backdrop.visible .modal { opacity: 1; transform: translateY(0) scale(1); }
 
-    .fetch-status.success {
-      background: var(--green-dim);
-      color: var(--green);
+    .modal-title { font-size: 20px; font-weight: 900; margin-bottom: 6px; color: var(--text); background: none; -webkit-text-fill-color: initial; background-clip: initial; }
+    .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
+    .form-input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 11px 14px;
+      font-family: inherit; font-size: 14px; transition: var(--transition);
     }
+    .form-input:focus { outline: none; border-color: var(--accent); background: var(--surface3); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+    .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; opacity: 0.6; }
 
-    .fetch-status.error {
-      background: var(--red-dim);
-      color: var(--red);
-    }
+    .modal-footer { display: flex; gap: 10px; margin-top: 8.1px; flex-wrap: wrap; }
+    .modal-footer .btn { flex: 1; justify-content: center; padding: 12px; }
+    #modalConfirmBtn { flex: 2; }
 
-    .fetch-status.hidden {
-      display: none;
-    }
-
-    .spinner {
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(64, 128, 224, 0.3);
-      border-top-color: #80b0ff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      flex-shrink: 0;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .toast-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 200;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
-    }
-
-    .toast {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 18px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      animation: toastIn 0.3s ease both;
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    @keyframes toastIn {
-      from {
-        opacity: 0;
-        transform: translateX(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    .toast.out {
-      animation: toastOut 0.3s ease forwards;
-    }
-
-    @keyframes toastOut {
-      to {
-        opacity: 0;
-        transform: translateX(20px);
-      }
-    }
-
-    /* ── SYNC MODAL & INDICATOR ── */
-    .sync-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1px solid var(--border);
+    .modal-close {
+      z-index: 99; position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
       transition: var(--transition);
-      user-select: none;
     }
+    .modal-close:hover { background: var(--surface3); color: var(--text); }
+    .modal-close svg { width: 14px; height: 14px; }
 
-    .sync-indicator:hover {
-      filter: brightness(1.2);
-    }
+    .img-preview { width: 60px; height: 80px; border-radius: 6px; object-fit: cover; border: 2px solid var(--border); display: none; will-change: transform; image-rendering: -webkit-optimize-contrast; }
+    .img-preview.visible { display: block !important; }
+    .img-preview-row { display: flex; align-items: flex-start; gap: 12px; min-height: 84px; }
 
-    .sync-off {
-      background: var(--surface2);
-      color: var(--text-muted);
-    }
+    .fetch-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-top: 8px; }
+    .fetch-status.loading { background: var(--blue-dim); color: #80b0ff; }
+    .fetch-status.success { background: var(--green-dim); color: var(--green); }
+    .fetch-status.error { background: var(--red-dim); color: var(--red); }
+    .fetch-status.hidden { display: none; }
 
-    .sync-ok {
-      background: rgba(64, 224, 160, 0.1);
-      color: var(--green);
-      border-color: rgba(64, 224, 160, 0.3);
-    }
+    .spinner { width: 14px; height: 14px; border: 2px solid rgba(64,128,224,0.3); border-top-color: #80b0ff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .sync-ing {
-      background: rgba(64, 128, 224, 0.1);
-      color: #80b0ff;
-      border-color: rgba(64, 128, 224, 0.3);
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 18px; font-size: 13px;
+      font-weight: 700; color: var(--text); box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      animation: toastIn 0.3s ease both; pointer-events: auto;
+      display: flex; align-items: center; gap: 8px;
     }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+    .toast.out { animation: toastOut 0.3s ease forwards; }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(20px); } }
 
-    .sync-err {
-      background: rgba(224, 64, 96, 0.1);
-      color: var(--red);
-      border-color: rgba(224, 64, 96, 0.3);
+    /* ── SYNC ── */
+    .sync-indicator {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 10px;
+      font-size: 12px; font-weight: 700;
+      cursor: pointer; border: 1px solid var(--border);
+      transition: var(--transition); user-select: none;
     }
+    .sync-indicator:hover { filter: brightness(1.2); }
+    .sync-indicator svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .sync-off { background: var(--surface2); color: var(--text-muted); }
+    .sync-ok { background: rgba(64,224,160,0.1); color: var(--green); border-color: rgba(64,224,160,0.3); }
+    .sync-ing { background: rgba(64,128,224,0.1); color: #80b0ff; border-color: rgba(64,128,224,0.3); }
+    .sync-err { background: rgba(224,64,96,0.1); color: var(--red); border-color: rgba(224,64,96,0.3); }
+    .sync-ing .sync-icon-wrap { display: inline-block; animation: spin 1s linear infinite; }
 
-    .sync-icon {
-      font-size: 14px;
-    }
+    /* ── SETTINGS MODAL ── */
+    .settings-modal { max-width: 520px; max-height: 90vh; overflow-y: auto; }
 
-    .sync-ing .sync-icon {
-      display: inline-block;
-      animation: spin 1s linear infinite;
-    }
+    .steps-list { counter-reset: steps; display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+    .step { counter-increment: steps; display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+    .step::before { content: counter(steps); min-width: 22px; height: 22px; background: var(--surface3); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+    .step a { color: var(--accent); text-decoration: none; }
+    .step a:hover { text-decoration: underline; }
+    .step code { background: var(--surface3); padding: 1px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; color: var(--text); }
 
-    .settings-modal {
-      max-width: 520px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
+    .settings-section { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
+    .settings-section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
 
-    .steps-list {
-      counter-reset: steps;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin: 16px 0;
-    }
+    .gist-status-box { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+    .gist-status-box svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .gist-status-box.connected { background: var(--green-dim); color: var(--green); border: 1px solid rgba(64,224,160,0.3); }
+    .gist-status-box.disconnected { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
 
-    .step {
-      counter-increment: steps;
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .step::before {
-      content: counter(steps);
-      min-width: 22px;
-      height: 22px;
-      background: var(--surface3);
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 900;
-      color: var(--accent);
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .step a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .step a:hover {
-      text-decoration: underline;
-    }
-
-    .step code {
-      background: var(--surface3);
-      padding: 1px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 12px;
-      color: var(--text);
-    }
-
-    .settings-section {
-      border-top: 1px solid var(--border);
-      padding-top: 16px;
-      margin-top: 4px;
-    }
-
-    .settings-section-title {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-
-    .gist-status-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .gist-status-box.connected {
-      background: var(--green-dim);
-      color: var(--green);
-      border: 1px solid rgba(64, 224, 160, 0.3);
-    }
-
-    .gist-status-box.disconnected {
-      background: var(--surface2);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
-    .danger-zone {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(224, 64, 96, 0.25);
-      background: rgba(224, 64, 96, 0.05);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .danger-zone-text {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .danger-zone-text strong {
-      color: var(--red);
-      display: block;
-      font-size: 13px;
-      margin-bottom: 2px;
-    }
-
-    .btn-danger {
-      background: rgba(224, 64, 96, 0.15);
-      color: var(--red);
-      border: 1px solid rgba(224, 64, 96, 0.3);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .btn-danger:hover {
-      background: var(--red);
-      color: #fff;
-    }
+    .danger-zone { margin-top: 12px; padding: 12px; border-radius: 10px; border: 1px solid rgba(224,64,96,0.25); background: rgba(224,64,96,0.05); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .danger-zone-text { font-size: 12px; color: var(--text-muted); }
+    .danger-zone-text strong { color: var(--red); display: block; font-size: 13px; margin-bottom: 2px; }
+    .btn-danger { background: rgba(224,64,96,0.15); color: var(--red); border: 1px solid rgba(224,64,96,0.3); white-space: nowrap; flex-shrink: 0; }
+    .btn-danger:hover { background: var(--red); color: #fff; }
 
     /* ── DEVICE CARDS ── */
-    .devices-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
+    .devices-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+    .device-card { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border); transition: var(--transition); }
+    .device-card.is-current { background: var(--green-dim); border-color: rgba(64,224,160,0.3); }
+    .device-icon-wrap { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--surface3); border-radius: 10px; color: var(--text-muted); }
+    .device-card.is-current .device-icon-wrap { background: rgba(64,224,160,0.15); color: var(--green); }
+    .device-icon-wrap svg { width: 18px; height: 18px; }
+    .device-info { flex: 1; min-width: 0; }
+    .device-name { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .device-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .device-tag { padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 700; background: var(--surface3); color: var(--text-muted); }
+    .device-tag.pwa { background: rgba(160,64,224,0.15); color: #c080ff; }
+    .device-tag.current { background: rgba(64,224,160,0.15); color: var(--green); }
+    .device-lastseen { font-size: 10px; color: var(--text-muted); opacity: 0.6; margin-left: auto; flex-shrink: 0; }
+    .devices-empty { font-size: 12px; color: var(--text-muted); text-align: center; padding: 16px; opacity: 0.5; }
 
-    .device-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      transition: var(--transition);
-    }
+    .mobile-bottom-bar { display: none; }
 
-    .device-card.is-current {
-      background: var(--green-dim);
-      border-color: rgba(64, 224, 160, 0.3);
-    }
-
-    .device-icon-wrap {
-      width: 36px;
-      height: 36px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--surface3);
-      border-radius: 10px;
-      color: var(--text-muted);
-    }
-
-    .device-card.is-current .device-icon-wrap {
-      background: rgba(64, 224, 160, 0.15);
-      color: var(--green);
-    }
-
-    .device-icon-wrap svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .device-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .device-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .device-meta {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .device-tag {
-      padding: 1px 7px;
-      border-radius: 8px;
-      font-size: 10px;
-      font-weight: 700;
-      background: var(--surface3);
-      color: var(--text-muted);
-    }
-
-    .device-tag.pwa {
-      background: rgba(160, 64, 224, 0.15);
-      color: #c080ff;
-    }
-
-    .device-tag.current {
-      background: rgba(64, 224, 160, 0.15);
-      color: var(--green);
-    }
-
-    .device-lastseen {
-      font-size: 10px;
-      color: var(--text-muted);
-      opacity: 0.6;
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-
-    .devices-empty {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-align: center;
-      padding: 16px;
-      opacity: 0.5;
-    }
-
-    .mobile-bottom-bar {
-      display: none;
-    }
-
-    /* ── MOBILE OVERHAUL ── */
+    /* ── MOBILE ── */
     @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 11px 13px 7px;
-        gap: 12px;
-      }
-
-      .logo {
-        align-items: center;
-        text-align: center;
-        width: 100%;
-      }
-
-      .logo-main {
-        font-size: 24px;
-        padding-bottom: 6px;
-      }
-
-      .search-input {
-        width: 100%;
-        transition: none;
-      }
-
-      .search-input:focus {
-        width: 100%;
-      }
-
-      .header-actions {
-        width: 100%;
-        justify-content: center;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 1px;
-        scrollbar-width: none;
-      }
-
-      .btn {
-        white-space: nowrap;
-        padding: 10px 14px;
-        font-size: 13px;
-      }
-
-      .stats-bar {
-        padding: 0 16px;
-        gap: 10px;
-      }
-
-      .cards-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-
-      .anime-card {
-        display: flex;
-        align-items: stretch;
-      }
-
-      .card-cover {
-        width: 145px;
-        padding-top: 0;
-        flex-shrink: 0;
-        border-right: 1px solid var(--border);
-      }
-
-      .card-body {
-        flex: 1;
-        padding: 11px;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .card-title {
-        font-size: 15px;
-        margin-bottom: 12px;
-        min-height: auto;
-        text-align: center;
-      }
-
-      .card-counters {
-        gap: 10px;
-      }
-
-      .counter-label {
-        font-size: 11px;
-        width: 22px;
-      }
-
-      .counter-btn {
-        width: 34px;
-        height: 34px;
-        font-size: 20px;
-      }
-
-      .counter-input {
-        height: 40px;
-        font-size: 15px;
-      }
-
-      .status-select {
-        height: 42px;
-        font-size: 13px;
-      }
-
-      .status-badge {
-        bottom: auto;
-        top: 8px;
-        left: 8px;
-        right: auto;
-        font-size: 9px;
-        padding: 4px 8px;
-      }
-
-      .concluded-overlay {
-        padding: 8px;
-        font-size: 10px;
-        text-align: center;
-      }
-
-      .modal-backdrop {
-        background: rgba(0, 0, 0, 0.85);
-        align-items: flex-end;
-        padding: 0;
-        backdrop-filter: none;
-      }
-
-      body.modal-is-open {
-        overflow: hidden;
-        height: 100vh;
-        position: fixed;
-        width: 100%;
-      }
-
-      .modal {
-        border-radius: 28px 28px 0 0;
-        padding: 24px 20px 48px;
-        max-height: 92vh;
-        border: none;
-        border-top: 1px solid var(--border);
-        contain: content;
-        will-change: transform, opacity;
-        transform: translate3d(0, 100%, 0);
-        transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-      }
-
-      .modal-backdrop.visible .modal {
-        transform: translate3d(0, 0, 0);
-      }
-
-      .modal .modal-title,
-      .modal .modal-subtitle,
-      .modal .form-group,
-      .modal .img-preview-row,
-      .modal .form-row,
-      .modal .modal-footer {
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(15px);
-        transition: opacity 0.2s ease, transform 0.25s ease, visibility 0s 0.25s;
-      }
-
-      .modal-backdrop.visible .modal .modal-title,
-      .modal-backdrop.visible .modal .modal-subtitle,
-      .modal-backdrop.visible .modal .form-group,
-      .modal-backdrop.visible .modal .img-preview-row,
-      .modal-backdrop.visible .modal .form-row,
-      .modal-backdrop.visible .modal .modal-footer {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-        transition: opacity 0.3s ease 0.25s, transform 0.3s ease 0.25s, visibility 0s 0.25s;
-      }
-
-      .header-actions .btn-primary {
-        display: none;
-      }
-
-      .mobile-bottom-bar {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 24px 16px;
-        height: 120px;
-        background: linear-gradient(to top, var(--bg) 40%, transparent);
-        justify-content: flex-end;
-        align-items: flex-end;
-        z-index: 90;
-        pointer-events: none;
-      }
-
-      .btn-mobile-add {
-        pointer-events: auto;
-        width: 56px;
-        height: 56px;
-        padding: 0;
-        font-size: 22px;
-        border-radius: 50%;
-        justify-content: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 4px 20px var(--accent-glow);
-      }
-
-      .btn-mobile-add:active {
-        transform: scale(0.96);
-      }
-
-      .tab-content {
-        padding: 16px 16px 120px;
-      }
-
-      .toast-container {
-        bottom: 95px;
-      }
+      header { flex-direction: column; align-items: stretch; padding: 11px 13px 7px; gap: 12px; }
+      .logo { align-items: center; text-align: center; width: 100%; }
+      .logo-main { font-size: 24px; padding-bottom: 6px; }
+      .search-input { width: 100%; transition: none; }
+      .search-input:focus { width: 100%; }
+      .header-actions { width: 100%; justify-content: center; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 1px; scrollbar-width: none; }
+      .btn { white-space: nowrap; padding: 10px 14px; font-size: 13px; }
+      .stats-bar { padding: 0 16px; gap: 10px; }
+      .cards-grid { grid-template-columns: 1fr; gap: 14px; }
+      .anime-card { display: flex; align-items: stretch; }
+      .card-cover { width: 145px; padding-top: 0; flex-shrink: 0; border-right: 1px solid var(--border); }
+      .card-body { flex: 1; padding: 11px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+      .card-title { font-size: 15px; margin-bottom: 12px; min-height: auto; text-align: center; }
+      .card-counters { gap: 10px; }
+      .counter-label { font-size: 11px; width: 22px; }
+      .counter-btn { width: 34px; height: 34px; font-size: 20px; }
+      .counter-input { height: 40px; font-size: 15px; }
+      .status-select { height: 42px; font-size: 13px; }
+      .status-badge { bottom: auto; top: 8px; left: 8px; right: auto; font-size: 9px; padding: 4px 8px; }
+      .concluded-overlay { padding: 8px; font-size: 10px; text-align: center; }
+      .modal-backdrop { background: rgba(0,0,0,0.85); align-items: flex-end; padding: 0; backdrop-filter: none; }
+      body.modal-is-open { overflow: hidden; height: 100vh; position: fixed; width: 100%; }
+      .modal { border-radius: 28px 28px 0 0; padding: 24px 20px 48px; max-height: 92vh; border: none; border-top: 1px solid var(--border); contain: content; will-change: transform, opacity; transform: translate3d(0, 100%, 0); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .modal-backdrop.visible .modal { transform: translate3d(0, 0, 0); }
+      .modal .modal-title, .modal .modal-subtitle, .modal .form-group, .modal .img-preview-row, .modal .form-row, .modal .modal-footer { opacity: 0; visibility: hidden; transform: translateY(15px); transition: opacity 0.2s ease, transform 0.25s ease, visibility 0s 0.25s; }
+      .modal-backdrop.visible .modal .modal-title, .modal-backdrop.visible .modal .modal-subtitle, .modal-backdrop.visible .modal .form-group, .modal-backdrop.visible .modal .img-preview-row, .modal-backdrop.visible .modal .form-row, .modal-backdrop.visible .modal .modal-footer { opacity: 1; visibility: visible; transform: translateY(0); transition: opacity 0.3s ease 0.25s, transform 0.3s ease 0.25s, visibility 0s 0.25s; }
+      .header-actions .btn-primary { display: none; }
+      .mobile-bottom-bar { display: flex; position: fixed; bottom: 0; left: 0; right: 0; padding: 24px 16px; height: 120px; background: linear-gradient(to top, var(--bg) 40%, transparent); justify-content: flex-end; align-items: flex-end; z-index: 90; pointer-events: none; }
+      .btn-mobile-add { pointer-events: auto; width: 56px; height: 56px; padding: 0; border-radius: 50%; justify-content: center; box-shadow: 0 8px 32px rgba(0,0,0,0.8), 0 4px 20px var(--accent-glow); }
+      .btn-mobile-add:active { transform: scale(0.96); }
+      .tab-content { padding: 16px 16px 120px; }
+      .toast-container { bottom: 95px; }
     }
   </style>
 </head>
@@ -1489,123 +461,154 @@
       <svg class="search-icon" viewBox="0 0 24 24">
         <path d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
-      <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar anime..."
-        oninput="filterAnimes()">
+      <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar anime..." oninput="filterAnimes()">
     </div>
 
     <div class="header-actions">
       <div id="syncIndicator" class="sync-indicator sync-off" onclick="openSettings()" title="Configurar sincronização">
-        <span class="sync-icon">☁</span>
-        <span class="sync-label" id="syncLabel">Sem sync</span>
+        <span class="sync-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+          </svg>
+        </span>
+        <span id="syncLabel">Sem sync</span>
       </div>
 
-      <button class="btn btn-ghost" onclick="exportData()"><span class="btn-icon">⬇</span> Backup</button>
-      <label class="btn btn-ghost" style="cursor:pointer"><span class="btn-icon">⬆</span> Importar<input type="file"
-          accept=".json" onchange="importData(event)" style="display:none"></label>
-      <button class="btn btn-primary" onclick="openModal()"><span class="btn-icon">＋</span> Novo Anime</button>
+      <button class="btn btn-ghost" onclick="exportData()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Backup
+      </button>
+
+      <label class="btn btn-ghost" style="cursor:pointer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Importar
+        <input type="file" accept=".json" onchange="importData(event)" style="display:none">
+      </label>
+
+      <button class="btn btn-primary" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Novo Anime
+      </button>
     </div>
   </header>
 
   <nav class="stats-bar" id="statsBar">
-    <div class="stat-pill active" data-tab="acompanhando" onclick="switchTab('acompanhando', this)"><span
-        class="stat-dot dot-acompanhando"></span>Acompanhando<span class="stat-count" id="count-acompanhando">0</span>
+    <div class="stat-pill active" data-tab="acompanhando" onclick="switchTab('acompanhando', this)">
+      <span class="stat-dot dot-acompanhando"></span>Acompanhando<span class="stat-count" id="count-acompanhando">0</span>
     </div>
-    <div class="stat-pill" data-tab="assistir" onclick="switchTab('assistir', this)"><span
-        class="stat-dot dot-assistir"></span>Backlog<span class="stat-count" id="count-assistir">0</span></div>
-    <div class="stat-pill" data-tab="esperando" onclick="switchTab('esperando', this)"><span
-        class="stat-dot dot-esperando"></span>Esperando<span class="stat-count" id="count-esperando">0</span></div>
-    <div class="stat-pill" data-tab="concluido" onclick="switchTab('concluido', this)"><span
-        class="stat-dot dot-concluido"></span>Concluído<span class="stat-count" id="count-concluido">0</span></div>
-    <div class="stat-pill" data-tab="dropado" onclick="switchTab('dropado', this)"><span
-        class="stat-dot dot-dropado"></span>Dropado<span class="stat-count" id="count-dropado">0</span></div>
+    <div class="stat-pill" data-tab="assistir" onclick="switchTab('assistir', this)">
+      <span class="stat-dot dot-assistir"></span>Backlog<span class="stat-count" id="count-assistir">0</span>
+    </div>
+    <div class="stat-pill" data-tab="esperando" onclick="switchTab('esperando', this)">
+      <span class="stat-dot dot-esperando"></span>Esperando<span class="stat-count" id="count-esperando">0</span>
+    </div>
+    <div class="stat-pill" data-tab="concluido" onclick="switchTab('concluido', this)">
+      <span class="stat-dot dot-concluido"></span>Concluído<span class="stat-count" id="count-concluido">0</span>
+    </div>
+    <div class="stat-pill" data-tab="dropado" onclick="switchTab('dropado', this)">
+      <span class="stat-dot dot-dropado"></span>Dropado<span class="stat-count" id="count-dropado">0</span>
+    </div>
   </nav>
 
   <main id="swipeArea">
     <div class="tab-content" id="tab-acompanhando">
-      <div class="section-header"><span class="section-label">Acompanhando</span>
-        <div class="section-line"></div>
-      </div>
+      <div class="section-header"><span class="section-label">Acompanhando</span><div class="section-line"></div></div>
       <div class="cards-grid" id="grid-acompanhando"></div>
     </div>
     <div class="tab-content" id="tab-assistir">
-      <div class="section-header"><span class="section-label">Backlog para assistir</span>
-        <div class="section-line"></div>
-      </div>
+      <div class="section-header"><span class="section-label">Backlog para assistir</span><div class="section-line"></div></div>
       <div class="cards-grid" id="grid-assistir"></div>
     </div>
     <div class="tab-content" id="tab-esperando">
-      <div class="section-header"><span class="section-label">Esperando nova temporada/Lançamento</span>
-        <div class="section-line"></div>
-      </div>
+      <div class="section-header"><span class="section-label">Esperando nova temporada / Lançamento</span><div class="section-line"></div></div>
       <div class="cards-grid" id="grid-esperando"></div>
     </div>
     <div class="tab-content" id="tab-concluido">
-      <div class="section-header"><span class="section-label">Concluídos</span>
-        <div class="section-line"></div>
-      </div>
+      <div class="section-header"><span class="section-label">Concluídos</span><div class="section-line"></div></div>
       <div class="cards-grid" id="grid-concluido"></div>
     </div>
     <div class="tab-content" id="tab-dropado">
-      <div class="section-header"><span class="section-label">Dropados</span>
-        <div class="section-line"></div>
-      </div>
+      <div class="section-header"><span class="section-label">Dropados</span><div class="section-line"></div></div>
       <div class="cards-grid" id="grid-dropado"></div>
     </div>
   </main>
 
   <div class="mobile-bottom-bar">
     <button class="btn btn-primary btn-mobile-add" onclick="openModal()">
-      <span class="btn-icon">＋</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
     </button>
   </div>
 
   <!-- MODAL NOVO/EDITAR -->
   <div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
     <div class="modal">
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
       <div class="modal-title" id="modalTitle">Novo Anime</div>
-      <div class="modal-subtitle" id="modalSubtitle">Vou buscar a capa automaticamente pelo nome ✨</div>
+      <div class="modal-subtitle" id="modalSubtitle">A capa é buscada automaticamente pelo nome.</div>
 
       <div class="form-group">
         <label class="form-label">Nome do anime *</label>
-        <input type="text" class="form-input" id="inputName" placeholder="Ex: Jujutsu Kaisen" oninput="onNameInput()"
-          onkeydown="if(event.key==='Enter')searchAnimeImage()">
+        <input type="text" class="form-input" id="inputName" placeholder="Ex: Jujutsu Kaisen"
+          oninput="onNameInput()" onkeydown="if(event.key==='Enter')searchAnimeImage()">
         <div class="fetch-status hidden" id="fetchStatus"></div>
       </div>
 
       <div class="img-preview-row">
-        <div class="form-group" style="flex:1"><label class="form-label">URL da imagem (opcional)</label><input
-            type="text" class="form-input" id="inputImage" placeholder="https://..." oninput="onImageUrlInput()">
-          <div class="form-hint">Se não encontrar automático, cole o link.</div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">URL da imagem (opcional)</label>
+          <input type="text" class="form-input" id="inputImage" placeholder="https://..." oninput="onImageUrlInput()">
+          <div class="form-hint">Cole o link caso a busca automática não encontre.</div>
         </div>
         <img class="img-preview" id="imgPreview" src="">
       </div>
 
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Temporada</label><input type="number" class="form-input"
-            id="inputSeason" placeholder="Opcional" min="1">
-          <div class="form-hint">Vazio p/ animes sem temp.</div>
+        <div class="form-group">
+          <label class="form-label">Temporada</label>
+          <input type="number" class="form-input" id="inputSeason" placeholder="Opcional" min="1">
+          <div class="form-hint">Deixe vazio para animes sem temporada.</div>
         </div>
-        <div class="form-group"><label class="form-label">Episódio atual</label><input type="number" class="form-input"
-            id="inputEpisode" placeholder="1" min="0"></div>
+        <div class="form-group">
+          <label class="form-label">Episódio atual</label>
+          <input type="number" class="form-input" id="inputEpisode" placeholder="1" min="0">
+        </div>
       </div>
 
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Capítulo (manga)</label><input type="number"
-            class="form-input" id="inputChapter" placeholder="Opcional" min="0"></div>
-        <div class="form-group"><label class="form-label">Status inicial</label><select class="form-input status-select"
-            id="inputStatus">
-            <option value="assistir">🔵 Backlog</option>
-            <option value="acompanhando">🟢 Acompanhando</option>
-            <option value="esperando">🟡 Esperando</option>
-            <option value="concluido">⚫ Concluído</option>
-            <option value="dropado">🔴 Dropado</option>
-          </select></div>
+        <div class="form-group">
+          <label class="form-label">Capítulo (manga)</label>
+          <input type="number" class="form-input" id="inputChapter" placeholder="Opcional" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status inicial</label>
+          <select class="form-input status-select" id="inputStatus">
+            <option value="assistir">Backlog</option>
+            <option value="acompanhando">Acompanhando</option>
+            <option value="esperando">Esperando</option>
+            <option value="concluido">Concluído</option>
+            <option value="dropado">Dropado</option>
+          </select>
+        </div>
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-danger" id="modalDeleteBtn" style="display: none; flex: 0 1 auto; padding: 12px 18px;"
-          onclick="deleteAnimeFromModal()"><span class="btn-icon">🗑</span></button>
+        <button class="btn btn-danger" id="modalDeleteBtn" style="display: none; flex: 0 1 auto; padding: 12px 18px;" onclick="deleteAnimeFromModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </button>
         <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
         <button class="btn btn-primary" id="modalConfirmBtn" onclick="saveAnime()">Adicionar</button>
       </div>
@@ -1615,39 +618,48 @@
   <!-- MODAL SYNC -->
   <div class="modal-backdrop" id="settingsBackdrop" onclick="handleSettingsBackdrop(event)">
     <div class="modal settings-modal">
-      <button class="modal-close" onclick="closeSettings()">✕</button>
-      <div class="modal-title">☁ Gist Sync</div>
+      <button class="modal-close" onclick="closeSettings()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="modal-title">Sincronização</div>
       <div class="modal-subtitle">Salva seu backlog automaticamente num Gist privado do GitHub.</div>
 
       <div id="gistStatusBox" class="gist-status-box disconnected">
-        <span id="gistStatusIcon">○</span>
+        <span id="gistStatusIcon">
+          <!-- icon swapped by JS -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </span>
         <span id="gistStatusText">Não configurado</span>
       </div>
 
-      <!-- PAINEL DE DISPOSITIVOS (visível só quando conectado) -->
+      <!-- DISPOSITIVOS (visível só quando conectado) -->
       <div class="settings-section" id="devicesSection" style="display:none">
-        <div class="settings-section-title">📱 Dispositivos Sincronizados</div>
+        <div class="settings-section-title">Dispositivos Sincronizados</div>
         <div class="devices-list" id="devicesList"></div>
       </div>
 
-      <div class="settings-section">
-        <div class="settings-section-title">📋 Como configurar (1x só)</div>
+      <!-- TUTORIAL (oculto quando conectado) -->
+      <div class="settings-section" id="howToSection">
+        <div class="settings-section-title">Como configurar</div>
         <div class="steps-list">
-          <div class="step">Acesse <a href="https://github.com/settings/tokens/new"
-              target="_blank">github.com/settings/tokens/new</a></div>
+          <div class="step">Acesse <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a></div>
           <div class="step">Em <strong>Note</strong> escreva exatamente <code>anime-backlog</code></div>
           <div class="step">Em <strong>Expiration</strong> escolha <code>No expiration</code></div>
-          <div class="step">Marque apenas a caixinha com o escopo <code>gist</code></div>
-          <div class="step">Clique em <strong>Generate token</strong> e copie o token gerado</div>
+          <div class="step">Marque apenas o escopo <code>gist</code></div>
+          <div class="step">Clique em <strong>Generate token</strong> e copie o valor gerado</div>
           <div class="step">Cole abaixo e clique em <strong>Conectar</strong></div>
         </div>
       </div>
 
       <div class="settings-section">
-        <div class="settings-section-title">🔑 Token do GitHub</div>
+        <div class="settings-section-title">Token do GitHub</div>
         <div class="form-group">
           <input type="password" class="form-input" id="inputToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-          <div class="form-hint">Fica salvo só no seu navegador, nunca sai daqui.</div>
+          <div class="form-hint">Armazenado apenas neste navegador, nunca transmitido a terceiros.</div>
         </div>
         <div class="fetch-status hidden" id="gistFetchStatus"></div>
       </div>
@@ -1655,39 +667,36 @@
       <div class="modal-footer" style="flex-direction:column;gap:8px">
         <div style="display:flex;gap:8px;width:100%">
           <button class="btn btn-ghost" style="flex:1" onclick="closeSettings()">Fechar</button>
-          <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="connectGist()">Conectar e
-            Sincronizar</button>
+          <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="connectGist()">Conectar e Sincronizar</button>
         </div>
         <div class="danger-zone" id="dangerZone" style="display:none">
-          <div class="danger-zone-text"><strong>Desconectar</strong> Remove o token. Dados locais não são afetados.
+          <div class="danger-zone-text">
+            <strong>Desconectar</strong>
+            Remove o token. Os dados locais não são afetados.
           </div>
           <button class="btn btn-danger" onclick="disconnectGist()">Sair</button>
         </div>
       </div>
     </div>
   </div>
+
   <!-- MODAL RECONHECIMENTO DE DISPOSITIVO -->
   <div class="modal-backdrop" id="deviceConflictBackdrop">
     <div class="modal" style="max-width:420px">
       <div class="modal-title">Dispositivo reconhecido</div>
-      <div class="modal-subtitle">Encontramos um dispositivo parecido já sincronizado. É o mesmo?</div>
-
+      <div class="modal-subtitle">Encontramos um dispositivo semelhante já sincronizado. É o mesmo?</div>
       <div id="deviceConflictCards" class="devices-list" style="margin:16px 0 8px"></div>
-
-      <div
-        style="font-size:12px;color:var(--text-muted);padding:10px 14px;background:var(--surface2);border-radius:10px;line-height:1.6;">
-        <strong style="color:var(--text)">Sim, é o mesmo</strong> — mantém o histórico e substitui o dispositivo
-        antigo.<br>
+      <div style="font-size:12px;color:var(--text-muted);padding:10px 14px;background:var(--surface2);border-radius:10px;line-height:1.6;">
+        <strong style="color:var(--text)">Sim, é o mesmo</strong> — mantém o histórico e substitui o registro antigo.<br>
         <strong style="color:var(--text)">Não, é novo</strong> — cadastra como dispositivo separado.
       </div>
-
       <div class="modal-footer" style="margin-top:16px">
         <button class="btn btn-ghost" style="flex:1" onclick="resolveDeviceConflict(false)">Não, é novo</button>
-        <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="resolveDeviceConflict(true)">Sim,
-          é o mesmo</button>
+        <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="resolveDeviceConflict(true)">Sim, é o mesmo</button>
       </div>
     </div>
   </div>
+
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
@@ -1716,14 +725,14 @@
     }
 
     // ── CONSTANTES & ESTADO GLOBAL ──
-    const STORAGE_KEY = 'anime_backlog_v2';
+    const STORAGE_KEY   = 'anime_backlog_v2';
     const GIST_TOKEN_KEY = 'anime_gist_token';
-    const GIST_ID_KEY = 'anime_gist_id';
+    const GIST_ID_KEY   = 'anime_gist_id';
     const GIST_FILENAME = 'anime-backlog.json';
     const DEVICE_ID_KEY = 'anime_device_id';
-    const DEVICES_KEY = 'anime_devices';
+    const DEVICES_KEY   = 'anime_devices';
     const LAST_SAVED_KEY = 'anime_gist_last_saved_at';
-    const POLL_INTERVAL = 3000; // ms
+    const POLL_INTERVAL = 3000;
 
     let animes = [];
     let nameInputTimer = null;
@@ -1741,63 +750,49 @@
       if (!id) {
         id = 'dev_' + genId();
         localStorage.setItem(DEVICE_ID_KEY, id);
-        localStorage.setItem('anime_device_is_new', 'true'); // flag: cache foi limpo
+        localStorage.setItem('anime_device_is_new', 'true');
       }
       return id;
     }
-    // ── ADICIONAR: variável de estado do conflito ────────────────────────
+
     let pendingDeviceMatch = null;
 
-    // ── ADICIONAR: detectar conflito e abrir modal ───────────────────────
     function checkDeviceConflict(remoteDevices) {
       if (!Array.isArray(remoteDevices)) return false;
       if (localStorage.getItem('anime_device_is_new') !== 'true') return false;
-
       const current = getDeviceInfo();
-      // Busca dispositivos com mesmo browser·OS mas ID diferente do atual
       const matches = remoteDevices
         .filter(d => d.id !== current.id && d.name === current.name)
         .sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen));
-
-      if (matches.length === 0) {
-        // Nenhum conflito — limpa flag e segue
-        localStorage.removeItem('anime_device_is_new');
-        return false;
-      }
-
-      pendingDeviceMatch = matches[0]; // usa o mais recente
+      if (matches.length === 0) { localStorage.removeItem('anime_device_is_new'); return false; }
+      pendingDeviceMatch = matches[0];
       openDeviceConflictModal();
       return true;
     }
 
-    // ── ADICIONAR: abrir/fechar modal de conflito ────────────────────────
     function openDeviceConflictModal() {
       const match = pendingDeviceMatch;
       const cards = document.getElementById('deviceConflictCards');
-
       const ICONS = {
-        mobile: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        tablet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
+        mobile:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
+        tablet:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
         desktop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`,
       };
-
       const typeKey = match.deviceType === 'mobile' ? 'mobile' : match.deviceType === 'tablet' ? 'tablet' : 'desktop';
       const icon = match.isPWA
         ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`
         : ICONS[typeKey];
-
       cards.innerHTML = `
-    <div class="device-card is-current">
-      <div class="device-icon-wrap">${icon}</div>
-      <div class="device-info">
-        <div class="device-name">${escHtml(match.name)}</div>
-        <div class="device-meta">
-          ${match.isPWA ? '<span class="device-tag pwa">PWA</span>' : ''}
-          <span class="device-tag">Último acesso: ${timeAgo(match.lastSeen)}</span>
-        </div>
-      </div>
-    </div>`;
-
+        <div class="device-card is-current">
+          <div class="device-icon-wrap">${icon}</div>
+          <div class="device-info">
+            <div class="device-name">${escHtml(match.name)}</div>
+            <div class="device-meta">
+              ${match.isPWA ? '<span class="device-tag pwa">PWA</span>' : ''}
+              <span class="device-tag">Último acesso: ${timeAgo(match.lastSeen)}</span>
+            </div>
+          </div>
+        </div>`;
       const backdrop = document.getElementById('deviceConflictBackdrop');
       backdrop.classList.add('open');
       requestAnimationFrame(() => backdrop.classList.add('visible'));
@@ -1809,15 +804,12 @@
       setTimeout(() => backdrop.classList.remove('open'), 400);
     }
 
-    // ── ADICIONAR: resolver o conflito ───────────────────────────────────
     function resolveDeviceConflict(isSame) {
       if (isSame && pendingDeviceMatch) {
-        lastGistETag = ''; // ← adicionar esta linha
-
-        // Em resolveDeviceConflict — substituir as 3 linhas do bloco isSame:
+        lastGistETag = '';
         const tempId = getDeviceId();
         localStorage.setItem(DEVICE_ID_KEY, pendingDeviceMatch.id);
-        showToast('✓ Dispositivo reconhecido!');
+        showToast('Dispositivo reconhecido.');
         const list = loadDeviceRegistry().filter(d => d.id !== tempId);
         saveDeviceRegistry(list);
       } else {
@@ -1830,45 +822,31 @@
 
     function getDeviceInfo() {
       const ua = navigator.userAgent;
-      let browser = 'Navegador', os = 'Sistema', deviceType = 'desktop', emoji = '💻';
-
+      let browser = 'Navegador', os = 'Sistema', deviceType = 'desktop';
       if (/Firefox\/[\d.]+/.test(ua)) browser = 'Firefox';
       else if (/Edg\/[\d.]+/.test(ua)) browser = 'Edge';
       else if (/OPR\/|Opera\//.test(ua)) browser = 'Opera';
       else if (/Chrome\/[\d.]+/.test(ua)) browser = 'Chrome';
       else if (/Version\/[\d.]+ Safari/.test(ua)) browser = 'Safari';
-
       if (/Windows NT/.test(ua)) os = 'Windows';
       else if (/Macintosh/.test(ua)) os = 'macOS';
-      else if (/Android/.test(ua)) { os = 'Android'; deviceType = 'mobile'; emoji = '📱'; }
-      else if (/iPhone/.test(ua)) { os = 'iPhone'; deviceType = 'mobile'; emoji = '📱'; }
-      else if (/iPad/.test(ua)) { os = 'iPad'; deviceType = 'tablet'; emoji = '📱'; }
+      else if (/Android/.test(ua)) { os = 'Android'; deviceType = 'mobile'; }
+      else if (/iPhone/.test(ua)) { os = 'iPhone'; deviceType = 'mobile'; }
+      else if (/iPad/.test(ua)) { os = 'iPad'; deviceType = 'tablet'; }
       else if (/Linux/.test(ua)) os = 'Linux';
-
       const isPWA = !!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone);
-      if (isPWA) emoji = '📲';
-
-      return {
-        id: getDeviceId(),
-        name: `${browser} · ${os}`,
-        browser, os, deviceType, emoji, isPWA,
-        lastSeen: new Date().toISOString()
-      };
+      return { id: getDeviceId(), name: `${browser} · ${os}`, browser, os, deviceType, isPWA, lastSeen: new Date().toISOString() };
     }
 
-    // ── DEVICE REGISTRY (lista de dispositivos conhecidos) ──
     function loadDeviceRegistry() {
       try {
         let list = JSON.parse(localStorage.getItem(DEVICES_KEY) || '[]');
-        // Remove dispositivos sem atividade nos últimos 30 dias
         const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
         list = list.filter(d => !d.lastSeen || new Date(d.lastSeen).getTime() > cutoff);
         return list;
       } catch { return []; }
     }
-    function saveDeviceRegistry(list) {
-      localStorage.setItem(DEVICES_KEY, JSON.stringify(list));
-    }
+    function saveDeviceRegistry(list) { localStorage.setItem(DEVICES_KEY, JSON.stringify(list)); }
     function registerCurrentDevice() {
       const info = getDeviceInfo();
       const list = loadDeviceRegistry();
@@ -1885,14 +863,12 @@
         const ld = map[rd.id];
         if (!ld || new Date(rd.lastSeen) > new Date(ld.lastSeen)) map[rd.id] = rd;
       });
-      // Sempre atualiza o dispositivo atual com hora real
       const current = getDeviceInfo();
       map[current.id] = current;
       const merged = Object.values(map).sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen));
       saveDeviceRegistry(merged);
     }
 
-    // ── HELPERS DE TEMPO ──
     function timeAgo(iso) {
       if (!iso) return 'nunca';
       const diff = Date.now() - new Date(iso).getTime();
@@ -1901,17 +877,16 @@
       if (m < 60) return `${m} min atrás`;
       const h = Math.floor(m / 60);
       if (h < 24) return `${h}h atrás`;
-      const d = Math.floor(h / 24);
-      return `${d}d atrás`;
+      return `${Math.floor(h / 24)}d atrás`;
     }
 
     // ── STATUS MAP ──
     const STATUS_MAP = {
-      acompanhando: { label: 'Acompanhando', emoji: '🟢', badge: 'badge-acompanhando' },
-      assistir: { label: 'Backlog', emoji: '🔵', badge: 'badge-assistir' },
-      esperando: { label: 'Esperando', emoji: '🟡', badge: 'badge-esperando' },
-      concluido: { label: 'Concluído', emoji: '⚫', badge: 'badge-concluido' },
-      dropado: { label: 'Dropado', emoji: '🔴', badge: 'badge-dropado' },
+      acompanhando: { label: 'Acompanhando', badge: 'badge-acompanhando' },
+      assistir:     { label: 'Backlog',       badge: 'badge-assistir' },
+      esperando:    { label: 'Esperando',     badge: 'badge-esperando' },
+      concluido:    { label: 'Concluído',     badge: 'badge-concluido' },
+      dropado:      { label: 'Dropado',       badge: 'badge-dropado' },
     };
     const TABS_ORDER = ['acompanhando', 'assistir', 'esperando', 'concluido', 'dropado'];
 
@@ -1920,26 +895,18 @@
       try { const raw = localStorage.getItem(STORAGE_KEY); animes = raw ? JSON.parse(raw) : []; }
       catch { animes = []; }
     }
-    function saveData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-      scheduleGistSync(); // hash calculado na hora de enviar
-    }
+    function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); scheduleGistSync(); }
 
-    // ── SMART MERGE: resolve conflitos por anime usando updatedAt ──
+    // ── SMART MERGE ──
     function smartMerge(localList, remoteList) {
       const map = new Map();
-      // Baseline com animes locais
       localList.forEach(a => map.set(a.id, a));
-      // Para cada remote, ganha quem tem updatedAt mais recente
       remoteList.forEach(remote => {
         const local = map.get(remote.id);
-        if (!local) {
-          map.set(remote.id, remote);
-        } else {
-          const lt = new Date(local.updatedAt || local.addedAt || 0).getTime();
-          const rt = new Date(remote.updatedAt || remote.addedAt || 0).getTime();
-          if (rt > lt) map.set(remote.id, remote);
-        }
+        if (!local) { map.set(remote.id, remote); return; }
+        const lt = new Date(local.updatedAt || local.addedAt || 0).getTime();
+        const rt = new Date(remote.updatedAt || remote.addedAt || 0).getTime();
+        if (rt > lt) map.set(remote.id, remote);
       });
       return Array.from(map.values());
     }
@@ -1974,6 +941,15 @@
       document.getElementById('tab-' + tab).scrollIntoView({ behavior: 'smooth', inline: 'center' });
     }
 
+    // SVG placeholders for empty states
+    const EMPTY_ICONS = {
+      acompanhando: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>`,
+      assistir:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+      esperando:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      concluido:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+      dropado:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+    };
+
     function renderAll() {
       TABS_ORDER.forEach(tab => {
         const grid = document.getElementById('grid-' + tab);
@@ -1981,7 +957,11 @@
         document.getElementById('count-' + tab).textContent = items.length;
         grid.innerHTML = '';
         if (items.length === 0) {
-          grid.innerHTML = `<div class="empty-state"><div class="empty-icon">${getEmptyIcon(tab)}</div><div class="empty-title">${getEmptyTitle(tab)}</div><div class="empty-sub">${getEmptySub(tab)}</div></div>`;
+          grid.innerHTML = `<div class="empty-state">
+            <div class="empty-icon">${EMPTY_ICONS[tab]}</div>
+            <div class="empty-title">${getEmptyTitle(tab)}</div>
+            <div class="empty-sub">${getEmptySub(tab)}</div>
+          </div>`;
         } else {
           items.forEach(anime => grid.appendChild(buildCard(anime)));
         }
@@ -1990,49 +970,52 @@
       filterAnimes();
     }
 
-    function getEmptyIcon(t) { return { acompanhando: '🎌', assistir: '📚', esperando: '🌸', concluido: '🏆', dropado: '💔' }[t]; }
     function getEmptyTitle(t) { return { acompanhando: 'Nenhum anime aqui', assistir: 'Backlog vazio', esperando: 'Nenhum em espera', concluido: 'Nenhum concluído ainda', dropado: 'Nenhum dropado' }[t]; }
-    function getEmptySub(t) { return { acompanhando: 'Adicione um anime que está assistindo agora.', assistir: 'Adicione animes que quer assistir no futuro.', esperando: 'Animes aguardando nova temporada aparecem aqui.', concluido: 'Seus animes finalizados aparecem aqui.', dropado: 'Animes que você desistiu aparecem aqui.' }[t]; }
+    function getEmptySub(t)   { return { acompanhando: 'Adicione um anime que está assistindo agora.', assistir: 'Adicione animes que quer assistir no futuro.', esperando: 'Animes aguardando nova temporada aparecem aqui.', concluido: 'Seus animes finalizados aparecem aqui.', dropado: 'Animes que você desistiu aparecem aqui.' }[t]; }
+
+    const PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`;
 
     function buildCard(anime) {
       const card = document.createElement('div');
       card.className = `anime-card status-${anime.status}`;
       card.id = 'card-' + anime.id;
       const sInfo = STATUS_MAP[anime.status];
-      const hasManga = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
-      const hasSeason = anime.season !== null && anime.season !== undefined && anime.season !== '';
+      const hasManga  = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
+      const hasSeason = anime.season  !== null && anime.season  !== undefined && anime.season  !== '';
       const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onload="this.style.display='';this.nextElementSibling.style.display='none'">` : '';
       const placeholderStyle = anime.image ? 'style="display:none"' : '';
-      const concludedBar = anime.status === 'concluido' && anime.concludedAt ? `<div class="concluded-overlay">✅ ${formatDate(anime.concludedAt)}</div>` : '';
-      const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
-      const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
+      const concludedBar = anime.status === 'concluido' && anime.concludedAt
+        ? `<div class="concluded-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 11 4 18"/></svg> ${formatDate(anime.concludedAt)}</div>`
+        : '';
+      const seasonRow  = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
+      const chapterRow = hasManga  ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
       card.innerHTML = `
-    <div class="card-cover" onclick="openModal('${anime.id}')" title="Clique para editar">
-      ${coverHTML}
-      <div class="card-cover-placeholder" ${placeholderStyle}>🎌</div>
-      ${concludedBar}
-    </div>
-    <div class="status-badge ${sInfo.badge}">${sInfo.emoji} ${sInfo.label}</div>
-    <div class="card-body">
-      <div class="card-title">${escHtml(anime.title)}</div>
-      <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
-        ${Object.entries(STATUS_MAP).map(([k, v]) => `<option value="${k}" ${k === anime.status ? 'selected' : ''}>${v.emoji} ${v.label}</option>`).join('')}
-      </select>
-      <div class="card-counters">
-        ${seasonRow}
-        <div class="counter-row">
-          <span class="counter-label">Ep</span>
-          <button class="counter-btn" onclick="changeValue('${anime.id}','episode',-1)">−</button>
-          <input class="counter-input" type="number" value="${anime.episode}" min="0" data-field="episode" onchange="updateField('${anime.id}','episode',this.value)">
-          <button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button>
+        <div class="card-cover" onclick="openModal('${anime.id}')" title="Clique para editar">
+          ${coverHTML}
+          <div class="card-cover-placeholder" ${placeholderStyle}>${PLACEHOLDER_SVG}</div>
+          ${concludedBar}
         </div>
-        ${chapterRow}
-      </div>
-    </div>`;
+        <div class="status-badge ${sInfo.badge}"><span class="status-badge-dot"></span>${sInfo.label}</div>
+        <div class="card-body">
+          <div class="card-title">${escHtml(anime.title)}</div>
+          <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
+            ${Object.entries(STATUS_MAP).map(([k, v]) => `<option value="${k}" ${k === anime.status ? 'selected' : ''}>${v.label}</option>`).join('')}
+          </select>
+          <div class="card-counters">
+            ${seasonRow}
+            <div class="counter-row">
+              <span class="counter-label">Ep</span>
+              <button class="counter-btn" onclick="changeValue('${anime.id}','episode',-1)">−</button>
+              <input class="counter-input" type="number" value="${anime.episode}" min="0" data-field="episode" onchange="updateField('${anime.id}','episode',this.value)">
+              <button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button>
+            </div>
+            ${chapterRow}
+          </div>
+        </div>`;
       return card;
     }
 
-    function escHtml(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     function formatDate(iso) { if (!iso) return ''; return new Date(iso).toLocaleDateString('pt-BR'); }
     function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
     function now() { return new Date().toISOString(); }
@@ -2042,7 +1025,7 @@
 
     function saveAnime() {
       const name = document.getElementById('inputName').value.trim();
-      if (!name) return showToast('⚠️ Digite o nome do anime!', 'warning');
+      if (!name) return showToast('Digite o nome do anime.');
       const epVal = document.getElementById('inputEpisode').value;
       const chVal = document.getElementById('inputChapter').value;
       const seVal = document.getElementById('inputSeason').value;
@@ -2052,38 +1035,33 @@
       if (editingId) {
         const anime = animes.find(a => a.id === editingId); if (!anime) return;
         anime.title = name; anime.image = imgUrl;
-        anime.season = seVal !== '' ? parseInt(seVal) : null;
-        anime.episode = epVal !== '' ? parseInt(epVal) : 1;
-        anime.chapter = chVal !== '' ? parseInt(chVal) : null;
+        anime.season   = seVal !== '' ? parseInt(seVal) : null;
+        anime.episode  = epVal !== '' ? parseInt(epVal) : 1;
+        anime.chapter  = chVal !== '' ? parseInt(chVal) : null;
         if (status === 'concluido' && !anime.concludedAt) anime.concludedAt = now();
         if (status !== 'concluido') anime.concludedAt = null;
         anime.status = status;
         touchAnime(anime);
-        showToast(`✏️ ${name} atualizado!`);
+        showToast(`${name} atualizado.`);
       } else {
         const ts = now();
-        animes.push({
-          id: genId(), title: name, image: imgUrl,
+        animes.push({ id: genId(), title: name, image: imgUrl,
           season: seVal !== '' ? parseInt(seVal) : null,
           episode: epVal !== '' ? parseInt(epVal) : 1,
           chapter: chVal !== '' ? parseInt(chVal) : null,
-          status, concludedAt: status === 'concluido' ? ts : null,
-          addedAt: ts, updatedAt: ts
-        });
-        showToast(`✨ ${name} adicionado!`);
+          status, concludedAt: status === 'concluido' ? ts : null, addedAt: ts, updatedAt: ts });
+        showToast(`${name} adicionado.`);
       }
       saveData(); renderAll(); closeModal();
       switchTab(status, document.querySelector(`[data-tab="${status}"]`));
     }
 
     function deleteAnime(id) {
-      const idx = animes.findIndex(a => a.id === id);
-      if (idx === -1) return false;
+      const idx = animes.findIndex(a => a.id === id); if (idx === -1) return false;
       if (confirm('Tem certeza que deseja excluir?')) {
         const name = animes[idx].title;
-        animes.splice(idx, 1);
-        saveData(); renderAll();
-        showToast(`🗑 ${name} removido.`);
+        animes.splice(idx, 1); saveData(); renderAll();
+        showToast(`${name} removido.`);
         return true;
       }
       return false;
@@ -2114,74 +1092,51 @@
       if (newStatus !== 'concluido') anime.concludedAt = null;
       touchAnime(anime); saveData(); renderAll();
       switchTab(newStatus, document.querySelector(`[data-tab="${newStatus}"]`));
-      showToast('Status atualizado!');
+      showToast('Status atualizado.');
     }
 
-    // ── SYNC: PAYLAOD ──
+    // ── SYNC: PAYLOAD ──
     function buildGistPayload() {
       const devices = registerCurrentDevice();
       return JSON.stringify({ animes, savedAt: now(), savedBy: getDeviceId(), devices }, null, 2);
     }
 
-    // ── SYNC: PULL ──
-    let lastGistETag = '';
-
-    // Substitui a função pullFromGist original:
-    async function pullFromGist(token, gistId) {
-      const headers = { Authorization: `token ${token}` };
-      // Se temos ETag, manda no header — GitHub retorna 304 se não mudou nada,
-      // economizando banda e evitando processar dados desnecessariamente
-      if (lastGistETag) headers['If-None-Match'] = lastGistETag;
-
-      const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers });
-
-      if (res.status === 304) return null; // Nada mudou desde o último pull
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const etag = res.headers.get('ETag');
-      if (etag) lastGistETag = etag; // Salva para próxima comparação
-
-      const data = await res.json();
-      const content = data.files?.[GIST_FILENAME]?.content;
-      if (!content) throw new Error('Arquivo não encontrado no Gist');
-      return JSON.parse(content);
-    }
-    // ── HASH DE CONTEÚDO (substitui anime_pending_sync) ──
+    // ── SYNC: HASH ──
     const LAST_HASH_KEY = 'anime_gist_last_hash';
-
     function buildAnimeHash(list) {
-      // Normaliza: só os campos de dados, ordem fixa, sem devices/timestamps voláteis
       const normalized = [...list]
         .sort((a, b) => a.id.localeCompare(b.id))
         .map(({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt }) =>
           ({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt }));
       return JSON.stringify(normalized);
     }
+    function hasUnpushedChanges() { return buildAnimeHash(animes) !== (localStorage.getItem(LAST_HASH_KEY) || ''); }
+    function markAsPushed() { localStorage.setItem(LAST_HASH_KEY, buildAnimeHash(animes)); localStorage.removeItem('anime_pending_sync'); }
 
-    function hasUnpushedChanges() {
-      return buildAnimeHash(animes) !== (localStorage.getItem(LAST_HASH_KEY) || '');
+    // ── SYNC: PULL ──
+    let lastGistETag = '';
+    async function pullFromGist(token, gistId) {
+      const headers = { Authorization: `token ${token}` };
+      if (lastGistETag) headers['If-None-Match'] = lastGistETag;
+      const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers });
+      if (res.status === 304) return null;
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const etag = res.headers.get('ETag');
+      if (etag) lastGistETag = etag;
+      const data = await res.json();
+      const content = data.files?.[GIST_FILENAME]?.content;
+      if (!content) throw new Error('Arquivo não encontrado no Gist');
+      return JSON.parse(content);
     }
 
-    function markAsPushed() {
-      localStorage.setItem(LAST_HASH_KEY, buildAnimeHash(animes));
-      localStorage.removeItem('anime_pending_sync'); // limpa flag legada se existir
-    }
     // ── SYNC: PUSH ──
     async function pushToGist(silent = false, background = false) {
       const token = getToken(), gistId = getGistId();
       if (!token) return;
       if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
-
-      // ← NOVA GUARDA: só prossegue se há mudança real
-      if (gistId && !hasUnpushedChanges()) {
-        setSyncUI('ok', 'Sincronizado');
-        return;
-      }
-
+      if (gistId && !hasUnpushedChanges()) { setSyncUI('ok', 'Sincronizado'); return; }
       if (!background) setSyncUI('ing', 'Enviando...');
       const payload = buildGistPayload();
-
       try {
         let res;
         if (gistId) {
@@ -2199,194 +1154,116 @@
         }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        if (!gistId) {
-          localStorage.setItem(GIST_ID_KEY, data.id);
-          if (!silent) showToast('☁ Gist criado!');
-        }
-
+        if (!gistId) { localStorage.setItem(GIST_ID_KEY, data.id); if (!silent) showToast('Gist criado.'); }
         const sent = JSON.parse(payload);
         lastKnownSavedAt = sent.savedAt;
         localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
-        markAsPushed(); // ← salva o hash do que foi enviado
+        markAsPushed();
         lastGistETag = '';
         setSyncUI('ok', 'Sincronizado');
       } catch (e) {
         if (!background) setSyncUI('err', 'Erro no envio');
-        if (!silent) showToast('⚠ Erro ao enviar para o Gist', 'error');
+        if (!silent) showToast('Erro ao enviar para o Gist.');
         throw e;
       }
     }
 
-    // ── SYNC: PULL + MERGE + PUSH (operação completa) ──
+    // ── SYNC: FULL SYNC ──
     async function fullSync(silent = false, background = false) {
       const token = getToken(), gistId = getGistId();
       if (!token || isSyncing || !navigator.onLine) return;
-
       isSyncing = true;
       if (!background) setSyncUI('ing', 'Sincronizando...');
-
       try {
         let needsPush = hasUnpushedChanges();
-
         if (gistId) {
           const remote = await pullFromGist(token, gistId);
-
-          // 304 → nada mudou remotamente
           if (!remote) {
-            if (needsPush) {
-              await pushToGist(true, background);
-            } else {
-              setSyncUI('ok', 'Sincronizado'); // ← sem push, só atualiza o ícone
-            }
+            if (needsPush) { await pushToGist(true, background); }
+            else { setSyncUI('ok', 'Sincronizado'); }
             return;
           }
-
           if (remote.devices) mergeDeviceRegistry(remote.devices);
           checkDeviceConflict(remote.devices);
-
           if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
             const merged = smartMerge(animes, remote.animes || []);
             const changed = JSON.stringify(merged) !== JSON.stringify(animes);
-            if (changed) {
-              animes = merged;
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-              renderAll();
-              if (!silent) showToast('☁ Atualizado com dados remotos!');
-              needsPush = true; // merge gerou dados novos → precisa reenviar
-            }
+            if (changed) { animes = merged; localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); renderAll(); if (!silent) showToast('Dados atualizados.'); needsPush = true; }
             lastKnownSavedAt = remote.savedAt;
             localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
           }
-        } else {
-          // Primeiro uso: sem gistId ainda, sempre precisa criar
-          needsPush = true;
-        }
-
-        if (needsPush) {
-          await pushToGist(true, background);
-        } else {
-          setSyncUI('ok', 'Sincronizado'); // ← abre o app 100x = 0 writes
-        }
+        } else { needsPush = true; }
+        if (needsPush) { await pushToGist(true, background); }
+        else { setSyncUI('ok', 'Sincronizado'); }
       } catch (e) {
         if (!background) setSyncUI('err', 'Erro de sync');
         console.error('Sync error:', e);
-      } finally {
-        isSyncing = false;
-      }
+      } finally { isSyncing = false; }
     }
 
-    // ── SYNC AGENDADO (debounce após edição) ──
     function scheduleGistSync() {
       if (!getToken()) return;
       clearTimeout(syncTimer);
-      // Passamos false no segundo parâmetro para a animação aparecer quando VOCÊ edita algo
       syncTimer = setTimeout(() => fullSync(true, false), 3500);
     }
 
-    // ── POLL: checar atualizações em background ──
     async function silentPoll() {
-      if (
-        document.getElementById('modalBackdrop').classList.contains('visible') ||
-        document.getElementById('settingsBackdrop').classList.contains('visible')
-      ) return;
-
+      if (document.getElementById('modalBackdrop').classList.contains('visible') ||
+          document.getElementById('settingsBackdrop').classList.contains('visible')) return;
       const token = getToken(), gistId = getGistId();
       if (!token || !gistId || !navigator.onLine || isSyncing) return;
-
-      if (localStorage.getItem('anime_pending_sync') === 'true') {
-        await fullSync(true, true);
-        return;
-      }
-
+      if (localStorage.getItem('anime_pending_sync') === 'true') { await fullSync(true, true); return; }
       try {
         const remote = await pullFromGist(token, gistId);
-        if (!remote) return; // 304 → nada mudou, zero writes
-
+        if (!remote) return;
         if (remote.devices) mergeDeviceRegistry(remote.devices);
-
         if (remote.savedAt && remote.savedAt !== lastKnownSavedAt) {
           const merged = smartMerge(animes, remote.animes || []);
           const changed = JSON.stringify(merged) !== JSON.stringify(animes);
-
-          if (changed) {
-            animes = merged;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
-            renderAll();
-            showToast('☁ Atualizado em tempo real!');
-          }
-
+          if (changed) { animes = merged; localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); renderAll(); showToast('Atualizado em tempo real.'); }
           lastKnownSavedAt = remote.savedAt;
           localStorage.setItem(LAST_SAVED_KEY, lastKnownSavedAt);
           setSyncUI('ok', 'Sincronizado');
-
-          // Só faz push se o merge trouxe dados novos (para atualizar o devices no Gist)
           if (changed) await pushToGist(true, true);
         }
       } catch (e) { /* silencioso */ }
     }
 
-    function startPolling() {
-      silentPoll();
-      clearInterval(pollTimer);
-      pollTimer = setInterval(silentPoll, POLL_INTERVAL);
-    }
-    function stopPolling() { clearInterval(pollTimer); }
+    function startPolling()  { silentPoll(); clearInterval(pollTimer); pollTimer = setInterval(silentPoll, POLL_INTERVAL); }
+    function stopPolling()   { clearInterval(pollTimer); }
 
     function startSmartMonitor() {
-      // Quando a aba fica visível ou ganha foco (clicou nela)
       const triggerSync = () => {
-        if (document.visibilityState === 'visible') {
-          console.log("App focado: checando atualizações...");
-          silentPoll(); // Checa na hora!
-          startPolling(); // Reinicia o timer
-        } else {
-          stopPolling(); // Para de gastar se a aba estiver escondida
-        }
+        if (document.visibilityState === 'visible') { silentPoll(); startPolling(); }
+        else { stopPolling(); }
       };
-
       document.addEventListener('visibilitychange', triggerSync);
       window.addEventListener('focus', triggerSync);
-
-      // Inicia o primeiro ciclo
-      if (document.visibilityState === 'visible') {
-        silentPoll();
-        startPolling();
-      }
+      if (document.visibilityState === 'visible') { silentPoll(); startPolling(); }
     }
 
-    // ── RECONEXÃO ──
     window.addEventListener('online', async () => {
       updateSettingsUI();
       document.querySelectorAll('.anime-card img[data-src]').forEach(img => {
-        if (img.style.display === 'none') {
-          const src = img.getAttribute('data-src');
-          img.src = src + (src.includes('?') ? '&' : '?') + 't=' + Date.now();
-        }
+        if (img.style.display === 'none') { const src = img.getAttribute('data-src'); img.src = src + (src.includes('?') ? '&' : '?') + 't=' + Date.now(); }
       });
       setSyncUI('ing', 'Reconectando...');
       await fullSync();
       startPolling();
     });
-    window.addEventListener('offline', () => {
-      updateSettingsUI();
-      stopPolling();
-      if (getToken()) setSyncUI('off', 'Offline (salvo local)');
-    });
+    window.addEventListener('offline', () => { updateSettingsUI(); stopPolling(); if (getToken()) setSyncUI('off', 'Offline'); });
 
-    // ── INIT GIST SYNC ──
     async function initGistSync() {
-      const token = getToken(), gistId = getGistId();
+      const token = getToken();
       if (!token) return;
       if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
       await fullSync();
     }
 
-    // ── CONNECT GIST ──
     async function connectGist() {
-      if (!navigator.onLine) return showToast('⚠️ Conecte-se à internet primeiro!', 'error');
+      if (!navigator.onLine) return showToast('Conecte-se à internet primeiro.');
       const token = document.getElementById('inputToken').value.trim();
       if (!token) return;
-
       setGistFetchStatus('loading', 'Verificando token...');
       try {
         const meRes = await fetch('https://api.github.com/user', { headers: { Authorization: `token ${token}` } });
@@ -2405,7 +1282,6 @@
         }
 
         if (foundGistId) {
-
           localStorage.setItem(GIST_ID_KEY, foundGistId);
           setGistFetchStatus('loading', 'Importando dados do Gist...');
           const remote = await pullFromGist(token, foundGistId);
@@ -2420,20 +1296,18 @@
             renderAll();
           }
           checkDeviceConflict(remote.devices);
-          showToast('☁ Conectado! Dados sincronizados.');
+          showToast('Conectado e sincronizado.');
         } else {
           setGistFetchStatus('loading', 'Criando novo Gist...');
           await pushToGist(true);
-          showToast('☁ Novo Gist criado!');
+          showToast('Novo Gist criado.');
         }
 
         updateSettingsUI();
         setGistFetchStatus('hidden', '');
         closeSettings();
         startPolling();
-      } catch (e) {
-        setGistFetchStatus('error', `❌ ${e.message}`);
-      }
+      } catch (e) { setGistFetchStatus('error', `Erro: ${e.message}`); }
     }
 
     function disconnectGist() {
@@ -2441,47 +1315,56 @@
       localStorage.removeItem(GIST_ID_KEY);
       localStorage.removeItem('anime_pending_sync');
       localStorage.removeItem(LAST_SAVED_KEY);
-      localStorage.removeItem(LAST_HASH_KEY); 
+      localStorage.removeItem(LAST_HASH_KEY);
       lastKnownSavedAt = '';
       stopPolling();
       setSyncUI('off', 'Sem sync');
       updateSettingsUI();
       closeSettings();
-      showToast('○ Desconectado do Gist.');
+      showToast('Desconectado do Gist.');
     }
 
     // ── SETTINGS UI ──
-    function getToken() { return localStorage.getItem(GIST_TOKEN_KEY) || ''; }
+    function getToken()  { return localStorage.getItem(GIST_TOKEN_KEY) || ''; }
     function getGistId() { return localStorage.getItem(GIST_ID_KEY) || ''; }
+
+    const SVG_CLOUD_OK  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><polyline points="9 12 11 14 15 10"/></svg>`;
+    const SVG_CLOUD_OFF = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`;
+    const SVG_INFO      = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
 
     function setSyncUI(state, label) {
       const el = document.getElementById('syncIndicator');
       const lb = document.getElementById('syncLabel');
       el.className = 'sync-indicator sync-' + state;
       lb.textContent = label;
+      const wrap = el.querySelector('.sync-icon-wrap');
+      wrap.innerHTML = (state === 'ok') ? SVG_CLOUD_OK : SVG_CLOUD_OFF;
     }
 
     function updateSettingsUI() {
       const token = getToken();
-      const box = document.getElementById('gistStatusBox');
+      const box    = document.getElementById('gistStatusBox');
       const danger = document.getElementById('dangerZone');
       const devsec = document.getElementById('devicesSection');
+      const howTo  = document.getElementById('howToSection');
 
       if (token) {
         box.className = 'gist-status-box connected';
-        document.getElementById('gistStatusIcon').textContent = '✓';
+        document.getElementById('gistStatusIcon').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="20 6 9 11 4 18"/></svg>`;
         document.getElementById('gistStatusText').textContent = navigator.onLine ? 'Conectado' : 'Conectado (offline agora)';
         danger.style.display = 'flex';
         devsec.style.display = 'block';
+        howTo.style.display  = 'none';   // ← oculta tutorial
         document.getElementById('inputToken').value = '●●●●●●●●●●●●●●●●';
         renderDeviceList();
         setSyncUI(navigator.onLine ? 'ok' : 'off', navigator.onLine ? 'Sincronizado' : 'Offline');
       } else {
         box.className = 'gist-status-box disconnected';
-        document.getElementById('gistStatusIcon').textContent = '○';
+        document.getElementById('gistStatusIcon').innerHTML = SVG_INFO;
         document.getElementById('gistStatusText').textContent = 'Não configurado';
         danger.style.display = 'none';
         devsec.style.display = 'none';
+        howTo.style.display  = 'block';  // ← mostra tutorial
         document.getElementById('inputToken').value = '';
         setSyncUI('off', 'Sem sync');
       }
@@ -2491,44 +1374,29 @@
       const list = loadDeviceRegistry();
       const currentId = getDeviceId();
       const el = document.getElementById('devicesList');
-
-      if (list.length === 0) {
-        el.innerHTML = '<div class="devices-empty">Nenhum dispositivo registrado ainda.</div>';
-        return;
-      }
-
+      if (list.length === 0) { el.innerHTML = '<div class="devices-empty">Nenhum dispositivo registrado ainda.</div>'; return; }
       const ICONS = {
-        mobile: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        tablet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
+        mobile:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
+        tablet:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
         desktop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`,
-        pwa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
+        pwa:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
       };
-
-      list.sort((a, b) => {
-        if (a.id === currentId) return -1;
-        if (b.id === currentId) return 1;
-        return new Date(b.lastSeen) - new Date(a.lastSeen);
-      });
-
+      list.sort((a, b) => { if (a.id === currentId) return -1; if (b.id === currentId) return 1; return new Date(b.lastSeen) - new Date(a.lastSeen); });
       el.innerHTML = list.map(dev => {
         const isCurrent = dev.id === currentId;
         const typeKey = dev.deviceType === 'mobile' ? 'mobile' : dev.deviceType === 'tablet' ? 'tablet' : 'desktop';
         const typeLabel = typeKey === 'mobile' ? 'Celular' : typeKey === 'tablet' ? 'Tablet' : 'Desktop';
         const icon = dev.isPWA ? ICONS.pwa : ICONS[typeKey];
-        const pwaBadge = dev.isPWA ? '<span class="device-tag pwa">PWA</span>' : '';
-        const curBadge = isCurrent ? '<span class="device-tag current">Este dispositivo</span>' : '';
-        return `
-      <div class="device-card ${isCurrent ? 'is-current' : ''}">
-        <div class="device-icon-wrap">${icon}</div>
-        <div class="device-info">
-          <div class="device-name">${escHtml(dev.name || 'Desconhecido')}</div>
-          <div class="device-meta">
-            <span class="device-tag">${escHtml(typeLabel)}</span>
-            ${pwaBadge}${curBadge}
+        const pwaBadge  = dev.isPWA ? '<span class="device-tag pwa">PWA</span>' : '';
+        const curBadge  = isCurrent ? '<span class="device-tag current">Este dispositivo</span>' : '';
+        return `<div class="device-card ${isCurrent ? 'is-current' : ''}">
+          <div class="device-icon-wrap">${icon}</div>
+          <div class="device-info">
+            <div class="device-name">${escHtml(dev.name || 'Desconhecido')}</div>
+            <div class="device-meta"><span class="device-tag">${escHtml(typeLabel)}</span>${pwaBadge}${curBadge}</div>
           </div>
-        </div>
-        <div class="device-lastseen">${timeAgo(dev.lastSeen)}</div>
-      </div>`;
+          <div class="device-lastseen">${timeAgo(dev.lastSeen)}</div>
+        </div>`;
       }).join('');
     }
 
@@ -2547,12 +1415,12 @@
       document.getElementById('modalTitle').textContent = isEdit ? 'Editar Anime' : 'Novo Anime';
       document.getElementById('modalConfirmBtn').textContent = isEdit ? 'Salvar' : 'Adicionar';
       document.getElementById('modalDeleteBtn').style.display = isEdit ? 'inline-flex' : 'none';
-      document.getElementById('inputName').value = anime?.title ?? '';
-      document.getElementById('inputSeason').value = anime?.season ?? '';
+      document.getElementById('inputName').value    = anime?.title   ?? '';
+      document.getElementById('inputSeason').value  = anime?.season  ?? '';
       document.getElementById('inputEpisode').value = anime?.episode ?? '';
       document.getElementById('inputChapter').value = anime?.chapter ?? '';
-      document.getElementById('inputImage').value = anime?.image ?? '';
-      document.getElementById('inputStatus').value = anime?.status ?? 'assistir';
+      document.getElementById('inputImage').value   = anime?.image   ?? '';
+      document.getElementById('inputStatus').value  = anime?.status  ?? 'assistir';
       fetchedImageUrl = '';
       setFetchStatus('hidden', '');
       const preview = document.getElementById('imgPreview');
@@ -2584,8 +1452,8 @@
       setTimeout(() => backdrop.classList.remove('open'), 400);
     }
 
-    function handleBackdropClick(e) { if (e.target === document.getElementById('modalBackdrop')) closeModal(); }
-    function handleSettingsBackdrop(e) { if (e.target === document.getElementById('settingsBackdrop')) closeSettings(); }
+    function handleBackdropClick(e)   { if (e.target === document.getElementById('modalBackdrop'))    closeModal(); }
+    function handleSettingsBackdrop(e){ if (e.target === document.getElementById('settingsBackdrop')) closeSettings(); }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSettings(); closeDeviceConflictModal(); } });
 
     // ── BUSCA DE IMAGEM ──
@@ -2613,7 +1481,7 @@
         const item = data.data?.[0];
         if (item?.images?.jpg?.large_image_url) {
           fetchedImageUrl = item.images.jpg.large_image_url;
-          setFetchStatus('success', '✓ Capa encontrada!');
+          setFetchStatus('success', 'Capa encontrada.');
           const p = document.getElementById('imgPreview');
           p.src = fetchedImageUrl; p.classList.add('visible');
         } else { setFetchStatus('error', 'Capa não encontrada.'); }
@@ -2633,7 +1501,7 @@
       a.href = URL.createObjectURL(blob);
       a.download = 'anime-backlog.json';
       a.click();
-      showToast('⬇ Backup exportado!');
+      showToast('Backup exportado.');
     }
     function importData(e) {
       const file = e.target.files[0]; if (!file) return;
@@ -2645,8 +1513,8 @@
           let added = 0;
           data.forEach(item => { if (!existing.has(item.id)) { animes.push(item); added++; } });
           saveData(); renderAll();
-          showToast(`⬆ ${added} importado(s)!`);
-        } catch { showToast('❌ Arquivo inválido!', 'error'); }
+          showToast(`${added} item(s) importado(s).`);
+        } catch { showToast('Arquivo inválido.'); }
         e.target.value = '';
       };
       reader.readAsText(file);
@@ -2680,8 +1548,7 @@
       }, { passive: false });
       const onEnd = () => {
         if (!isDragging) return;
-        isDragging = false;
-        modal.style.transform = '';
+        isDragging = false; modal.style.transform = '';
         if (hasMovedEnough && (currentY - startY) > 100) closeFn();
       };
       modal.addEventListener('touchend', onEnd);
@@ -2689,7 +1556,7 @@
     }
     makeModalDraggable('modalBackdrop', closeModal);
     makeModalDraggable('settingsBackdrop', closeSettings);
-    makeModalDraggable('deviceConflictBackdrop', () => resolveDeviceConflict(false)); // ← adicionar
+    makeModalDraggable('deviceConflictBackdrop', () => resolveDeviceConflict(false));
 
     // ── PRÉ-AQUECIMENTO DOS MODAIS ──
     document.addEventListener('DOMContentLoaded', () => {
