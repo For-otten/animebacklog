@@ -985,7 +985,7 @@
       const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onload="this.style.display='';this.nextElementSibling.style.display='none'">` : '';
       const placeholderStyle = anime.image ? 'style="display:none"' : '';
       const concludedBar = anime.status === 'concluido' && anime.concludedAt
-        ? `<div class="concluded-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 11 4 18"/></svg> ${formatDate(anime.concludedAt)}</div>`
+        ? `<div class="concluded-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 9 22 6 18"/></svg> ${formatDate(anime.concludedAt)}</div>`
         : '';
       const seasonRow  = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
       const chapterRow = hasManga  ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
@@ -1350,7 +1350,7 @@
 
       if (token) {
         box.className = 'gist-status-box connected';
-        document.getElementById('gistStatusIcon').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="20 6 9 11 4 18"/></svg>`;
+        document.getElementById('gistStatusIcon').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 9 22 6 18"/></svg>`;
         document.getElementById('gistStatusText').textContent = navigator.onLine ? 'Conectado' : 'Conectado (offline agora)';
         danger.style.display = 'flex';
         devsec.style.display = 'block';
