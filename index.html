@@ -951,10 +951,11 @@
       dropado:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
     };
 
-    function renderAll() {
-      TABS_ORDER.forEach(tab => {
-        const grid = document.getElementById('grid-' + tab);
-        const items = animes.filter(a => a.status === tab);
+function renderAll() {
+  TABS_ORDER.forEach(tab => {
+    const grid = document.getElementById('grid-' + tab);
+    // Agora ele ignora qualquer anime com deleted: true
+    const items = animes.filter(a => a.status === tab && !a.deleted);
         document.getElementById('count-' + tab).textContent = items.length;
         grid.innerHTML = '';
         if (items.length === 0) {
@@ -1057,16 +1058,21 @@
       switchTab(status, document.querySelector(`[data-tab="${status}"]`));
     }
 
-    function deleteAnime(id) {
-      const idx = animes.findIndex(a => a.id === id); if (idx === -1) return false;
-      if (confirm('Tem certeza que deseja excluir?')) {
-        const name = animes[idx].title;
-        animes.splice(idx, 1); saveData(); renderAll();
-        showToast(`${name} removido.`);
-        return true;
-      }
-      return false;
-    }
+function deleteAnime(id) {
+  const idx = animes.findIndex(a => a.id === id); if (idx === -1) return false;
+  if (confirm('Tem certeza que deseja excluir?')) {
+    const name = animes[idx].title;
+    
+    // Marca como deletado (Soft Delete) e atualiza o timer pro Merge respeitar
+    animes[idx].deleted = true;
+    animes[idx].updatedAt = now();
+    
+    saveData(); renderAll();
+    showToast(`${name} removido.`);
+    return true;
+  }
+  return false;
+}
     function deleteAnimeFromModal() { if (editingId && deleteAnime(editingId)) closeModal(); }
 
     function updateField(id, field, val) {
@@ -1104,13 +1110,14 @@
 
     // ── SYNC: HASH ──
     const LAST_HASH_KEY = 'anime_gist_last_hash';
-    function buildAnimeHash(list) {
-      const normalized = [...list]
-        .sort((a, b) => a.id.localeCompare(b.id))
-        .map(({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt }) =>
-          ({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt }));
-      return JSON.stringify(normalized);
-    }
+function buildAnimeHash(list) {
+  const normalized = [...list]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    // Adicionamos a propriedade "deleted" aqui:
+    .map(({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt, deleted }) =>
+      ({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt, deleted }));
+  return JSON.stringify(normalized);
+}
     function hasUnpushedChanges() { return buildAnimeHash(animes) !== (localStorage.getItem(LAST_HASH_KEY) || ''); }
     function markAsPushed() { localStorage.setItem(LAST_HASH_KEY, buildAnimeHash(animes)); localStorage.removeItem('anime_pending_sync'); }
 
