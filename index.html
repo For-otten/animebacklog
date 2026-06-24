@@ -1344,6 +1344,10 @@
         gap: 12px;
       }
 
+      .sync-indicator {
+        width: 130px;
+      }
+
       .stat-pill {
         padding: 17px 11px;
         gap: 6px;
@@ -1631,8 +1635,7 @@
 
   <nav class="stats-bar" id="statsBar">
     <div class="stat-pill active" data-tab="acompanhando" onclick="switchTab('acompanhando', this)">
-      <span class="stat-dot dot-acompanhando"></span>Acompanhando<span class="stat-count"
-        id="count-acompanhando">0</span>
+      <span class="stat-dot dot-acompanhando"></span>Assistindo<span class="stat-count" id="count-acompanhando">0</span>
     </div>
     <div class="stat-pill" data-tab="assistir" onclick="switchTab('assistir', this)">
       <span class="stat-dot dot-assistir"></span>Backlog<span class="stat-count" id="count-assistir">0</span>
@@ -1650,7 +1653,7 @@
 
   <main id="swipeArea">
     <div class="tab-content" id="tab-acompanhando">
-      <div class="section-header"><span class="section-label">Acompanhando</span>
+      <div class="section-header"><span class="section-label">Assistindo</span>
         <div class="section-line"></div>
       </div>
       <div class="cards-grid" id="grid-acompanhando"></div>
@@ -1740,7 +1743,7 @@
           <label class="form-label">Status inicial</label>
           <select class="form-input status-select" id="inputStatus">
             <option value="assistir">Backlog</option>
-            <option value="acompanhando">Acompanhando</option>
+            <option value="acompanhando">Assistindo</option>
             <option value="esperando">Esperando</option>
             <option value="concluido">Concluído</option>
             <option value="dropado">Dropado</option>
@@ -2039,7 +2042,7 @@
 
     // ── STATUS MAP ──
     const STATUS_MAP = {
-      acompanhando: { label: 'Acompanhando', badge: 'badge-acompanhando' },
+      acompanhando: { label: 'Assistindo', badge: 'badge-acompanhando' },
       assistir: { label: 'Backlog', badge: 'badge-assistir' },
       esperando: { label: 'Esperando', badge: 'badge-esperando' },
       concluido: { label: 'Concluído', badge: 'badge-concluido' },
