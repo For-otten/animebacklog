@@ -1336,28 +1336,24 @@
       display: none;
     }
 
-    /* ── CONCLUÍDO: counters read-only ── */
-    .status-concluido .counter-row {
+    /* ── NÃO-ACOMPANHANDO: counters somente leitura ── */
+    .anime-card:not(.status-acompanhando) .counter-row {
       flex-direction: column;
       text-align: center;
-      gap: 10px;
-
     }
 
-    .status-concluido .counter-label {
+    .anime-card:not(.status-acompanhando) .counter-label {
       width: auto;
-      /* remove o width fixo de 28px do layout em linha */
     }
 
-    .status-concluido .counter-btn {
+    .anime-card:not(.status-acompanhando) .counter-btn {
       display: none;
     }
 
-    .status-concluido .counter-input {
+    .anime-card:not(.status-acompanhando) .counter-input {
       opacity: 0.5;
       box-shadow: inset 1px 1px 20px 20px #000000a3;
       pointer-events: none;
-      padding: 6px 6px;
     }
 
     /* ── MOBILE ── */
@@ -2162,46 +2158,59 @@
 
     const PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`;
 
-    function buildCard(anime) {
-      const card = document.createElement('div');
-      card.className = `anime-card status-${anime.status}`;
-      card.id = 'card-' + anime.id;
-      const sInfo = STATUS_MAP[anime.status];
-      const hasManga = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
-      const hasSeason = anime.season !== null && anime.season !== undefined && anime.season !== '';
-      const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onload="this.style.display='';this.nextElementSibling.style.display='none'">` : '';
-      const placeholderStyle = anime.image ? 'style="display:none"' : '';
-      const concludedBar = anime.status === 'concluido' && anime.concludedAt
-        ? `<div class="concluded-overlay"> ${formatDate(anime.concludedAt)}</div>`
-        : '';
-      const seasonRow = hasSeason ? `<div class="counter-row"><span class="counter-label">T</span><button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button><input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button></div>` : '';
-      const chapterRow = hasManga ? `<div class="counter-row"><span class="counter-label">Cap</span><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button><input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"><button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button></div>` : '';
-      card.innerHTML = `
-        <div class="card-cover" onclick="openModal('${anime.id}')" title="Clique para editar">
-          ${coverHTML}
-          <div class="card-cover-placeholder" ${placeholderStyle}>${PLACEHOLDER_SVG}</div>
-          ${concludedBar}
-        </div>
-        <div class="status-badge ${sInfo.badge}"><span class="status-badge-dot"></span>${sInfo.label}</div>
-        <div class="card-body">
-          <div class="card-title">${escHtml(anime.title)}</div>
-          <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
-            ${Object.entries(STATUS_MAP).map(([k, v]) => `<option value="${k}" ${k === anime.status ? 'selected' : ''}>${v.label}</option>`).join('')}
-          </select>
-          <div class="card-counters">
-            ${seasonRow}
-<div class="counter-row">
-  <span class="counter-label">${anime.status === 'concluido' ? 'Episódios' : 'Ep'}</span>
-  <button class="counter-btn" onclick="changeValue('${anime.id}','episode',-1)">−</button>
-  <input class="counter-input" type="number" value="${anime.episode}" min="0" data-field="episode" onchange="updateField('${anime.id}','episode',this.value)"${anime.status === 'concluido' ? ' readonly' : ''}>
-  <button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button>
-</div>
-            ${chapterRow}
-          </div>
-        </div>`;
-      return card;
-    }
-
+function buildCard(anime) {
+  const card = document.createElement('div');
+  card.className = `anime-card status-${anime.status}`;
+  card.id = 'card-' + anime.id;
+  const sInfo = STATUS_MAP[anime.status];
+  const isWatching = anime.status === 'acompanhando';
+  const isBacklog = anime.status === 'assistir';
+  const hasManga = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
+  const hasSeason = anime.season !== null && anime.season !== undefined && anime.season !== '';
+  const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onload="this.style.display='';this.nextElementSibling.style.display='none'">` : '';
+  const placeholderStyle = anime.image ? 'style="display:none"' : '';
+  const concludedBar = anime.status === 'concluido' && anime.concludedAt
+    ? `<div class="concluded-overlay"> ${formatDate(anime.concludedAt)}</div>`
+    : '';
+  const readonly = !isWatching ? ' readonly' : '';
+  const seasonRow = !isBacklog && hasSeason ? `<div class="counter-row">
+    <span class="counter-label">${isWatching ? 'T' : 'Temporada'}</span>
+    <button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button>
+    <input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"${readonly}>
+    <button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button>
+  </div>` : '';
+  const chapterRow = !isBacklog && hasManga ? `<div class="counter-row">
+    <span class="counter-label">${isWatching ? 'Cap' : 'Capítulo (Mangá)'}</span>
+    <button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button>
+    <input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"${readonly}>
+    <button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button>
+  </div>` : '';
+  const episodeRow = !isBacklog ? `<div class="counter-row">
+    <span class="counter-label">${isWatching ? 'Ep' : 'Episódio'}</span>
+    <button class="counter-btn" onclick="changeValue('${anime.id}','episode',-1)">−</button>
+    <input class="counter-input" type="number" value="${anime.episode}" min="0" data-field="episode" onchange="updateField('${anime.id}','episode',this.value)"${readonly}>
+    <button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button>
+  </div>` : '';
+  card.innerHTML = `
+    <div class="card-cover" onclick="openModal('${anime.id}')" title="Clique para editar">
+      ${coverHTML}
+      <div class="card-cover-placeholder" ${placeholderStyle}>${PLACEHOLDER_SVG}</div>
+      ${concludedBar}
+    </div>
+    <div class="status-badge ${sInfo.badge}"><span class="status-badge-dot"></span>${sInfo.label}</div>
+    <div class="card-body">
+      <div class="card-title">${escHtml(anime.title)}</div>
+      <select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
+        ${Object.entries(STATUS_MAP).map(([k, v]) => `<option value="${k}" ${k === anime.status ? 'selected' : ''}>${v.label}</option>`).join('')}
+      </select>
+      <div class="card-counters">
+        ${seasonRow}
+        ${episodeRow}
+        ${chapterRow}
+      </div>
+    </div>`;
+  return card;
+}
     function escHtml(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
     function formatDate(iso) { if (!iso) return ''; return new Date(iso).toLocaleDateString('pt-BR'); }
     function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
