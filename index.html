@@ -1551,10 +1551,13 @@
 
       .header-toggle svg {
         transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
+        transform: translateZ(0);
+
       }
 
       header.header-collapsed .header-toggle svg {
-        transform: rotate(180deg);
+        transform: rotate(180deg) translateZ(0);
       }
 
       .header-collapsible {
