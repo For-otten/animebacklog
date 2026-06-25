@@ -502,7 +502,7 @@
       background: rgba(255, 255, 255, 0.05);
     }
 
-    .card-cover img {
+    .card-cover>img {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -511,7 +511,7 @@
       transition: transform 0.5s ease;
     }
 
-    .anime-card:hover .card-cover img {
+    .anime-card:hover .card-cover>img {
       transform: scale(1.05);
     }
 
@@ -633,6 +633,8 @@
     }
 
     .card-body {
+      display: flex;
+      flex-direction: column;
       padding: 14px;
     }
 
@@ -651,6 +653,7 @@
     }
 
     .card-counters {
+      order: 3;
       display: flex;
       flex-direction: column;
       gap: 7px;
@@ -737,6 +740,24 @@
       padding-right: 28px;
     }
 
+    .card-body>.card-title {
+      order: 1;
+    }
+
+    .card-body>.status-select {
+      order: 2;
+      margin-bottom: 10px;
+    }
+
+    .card-body>.select-ribbon {
+      order: 2;
+      margin-bottom: 10px;
+    }
+
+    .card-body>.card-genres-mobile {
+      order: 4;
+    }
+
     .status-select:focus {
       outline: none;
       border-color: var(--accent);
@@ -804,9 +825,12 @@
       border-radius: 28px 28px 0 0;
       padding: 24px 20px 48px;
       max-height: 92vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
       border: none;
       border-top: 1px solid var(--border);
-      contain: content;
+      contain: layout paint;
       background: var(--surface);
       will-change: transform, opacity;
       transform: translate3d(0, 100%, 0);
@@ -1452,8 +1476,944 @@
       color: var(--red);
     }
 
+    /* ── FILTROS ── */
+    .filter-bar {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 14px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .filter-bar.has-filters {
+      display: flex;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      min-width: 64px;
+    }
+
+    .filter-pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      transition: var(--transition);
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .filter-pill:hover {
+      background: var(--surface3);
+      color: var(--text);
+    }
+
+    .filter-pill.active {
+      background: rgba(224, 64, 160, 0.18);
+      border-color: rgba(224, 64, 160, 0.55);
+      color: #fff;
+      box-shadow: 0 2px 10px var(--accent-glow), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      padding-left: 10px;
+    }
+
+    .filter-clear {
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-weight: 700;
+      transition: var(--transition);
+      margin-top: 2px;
+      align-self: flex-start;
+    }
+
+    .filter-clear:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .filter-pill,
+    .platform-toggle {
+      position: relative;
+    }
+
+    .filter-pill.active::before {
+      content: '\2713';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 12px;
+      height: 12px;
+      margin-right: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      font-size: 9px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .platform-choice {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      min-height: 58px;
+      min-width: 120px;
+      padding: 9px 12px 8px;
+      border-radius: 16px;
+      text-align: center;
+      line-height: 1.15;
+      white-space: normal;
+      position: relative;
+    }
+
+    .platform-choice.active::before,
+    .platform-toggle.active::before {
+      content: '\2713';
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      border-radius: 999px;
+      background: rgba(224, 64, 160, 0.22);
+      color: #fff;
+      border: 1px solid rgba(224, 64, 160, 0.55);
+      font-size: 10px;
+      line-height: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.16);
+    }
+
+    /* ── PLATFORM ICONS NO CARD ── */
+    .card-platform-icons {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 5px;
+      z-index: 9;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: calc(100% - 16px);
+      pointer-events: none;
+    }
+
+    .platform-icon {
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      max-width: 26px;
+      border-radius: 0;
+      background: transparent;
+      backdrop-filter: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      flex-shrink: 0;
+      box-shadow: none;
+    }
+
+    .platform-icon img,
+    .platform-icon svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .platform-icon-custom {
+      font-size: 8px;
+      font-weight: 900;
+      color: var(--platform-color);
+      letter-spacing: 0.3px;
+      padding: 0;
+      width: 26px;
+      min-width: 26px;
+      max-width: 26px;
+      text-align: center;
+    }
+
+    .platform-add-toggle {
+      justify-content: center;
+      min-width: 0;
+      min-height: 64px;
+      padding: 10px 12px;
+      border-style: dashed;
+      color: var(--accent);
+    }
+
+    .platform-edit-toggle {
+      justify-content: center;
+      min-width: 0;
+      min-height: 64px;
+      padding: 10px 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── GENRE HOVER OVERLAY ── */
+    .card-genre-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px 8px 8px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, transparent 100%);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      z-index: 8;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      pointer-events: none;
+    }
+
+    .anime-card:hover .card-genre-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .genre-overlay-tag {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(4px);
+      color: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      white-space: nowrap;
+    }
+
+    /* ── FILTER BUTTON (no section-header) ── */
+    .section-header {
+      gap: 12px;
+    }
+
+    /* era 0px */
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      transition: var(--transition);
+      font-family: inherit;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .filter-btn:hover {
+      background: var(--surface3);
+      color: var(--text);
+    }
+
+    .filter-btn.has-active {
+      background: rgba(224, 64, 160, 0.16);
+      border-color: rgba(224, 64, 160, 0.48);
+      color: var(--accent);
+      box-shadow: 0 8px 18px rgba(224, 64, 160, 0.12);
+    }
+
+    .filter-btn-count {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 20px;
+      padding: 0 5px;
+      font-size: 10px;
+      min-width: 16px;
+      text-align: center;
+      line-height: 16px;
+      height: 16px;
+      display: inline-block;
+    }
+
+    /* ── FILTER PANEL ── */
+    .filter-panel {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease,
+        margin-bottom 0.35s ease;
+      margin-bottom: 0;
+    }
+
+    .filter-panel.open {
+      max-height: 520px;
+      opacity: 1;
+      margin-bottom: 20px;
+    }
+
+    .filter-panel-inner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .filter-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .filter-row-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-top: 5px;
+      min-width: 72px;
+      flex-shrink: 0;
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      flex: 1;
+      align-items: center;
+    }
+
+    .filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      transition: var(--transition);
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .filter-pill:hover {
+      background: var(--surface3);
+      color: var(--text);
+    }
+
+    .filter-pill.active {
+      background: rgba(224, 64, 160, 0.18);
+      border-color: rgba(224, 64, 160, 0.55);
+      color: var(--accent);
+    }
+
+    .filter-pill img,
+    .filter-pill svg {
+      width: 12px;
+      height: 12px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .filter-pill .platform-icon {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      padding: 2px;
+      border-radius: 5px;
+      box-shadow: none;
+    }
+
+    .filter-pill .platform-icon-custom {
+      min-width: 22px;
+      width: auto;
+      padding: 2px 4px;
+      font-size: 10px;
+    }
+
+    .filter-pill.active img,
+    .filter-pill.active svg {
+      opacity: 0.95;
+    }
+
+    .filter-add-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      margin-left: 2px;
+    }
+
+    .filter-add-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 1.5px dashed var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      transition: var(--transition);
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+
+    .filter-add-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .filter-add-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 20;
+      min-width: 220px;
+      max-width: min(320px, calc(100vw - 32px));
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(10, 12, 18, 0.96);
+      border: 1px solid rgba(224, 64, 160, 0.35);
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
+    }
+
+    .filter-add-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 11px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .filter-add-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .filter-add-confirm,
+    .filter-add-cancel {
+      border-radius: 10px;
+      padding: 8px 11px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .filter-add-confirm {
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      padding-inline: 13px;
+    }
+
+    .filter-add-confirm:hover {
+      filter: brightness(1.2);
+    }
+
+    .filter-add-cancel {
+      background: transparent;
+      color: var(--text-muted);
+    }
+
+    .filter-add-cancel:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .filter-footer {
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+
+    .filter-clear-btn {
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 3px 12px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+
+    .filter-clear-btn:hover {
+      color: var(--red);
+      border-color: rgba(224, 64, 96, 0.5);
+    }
+
+    /* ── GENRE TAGS MOBILE (no body) ── */
+    .card-genres-mobile {
+      display: none;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .genre-tag-mobile {
+      font-size: 12px;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: var(--surface3);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+      line-height: 1.15;
+    }
+
+    /* ── BACKFILL BANNER ── */
+    .backfill-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      background: var(--blue-dim);
+      border-bottom: 1px solid rgba(64, 128, 224, 0.25);
+      font-size: 12px;
+      color: #80b0ff;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    .backfill-banner.visible {
+      display: flex;
+    }
+
+    .backfill-progress {
+      flex: 1;
+      height: 3px;
+      background: rgba(64, 128, 224, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .backfill-progress-bar {
+      height: 100%;
+      background: #80b0ff;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+
+    /* ── MODAL: PLATAFORMAS & GÊNEROS ── */
+    .platform-section {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .platform-section-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .platform-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .platform-section-title .form-label {
+      margin-bottom: 0;
+    }
+
+    .platform-count-badge {
+      min-width: 24px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(224, 64, 160, 0.32);
+      background: rgba(224, 64, 160, 0.12);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .platform-section-hint {
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.75;
+      white-space: nowrap;
+    }
+
+    .platform-section-caret {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--text-muted);
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .platform-section.expanded .platform-section-caret {
+      transform: rotate(180deg);
+      color: var(--accent);
+    }
+
+    .platform-toggles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .platform-section:not(.expanded) .platform-toggles {
+      display: none;
+    }
+
+    .platform-toggle {
+      display: inline-flex;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 64px;
+      padding: 10px 12px 9px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      transition: var(--transition);
+      font-family: inherit;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
+    }
+
+    .platform-toggle .platform-icon {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      padding: 1px;
+      border-radius: 6px;
+      box-shadow: none;
+      background: transparent;
+      border: none;
+    }
+
+    .platform-toggle:hover {
+      background: var(--surface3);
+      color: var(--text);
+    }
+
+    .platform-toggle.active {
+      border-color: rgba(224, 64, 160, 0.4);
+      color: var(--accent);
+      background: rgba(224, 64, 160, 0.1);
+    }
+
+    .platform-toggle .platform-icon-custom {
+      min-width: 22px;
+      padding: 2px 4px;
+      font-size: 10px;
+    }
+
+    .platform-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: var(--platform-color);
+    }
+
+    .platform-preview {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 96px;
+      border-radius: 16px;
+      margin: 6px 0 14px;
+      border: 1px dashed var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    }
+
+    .platform-preview-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      overflow: hidden;
+    }
+
+    .platform-preview-badge img,
+    .platform-preview-badge svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .platform-preview-badge span {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--platform-color);
+    }
+
+    .platform-picker-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: 8px;
+    }
+
+    .platform-picker-empty {
+      padding: 18px;
+      border-radius: 14px;
+      background: var(--surface2);
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .modal-genre-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+      min-height: 28px;
+      align-items: center;
+    }
+
+    .modal-genre-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface3);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .modal-genre-empty {
+      font-size: 12px;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    .meta-refresh-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .meta-refresh-btn:hover {
+      background: var(--surface3);
+      color: var(--text);
+    }
+
+    .meta-refresh-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+    }
+
     /* ── MOBILE ── */
     @media (max-width: 600px) {
+      .card-genre-overlay {
+        display: none;
+      }
+
+      .card-genres-mobile {
+        display: grid;
+      }
+
+      .filter-row {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .filter-row-label {
+        min-width: auto;
+        padding-top: 0;
+      }
+
+      .filter-pills {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+      }
+
+      .filter-pill .platform-icon {
+        width: 14px;
+        height: 14px;
+        min-width: 14px;
+      }
+
+      .filter-pill {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.2;
+        min-width: 0;
+      }
+
+      .platform-choice {
+        min-width: 0;
+        min-height: 60px;
+        padding: 8px 10px 7px;
+      }
+
+      .platform-toggle {
+        min-height: 62px;
+        padding: 9px 10px 8px;
+      }
+
+      .platform-toggles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .platform-section-hint {
+        display: none;
+      }
+
+      .card-genres-mobile {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .genre-tag-mobile {
+        width: 100%;
+        text-align: center;
+        white-space: normal;
+        font-size: 10px;
+        line-height: 1.15;
+        padding: 4px 6px;
+        overflow-wrap: anywhere;
+        min-height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .filter-panel-inner {
+        padding: 12px;
+      }
+
+      .backfill-banner {
+        padding: 9px 13px;
+        font-size: 11px;
+      }
+
+      .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-group-label {
+        display: block;
+        min-width: 0;
+      }
+
+      .filter-bar {
+        padding: 10px;
+      }
+
+      .backfill-banner {
+        padding: 9px 13px;
+        font-size: 11px;
+      }
+
       header {
         flex-direction: column;
         align-items: stretch;
@@ -1471,6 +2431,16 @@
 
       .card-body>.status-select {
         order: 3;
+        margin-bottom: 0;
+      }
+
+      .card-body>.select-ribbon {
+        order: 3;
+        margin-bottom: 0;
+      }
+
+      .card-body>.card-genres-mobile {
+        order: 4;
       }
 
       .sync-mini {
@@ -1747,9 +2717,12 @@
         border-radius: 28px 28px 0 0;
         padding: 24px 20px 48px;
         max-height: 92vh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
         border: none;
         border-top: 1px solid var(--border);
-        contain: content;
+        contain: layout paint;
         will-change: transform, opacity;
         transform: translate3d(0, 100%, 0);
         transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1920,36 +2893,101 @@
       <span class="stat-dot dot-dropado"></span>Dropado<span class="stat-count" id="count-dropado">0</span>
     </div>
   </nav>
-
+  <div class="backfill-banner" id="backfillBanner">
+    <div class="spinner" style="border-color:rgba(64,128,224,0.3);border-top-color:#80b0ff;flex-shrink:0"></div>
+    <span id="backfillText">Buscando metadados...</span>
+    <div class="backfill-progress">
+      <div class="backfill-progress-bar" id="backfillProgressBar"></div>
+    </div>
+  </div>
   <main id="swipeArea">
     <div class="tab-content" id="tab-acompanhando">
-      <div class="section-header"><span class="section-label">Assistindo</span>
+      <div class="section-header">
+        <span class="section-label">Assistindo</span>
         <div class="section-line"></div>
+        <button class="filter-btn" id="filter-btn-acompanhando" onclick="toggleFilterPanel('acompanhando')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+            <line x1="11" y1="18" x2="13" y2="18" />
+          </svg>
+          Filtrar
+        </button>
       </div>
+      <div class="filter-panel" id="filter-panel-acompanhando"></div>
       <div class="cards-grid" id="grid-acompanhando"></div>
     </div>
+
     <div class="tab-content" id="tab-assistir">
-      <div class="section-header"><span class="section-label">Backlog para assistir</span>
+      <div class="section-header">
+        <span class="section-label">Backlog para assistir</span>
         <div class="section-line"></div>
+        <button class="filter-btn" id="filter-btn-assistir" onclick="toggleFilterPanel('assistir')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+            <line x1="11" y1="18" x2="13" y2="18" />
+          </svg>
+          Filtrar
+        </button>
       </div>
+      <div class="filter-panel" id="filter-panel-assistir"></div>
       <div class="cards-grid" id="grid-assistir"></div>
     </div>
+
     <div class="tab-content" id="tab-esperando">
-      <div class="section-header"><span class="section-label">Esperando nova temporada / Lançamento</span>
+      <div class="section-header">
+        <span class="section-label">Esperando nova temporada / Lançamento</span>
         <div class="section-line"></div>
+        <button class="filter-btn" id="filter-btn-esperando" onclick="toggleFilterPanel('esperando')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+            <line x1="11" y1="18" x2="13" y2="18" />
+          </svg>
+          Filtrar
+        </button>
       </div>
+      <div class="filter-panel" id="filter-panel-esperando"></div>
       <div class="cards-grid" id="grid-esperando"></div>
     </div>
+
     <div class="tab-content" id="tab-concluido">
-      <div class="section-header"><span class="section-label">Concluídos</span>
+      <div class="section-header">
+        <span class="section-label">Concluídos</span>
         <div class="section-line"></div>
+        <button class="filter-btn" id="filter-btn-concluido" onclick="toggleFilterPanel('concluido')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+            <line x1="11" y1="18" x2="13" y2="18" />
+          </svg>
+          Filtrar
+        </button>
       </div>
+      <div class="filter-panel" id="filter-panel-concluido"></div>
       <div class="cards-grid" id="grid-concluido"></div>
     </div>
+
     <div class="tab-content" id="tab-dropado">
-      <div class="section-header"><span class="section-label">Dropados</span>
+      <div class="section-header">
+        <span class="section-label">Dropados</span>
         <div class="section-line"></div>
+        <button class="filter-btn" id="filter-btn-dropado" onclick="toggleFilterPanel('dropado')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+            <line x1="11" y1="18" x2="13" y2="18" />
+          </svg>
+          Filtrar
+        </button>
       </div>
+      <div class="filter-panel" id="filter-panel-dropado"></div>
       <div class="cards-grid" id="grid-dropado"></div>
     </div>
   </main>
@@ -2020,7 +3058,40 @@
           </select>
         </div>
       </div>
+      <div class="form-group">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+          <label class="form-label" style="margin-bottom:0">Gêneros</label>
+          <button class="meta-refresh-btn" id="metaRefreshBtn" onclick="refreshModalMeta()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round">
+              <path d="M23 4v6h-6" />
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+            </svg>
+            Buscar
+          </button>
+        </div>
+        <div class="modal-genre-tags" id="modalGenreTags">
+          <span class="modal-genre-empty">Salve para buscar automaticamente</span>
+        </div>
+      </div>
 
+      <div class="form-group platform-section" id="platformSection">
+        <button class="platform-section-header" type="button" onclick="togglePlatformSection()"
+          aria-expanded="false" aria-controls="platformToggles">
+          <span class="platform-section-title">
+            <span class="form-label">Plataformas</span>
+            <span class="platform-count-badge" id="platformCountBadge">0</span>
+          </span>
+          <span style="display:flex;align-items:center;gap:8px">
+            <span class="platform-section-hint" id="platformSectionHint">Toque para editar</span>
+            <svg class="platform-section-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
+        </button>
+        <div class="platform-toggles" id="platformToggles"></div>
+      </div>
       <div class="modal-footer">
         <button class="btn btn-danger" id="modalDeleteBtn" style="display: none; flex: 0 1 auto; padding: 12px 18px;"
           onclick="deleteAnimeFromModal()">
@@ -2033,6 +3104,52 @@
         <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
         <button class="btn btn-primary" id="modalConfirmBtn" onclick="saveAnime()">Adicionar</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL NOVA PLATAFORMA -->
+  <div class="modal-backdrop" id="platformBackdrop" onclick="handlePlatformBackdrop(event)">
+    <div class="modal" style="max-width:460px">
+      <button class="modal-close" onclick="closePlatformCreatorModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="modal-title" id="platformModalTitle">Nova plataforma</div>
+      <div class="modal-subtitle">Adicione um serviço personalizado com logo opcional.</div>
+      <div class="platform-preview" id="platformPreview"></div>
+      <div class="form-group">
+        <label class="form-label">Nome da plataforma *</label>
+        <input type="text" class="form-input" id="platformNameInput" placeholder="Ex: Anime Nexus"
+          oninput="updatePlatformCreatorPreview()" onkeydown="if(event.key==='Enter')savePlatformFromModal()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link da logo (opcional)</label>
+        <input type="text" class="form-input" id="platformLogoInput" placeholder="https://..."
+          oninput="updatePlatformCreatorPreview()" onkeydown="if(event.key==='Enter')savePlatformFromModal()">
+        <div class="form-hint">Se não enviar logo, a plataforma usa iniciais como AN.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="platformDeleteBtn" style="display:none;flex:0 1 auto" onclick="deletePlatformFromModal()">Excluir</button>
+        <button class="btn btn-ghost" onclick="closePlatformCreatorModal()">Cancelar</button>
+        <button class="btn btn-primary" id="platformSaveBtn" onclick="savePlatformFromModal()">Adicionar plataforma</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SELECIONAR PLATAFORMA -->
+  <div class="modal-backdrop" id="platformPickerBackdrop" onclick="handlePlatformPickerBackdrop(event)">
+    <div class="modal" style="max-width:460px">
+      <button class="modal-close" onclick="closePlatformPickerModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="modal-title">Editar plataforma</div>
+      <div class="modal-subtitle">Escolha uma plataforma personalizada.</div>
+      <div class="platform-picker-list" id="platformPickerList"></div>
     </div>
   </div>
 
@@ -2089,7 +3206,21 @@
         </div>
         <div class="fetch-status hidden" id="gistFetchStatus"></div>
       </div>
-
+      <div class="settings-section" id="metaSection">
+        <div class="settings-section-title">Metadados</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.6">
+          Gêneros e plataformas são buscados automaticamente pela Jikan API.<br>
+          Use o botão abaixo para (re)buscar todos os animes da lista.
+        </div>
+        <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="startManualBackfill()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <path d="M23 4v6h-6" />
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+          </svg>
+          Atualizar metadados de todos os animes
+        </button>
+      </div>
       <div class="modal-footer" style="flex-direction:column;gap:8px">
         <div style="display:flex;gap:8px;width:100%">
           <button class="btn btn-ghost" style="flex:1" onclick="closeSettings()">Fechar</button>
@@ -2130,6 +3261,232 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
+    // ── PLATFORM CONFIG ──
+    const KNOWN_PLATFORMS = [
+      {
+        label: 'Netflix',
+        slug: 'netflix',
+        color: '#E50914',
+      },
+      {
+        label: 'Crunchyroll',
+        slug: 'crunchyroll',
+        color: '#F47521',
+      },
+      {
+        label: 'Prime Video',
+        slug: 'primevideo',
+        color: '#00A8E1',
+      },
+      {
+        label: 'Max',
+        slug: 'max',
+        color: '#6C63FF',
+        icon: `<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <title>HBO Max</title>
+  <path fill="currentColor" d="M3.784 8.716c-.655 0-1.32.29-2.173.946v-.78H0v6.236h1.715V11.24c.749-.592 1.091-.78 1.372-.78.333 0 .551.209.551.729v3.928h1.715V11.23c.748-.582 1.081-.769 1.372-.769.333 0 .55.208.55.728v3.928H8.99v-4.53c0-1.403-.8-1.871-1.57-1.871-.654 0-1.32.27-2.192.936-.28-.697-.894-.936-1.444-.936zm8.689 0c-1.705 0-3.118 1.466-3.118 3.284 0 1.82 1.413 3.285 3.118 3.285.842 0 1.57-.312 2.131-.988v.82h1.632V8.883h-1.632v.822c-.561-.676-1.29-.988-2.131-.988zm4.064.166c.707 1.102 1.507 2.09 2.443 3.077a26.593 26.593 0 0 0-2.443 3.16h2.069a13.603 13.603 0 0 1 1.673-2.183 14.067 14.067 0 0 1 1.632 2.182H24a25.142 25.142 0 0 0-2.432-3.16A23.918 23.918 0 0 0 24 8.883h-2.047a14.65 14.65 0 0 1-1.674 2.11 13.357 13.357 0 0 1-1.674-2.11zm-3.804 1.279c1.018 0 1.84.82 1.84 1.84a1.837 1.837 0 0 1-1.84 1.839c-1.019 0-1.84-.82-1.84-1.84 0-1.018.821-1.84 1.84-1.84zm0 .415c-.78 0-1.414.633-1.414 1.423s.634 1.424 1.413 1.424c.78 0 1.414-.634 1.414-1.424s-.634-1.424-1.414-1.424z"/>
+</svg>`,
+      },
+      {
+        label: 'Disney+',
+        slug: 'disneyplus',
+        color: '#113CCF',
+      },
+    ];
+
+    const KNOWN_PLATFORM_BY_LABEL = new Map(KNOWN_PLATFORMS.map(p => [p.label.toLowerCase(), p]));
+
+    function getPlatformIconUrl(slug, color) {
+      const hex = String(color || '').replace('#', '');
+      return hex ? `https://cdn.simpleicons.org/${slug}/${hex}` : `https://cdn.simpleicons.org/${slug}`;
+    }
+
+    function getPlatformColor(label) {
+      const meta = KNOWN_PLATFORM_BY_LABEL.get(String(label || '').toLowerCase());
+      if (meta?.color) return meta.color;
+      const palette = ['#F59E0B', '#10B981', '#A855F7', '#06B6D4', '#F43F5E', '#8B5CF6', '#22C55E'];
+      const seed = String(label || '').split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+      return palette[seed % palette.length];
+    }
+
+    function getKnownPlatform(name) {
+      const n = String(name || '').toLowerCase();
+      if (n.includes('netflix')) return KNOWN_PLATFORMS[0];
+      if (n.includes('crunchyroll')) return KNOWN_PLATFORMS[1];
+      if (n.includes('prime') || n.includes('amazon')) return KNOWN_PLATFORMS[2];
+      if (n.includes('max') || n.includes('hbo')) return KNOWN_PLATFORMS[3];
+      if (n.includes('disney')) return KNOWN_PLATFORMS[4];
+      return null;
+    }
+
+    function normalizePlatform(name) {
+      return getKnownPlatform(name) || { label: name, slug: null, color: 'var(--text-muted)' };
+    }
+
+    function getAllowedPlatformMap() {
+      const map = new Map();
+      KNOWN_PLATFORMS.forEach(p => map.set(p.label.toLowerCase(), p.label));
+      getCustomPlatforms().forEach(p => map.set(p.label.toLowerCase(), p.label));
+      return map;
+    }
+
+    function sanitizePlatformList(list, allowedMap = getAllowedPlatformMap()) {
+      const seen = new Set();
+      const out = [];
+      (Array.isArray(list) ? list : []).forEach(item => {
+        const normalized = normalizePlatform(item);
+        const key = normalized.slug ? normalized.label.toLowerCase() : String(item || '').trim().toLowerCase();
+        const label = allowedMap.get(key);
+        if (label && !seen.has(label.toLowerCase())) {
+          seen.add(label.toLowerCase());
+          out.push(label);
+        }
+      });
+      return out;
+    }
+
+    function sanitizeAnimePlatforms(anime, allowedMap = getAllowedPlatformMap()) {
+      if (!anime || typeof anime !== 'object') return anime;
+      anime.platforms = sanitizePlatformList(anime.platforms, allowedMap);
+      return anime;
+    }
+
+    function getPlatformIconMarkup(label) {
+      const meta = normalizePlatform(label);
+      const style = `--platform-color:${getPlatformColor(meta.label)};`;
+      if (meta.icon) {
+        return `<span class="platform-icon platform-icon-svg" style="${style}color:var(--platform-color)">${meta.icon}</span>`;
+      }
+      if (meta.slug) {
+        return `<span class="platform-icon platform-icon-img" style="${style}">
+          <img src="${getPlatformIconUrl(meta.slug, getPlatformColor(meta.label))}" alt="${escHtml(meta.label)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="platform-fallback" style="display:none">${escHtml(getPlatformInitials(meta.label))}</span>
+        </span>`;
+      }
+      const custom = getCustomPlatformEntry(meta.label);
+      if (custom?.logo) {
+        return `<span class="platform-icon platform-icon-img" style="${style}">
+          <img src="${escHtml(custom.logo)}" alt="${escHtml(meta.label)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="platform-fallback" style="display:none">${escHtml(getPlatformInitials(meta.label))}</span>
+        </span>`;
+      }
+      return `<span class="platform-icon platform-icon-custom" style="${style}" title="${escHtml(meta.label)}">${escHtml(getPlatformInitials(meta.label))}</span>`;
+    }
+
+    function getCustomPlatforms() {
+      try {
+        const raw = JSON.parse(localStorage.getItem('anime_custom_platforms') || '[]');
+        const seen = new Set();
+        const out = [];
+        raw.forEach(item => {
+          const normalized = normalizeCustomPlatformEntry(item);
+          if (!normalized?.label) return;
+          const key = normalized.label.toLowerCase();
+          if (seen.has(key)) return;
+          seen.add(key);
+          out.push(normalized);
+        });
+        return out;
+      } catch { return []; }
+    }
+    function saveCustomPlatforms(list) {
+      const seen = new Set();
+      const normalized = [];
+      (Array.isArray(list) ? list : []).forEach(item => {
+        const entry = normalizeCustomPlatformEntry(item);
+        if (!entry?.label) return;
+        const key = entry.label.toLowerCase();
+        if (seen.has(key)) return;
+        seen.add(key);
+        normalized.push(entry);
+      });
+      localStorage.setItem('anime_custom_platforms', JSON.stringify(normalized));
+    }
+    function normalizeCustomPlatformEntry(item) {
+      if (!item) return null;
+      if (typeof item === 'string') return { label: item.trim(), logo: '' };
+      if (typeof item === 'object') {
+        const label = String(item.label || item.name || '').trim();
+        if (!label) return null;
+        return { label, logo: String(item.logo || item.image || '').trim() };
+      }
+      return null;
+    }
+    function getCustomPlatformEntry(label) {
+      const needle = String(label || '').trim().toLowerCase();
+      return getCustomPlatforms().find(p => p.label.toLowerCase() === needle) || null;
+    }
+    function getPlatformInitials(label) {
+      const parts = String(label || '')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+      if (!parts.length) return '';
+      return parts.slice(0, 2).map(part => part[0] || '').join('').toUpperCase();
+    }
+    function addCustomPlatform(label, logo = '') {
+      const clean = String(label || '').trim();
+      if (!clean) return null;
+      const list = getCustomPlatforms();
+      if (list.some(p => p.label.toLowerCase() === clean.toLowerCase())) return null;
+      const entry = { label: clean, logo: String(logo || '').trim() };
+      list.push(entry);
+      saveCustomPlatforms(list);
+      return entry;
+    }
+    function updateCustomPlatform(oldLabel, nextLabel, nextLogo = '') {
+      const oldKey = String(oldLabel || '').trim().toLowerCase();
+      const clean = String(nextLabel || '').trim();
+      if (!oldKey || !clean) return null;
+      const list = getCustomPlatforms();
+      if (list.some(p => p.label.toLowerCase() === clean.toLowerCase() && p.label.toLowerCase() !== oldKey)) return null;
+      const idx = list.findIndex(p => p.label.toLowerCase() === oldKey);
+      if (idx < 0) return null;
+      const oldValue = list[idx].label;
+      const entry = { label: clean, logo: String(nextLogo || '').trim() };
+      list[idx] = entry;
+      saveCustomPlatforms(list);
+      if (oldValue !== entry.label) {
+        animes.forEach(anime => {
+          if (!Array.isArray(anime.platforms)) return;
+          anime.platforms = anime.platforms.map(p => String(p).toLowerCase() === oldKey ? entry.label : p);
+        });
+        if (modalPlatforms.delete(oldValue)) modalPlatforms.add(entry.label);
+        if (activePlatformFilters.delete(oldValue)) activePlatformFilters.add(entry.label);
+      }
+      saveData();
+      return entry;
+    }
+    function deleteCustomPlatform(label) {
+      const key = String(label || '').trim().toLowerCase();
+      if (!key) return false;
+      const next = getCustomPlatforms().filter(p => p.label.toLowerCase() !== key);
+      saveCustomPlatforms(next);
+      animes.forEach(anime => {
+        if (!Array.isArray(anime.platforms)) return;
+        anime.platforms = anime.platforms.filter(p => String(p).toLowerCase() !== key);
+      });
+      modalPlatforms.forEach(p => { if (String(p).toLowerCase() === key) modalPlatforms.delete(p); });
+      activePlatformFilters.forEach(p => { if (String(p).toLowerCase() === key) activePlatformFilters.delete(p); });
+      saveData();
+      return true;
+    }
+
+    // ── FILTER STATE ──
+    let activeGenreFilters = new Set();
+    let activePlatformFilters = new Set();
+    let openFilterPanels = new Set();
+
+    // ── MODAL METADATA STATE ──
+    let modalGenres = [];
+    let modalPlatforms = new Set();
+    let modalPlatformsExpanded = false;
+    let editingPlatformLabel = null;
+    let platformLongPressTimer = null;
+    let platformLongPressTriggered = false;
+
+    // ── BACKFILL STATE ──
+    let backfillRunning = false;
     // ── SERVICE WORKER ──
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
@@ -2322,10 +3679,30 @@
 
     // ── STORAGE LOCAL ──
     function loadData() {
-      try { const raw = localStorage.getItem(STORAGE_KEY); animes = raw ? JSON.parse(raw) : []; }
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        animes = raw ? JSON.parse(raw) : [];
+        const allowedMap = getAllowedPlatformMap();
+        let mutated = false;
+        animes.forEach(a => {
+          const before = JSON.stringify(a?.platforms || []);
+          sanitizeAnimePlatforms(a, allowedMap);
+          const after = JSON.stringify(a?.platforms || []);
+          if (before !== after) mutated = true;
+        });
+        if (mutated) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+          scheduleGistSync();
+        }
+      }
       catch { animes = []; }
     }
-    function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(animes)); scheduleGistSync(); }
+    function saveData() {
+      const allowedMap = getAllowedPlatformMap();
+      animes.forEach(a => sanitizeAnimePlatforms(a, allowedMap));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+      scheduleGistSync();
+    }
 
     // ── SMART MERGE ──
     function smartMerge(localList, remoteList) {
@@ -2338,16 +3715,117 @@
         const rt = new Date(remote.updatedAt || remote.addedAt || 0).getTime();
         if (rt > lt) map.set(remote.id, remote);
       });
-      return Array.from(map.values());
+      const allowedMap = getAllowedPlatformMap();
+      return Array.from(map.values()).map(a => sanitizeAnimePlatforms(a, allowedMap));
+    }
+    // ── FILTER PANEL ──
+    function toggleFilterPanel(tab) {
+      const panel = document.getElementById(`filter-panel-${tab}`);
+      if (openFilterPanels.has(tab)) {
+        openFilterPanels.delete(tab);
+        panel.classList.remove('open');
+      } else {
+        openFilterPanels.add(tab);
+        panel.classList.add('open');
+      }
+      renderFilterPanel(tab);
     }
 
+    function renderFilterPanel(tab) {
+      const panel = document.getElementById(`filter-panel-${tab}`);
+      const btn = document.getElementById(`filter-btn-${tab}`);
+      if (!panel || !btn) return;
+
+      const activeCount = activeGenreFilters.size + activePlatformFilters.size;
+      btn.className = `filter-btn${activeCount > 0 ? ' has-active' : ''}`;
+      btn.innerHTML = `
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+    </svg>
+    Filtrar${activeCount > 0 ? ` <span class="filter-btn-count">${activeCount}</span>` : ''}`;
+
+      if (!openFilterPanels.has(tab)) return;
+
+      const { genres, platforms } = getTabMeta(tab);
+      const knownInTab = KNOWN_PLATFORMS.filter(p => platforms.has(p.label));
+      const customInTab = getCustomPlatforms().filter(c => platforms.has(c.label));
+      const hasAny = genres.length || knownInTab.length || customInTab.length;
+
+      if (!hasAny) {
+        panel.innerHTML = `<div class="filter-panel-inner">
+      <span style="font-size:12px;color:var(--text-muted);opacity:0.5">Sem metadados ainda. Aguarde o carregamento em background.</span>
+    </div>`;
+        return;
+      }
+
+      const platformPills = [
+        ...knownInTab.map(p => `
+      <span class="filter-pill platform-choice${activePlatformFilters.has(p.label) ? ' active' : ''}"
+            onclick="togglePlatformFilter('${escHtml(p.label)}')">
+        ${getPlatformIconMarkup(p.label)}
+        <span>${escHtml(p.label)}</span>
+      </span>`),
+        ...customInTab.map(c => `
+      <span class="filter-pill platform-choice${activePlatformFilters.has(c.label) ? ' active' : ''}"
+            onclick="togglePlatformFilter('${escHtml(c.label)}')">
+        ${getPlatformIconMarkup(c.label)}
+        <span>${escHtml(c.label)}</span>
+      </span>`),
+      ].join('');
+
+      const genrePills = genres.map(g => `
+    <span class="filter-pill${activeGenreFilters.has(g) ? ' active' : ''}"
+          onclick="toggleGenreFilter('${escHtml(g)}')">${escHtml(g)}</span>`).join('');
+
+      const clearRow = activeCount > 0
+        ? `<div class="filter-footer">
+         <button class="filter-clear-btn" onclick="clearFilters()">✕ Limpar filtros</button>
+       </div>` : '';
+
+      panel.innerHTML = `<div class="filter-panel-inner">
+    ${platformPills.trim() ? `<div class="filter-row">
+      <span class="filter-row-label">Plataforma</span>
+      <div class="filter-pills">${platformPills}</div>
+    </div>` : ''}
+    ${genrePills ? `<div class="filter-row">
+      <span class="filter-row-label">Gênero</span>
+      <div class="filter-pills">${genrePills}</div>
+    </div>` : ''}
+    ${clearRow}
+  </div>`;
+
+    }
+
+    function toggleGenreFilter(g) {
+      activeGenreFilters.has(g) ? activeGenreFilters.delete(g) : activeGenreFilters.add(g);
+      TABS_ORDER.forEach(t => renderFilterPanel(t));
+      filterAnimes();
+    }
+    function togglePlatformFilter(p) {
+      activePlatformFilters.has(p) ? activePlatformFilters.delete(p) : activePlatformFilters.add(p);
+      TABS_ORDER.forEach(t => renderFilterPanel(t));
+      filterAnimes();
+    }
+    function clearFilters() {
+      activeGenreFilters.clear();
+      activePlatformFilters.clear();
+      TABS_ORDER.forEach(t => renderFilterPanel(t));
+      filterAnimes();
+    }
     // ── FILTRO / RENDER ──
     function filterAnimes() {
       const query = document.getElementById('searchInput').value.toLowerCase();
       const displayType = window.innerWidth <= 600 ? 'flex' : 'block';
       document.querySelectorAll('.anime-card').forEach(card => {
         const title = card.querySelector('.card-title').textContent.toLowerCase();
-        card.style.display = title.includes(query) ? displayType : 'none';
+        const id = card.id.replace('card-', '');
+        const anime = animes.find(a => a.id === id);
+        let visible = title.includes(query);
+        if (visible && activeGenreFilters.size > 0)
+          visible = [...activeGenreFilters].every(g => (anime?.genres || []).includes(g));
+        if (visible && activePlatformFilters.size > 0)
+          visible = [...activePlatformFilters].every(p => (anime?.platforms || []).includes(p));
+        card.style.display = visible ? displayType : 'none';
       });
     }
 
@@ -2383,21 +3861,21 @@
     function renderAll() {
       TABS_ORDER.forEach(tab => {
         const grid = document.getElementById('grid-' + tab);
-        // Agora ele ignora qualquer anime com deleted: true
         const items = animes.filter(a => a.status === tab && !a.deleted);
         document.getElementById('count-' + tab).textContent = items.length;
         grid.innerHTML = '';
         if (items.length === 0) {
           grid.innerHTML = `<div class="empty-state">
-            <div class="empty-icon">${EMPTY_ICONS[tab]}</div>
-            <div class="empty-title">${getEmptyTitle(tab)}</div>
-            <div class="empty-sub">${getEmptySub(tab)}</div>
-          </div>`;
+        <div class="empty-icon">${EMPTY_ICONS[tab]}</div>
+        <div class="empty-title">${getEmptyTitle(tab)}</div>
+        <div class="empty-sub">${getEmptySub(tab)}</div>
+      </div>`;
         } else {
           items.forEach(anime => grid.appendChild(buildCard(anime)));
         }
       });
       document.querySelectorAll('.tab-content').forEach(t => tabObserver.observe(t));
+      TABS_ORDER.forEach(t => renderFilterPanel(t));
       filterAnimes();
     }
 
@@ -2415,21 +3893,42 @@
       const isBacklog = anime.status === 'assistir';
       const hasManga = anime.chapter !== null && anime.chapter !== undefined && anime.chapter !== '';
       const hasSeason = anime.season !== null && anime.season !== undefined && anime.season !== '';
-      const coverHTML = anime.image ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onload="this.style.display='';this.nextElementSibling.style.display='none'">` : '';
+      const coverHTML = anime.image
+        ? `<img src="${escHtml(anime.image)}" data-src="${escHtml(anime.image)}" alt="${escHtml(anime.title)}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+         onload="this.style.display='';this.nextElementSibling.style.display='none'">`
+        : '';
       const placeholderStyle = anime.image ? 'style="display:none"' : '';
       const concludedBar = anime.status === 'concluido' && anime.concludedAt
-        ? `<div class="concluded-overlay"> ${formatDate(anime.concludedAt)}</div>`
-        : '';
+        ? `<div class="concluded-overlay">${formatDate(anime.concludedAt)}</div>` : '';
+
+      // Platform icons (on cover image)
+      const platformIconsHTML = (anime.platforms && anime.platforms.length)
+        ? `<div class="card-platform-icons">
+        ${sanitizePlatformList(anime.platforms).map(p => getPlatformIconMarkup(p)).join('')}
+      </div>` : '';
+
+      // Genre overlay (desktop hover)
+      const genreOverlayHTML = (anime.genres && anime.genres.length)
+        ? `<div class="card-genre-overlay">
+        ${anime.genres.slice(0, 4).map(g => `<span class="genre-overlay-tag">${escHtml(g)}</span>`).join('')}
+      </div>` : '';
+
+      // Genre tags (mobile, always visible in body)
+      const genresMobileHTML = (anime.genres && anime.genres.length)
+        ? `<div class="card-genres-mobile">
+        ${anime.genres.slice(0, 3).map(g => `<span class="genre-tag-mobile">${escHtml(g)}</span>`).join('')}
+      </div>` : '';
+
       const readonly = !isWatching ? ' readonly' : '';
       const seasonRow = !isBacklog && hasSeason ? `<div class="counter-row">
-        
     <span class="counter-label">${isWatching ? 'T' : 'Temporadas'}</span>
     <button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button>
     <input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"${readonly}>
     <button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button>
   </div>` : '';
       const chapterRow = !isBacklog && hasManga ? `<div class="counter-row">
-    <span class="counter-label">${isWatching ? 'Cap' : 'Capítulos (Mangá)'}</span>
+    <span class="counter-label">${isWatching ? 'Cap' : 'Capítulos'}</span>
     <button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button>
     <input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"${readonly}>
     <button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button>
@@ -2441,36 +3940,35 @@
     <button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button>
   </div>` : '';
       const selectEl = `<select class="status-select" onchange="updateStatus('${anime.id}', this.value)">
-  ${Object.entries(STATUS_MAP).map(([k, v]) => `<option value="${k}" ${k === anime.status ? 'selected' : ''}>${v.label}</option>`).join('')}
-</select>`;
+    ${Object.entries(STATUS_MAP).map(([k, v]) => `<option value="${k}" ${k === anime.status ? 'selected' : ''}>${v.label}</option>`).join('')}
+  </select>`;
+      const selectBlock = isBacklog ? `<div class="select-ribbon">${selectEl}</div>` : selectEl;
 
-      const selectBlock = isBacklog
-        ? `<div class="select-ribbon">${selectEl}</div>`
-        : selectEl;
       card.innerHTML = `
     <div class="card-cover" onclick="openModal('${anime.id}')" title="Clique para editar">
       ${coverHTML}
       <div class="card-cover-placeholder" ${placeholderStyle}>${PLACEHOLDER_SVG}</div>
+      ${genreOverlayHTML}
+      ${platformIconsHTML}
       ${concludedBar}
     </div>
     <div class="status-badge ${sInfo.badge}"><span class="status-badge-dot"></span>${sInfo.label}</div>
-<div class="card-body">
-  ${isBacklog ? `<div class="content-ribbon">
-    <div class="card-title">${escHtml(anime.title)}</div>
-    ${selectBlock}
-  </div>` : `
-    <div class="card-title">${escHtml(anime.title)}</div>
-    ${selectBlock}
-    <div class="card-counters">
-      ${seasonRow}
-      ${episodeRow}
-      ${chapterRow}
-    </div>
-  `}
-</div>`;
+    <div class="card-body">
+      ${isBacklog ? `
+        <div class="content-ribbon">
+          <div class="card-title">${escHtml(anime.title)}</div>
+        </div>
+        ${selectBlock}
+        ${genresMobileHTML}` : `
+        <div class="card-title">${escHtml(anime.title)}</div>
+        <div class="card-counters">${seasonRow}${episodeRow}${chapterRow}</div>
+        ${selectBlock}
+        ${genresMobileHTML}`}
+    </div>`;
       return card;
     }
     function escHtml(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function escJs(str) { return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, ''); }
     function formatDate(iso) { if (!iso) return ''; return new Date(iso).toLocaleDateString('pt-BR'); }
     function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
     function now() { return new Date().toISOString(); }
@@ -2489,6 +3987,8 @@
 
       if (editingId) {
         const anime = animes.find(a => a.id === editingId); if (!anime) return;
+        anime.genres = [...modalGenres];
+        anime.platforms = sanitizePlatformList([...modalPlatforms]);
         anime.title = name; anime.image = imgUrl;
         anime.season = seVal !== '' ? parseInt(seVal) : null;
         anime.episode = epVal !== '' ? parseInt(epVal) : 1;
@@ -2496,6 +3996,8 @@
         if (status === 'concluido' && !anime.concludedAt) anime.concludedAt = now();
         if (status !== 'concluido') anime.concludedAt = null;
         anime.status = status;
+        anime.genres = [...modalGenres];
+        anime.platforms = sanitizePlatformList([...modalPlatforms]);
         touchAnime(anime);
         showToast(`${name} atualizado.`);
       } else {
@@ -2505,6 +4007,8 @@
           season: seVal !== '' ? parseInt(seVal) : null,
           episode: epVal !== '' ? parseInt(epVal) : 1,
           chapter: chVal !== '' ? parseInt(chVal) : null,
+          genres: [...modalGenres],
+          platforms: sanitizePlatformList([...modalPlatforms]),
           status, concludedAt: status === 'concluido' ? ts : null, addedAt: ts, updatedAt: ts
         });
         showToast(`${name} adicionado.`);
@@ -2560,7 +4064,8 @@
     // ── SYNC: PAYLOAD ──
     function buildGistPayload() {
       const devices = registerCurrentDevice();
-      return JSON.stringify({ animes, savedAt: now(), savedBy: getDeviceId(), devices }, null, 2);
+      const payloadAnimes = animes.map(a => sanitizeAnimePlatforms({ ...a }));
+      return JSON.stringify({ animes: payloadAnimes, savedAt: now(), savedBy: getDeviceId(), devices }, null, 2);
     }
 
     // ── SYNC: HASH ──
@@ -2568,9 +4073,8 @@
     function buildAnimeHash(list) {
       const normalized = [...list]
         .sort((a, b) => a.id.localeCompare(b.id))
-        // Adicionamos a propriedade "deleted" aqui:
-        .map(({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt, deleted }) =>
-          ({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt, deleted }));
+        .map(({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt, deleted, genres, platforms }) =>
+          ({ id, title, status, episode, chapter, season, image, updatedAt, concludedAt, deleted, genres, platforms: sanitizePlatformList(platforms) }));
       return JSON.stringify(normalized);
     }
     function hasUnpushedChanges() { return buildAnimeHash(animes) !== (localStorage.getItem(LAST_HASH_KEY) || ''); }
@@ -2892,6 +4396,11 @@
       document.getElementById('inputImage').value = anime?.image ?? '';
       document.getElementById('inputStatus').value = anime?.status ?? 'assistir';
       fetchedImageUrl = '';
+      modalGenres = anime?.genres ? [...anime.genres] : [];
+      modalPlatforms = new Set(sanitizePlatformList(anime?.platforms || []));
+      modalPlatformsExpanded = false;
+      renderModalGenres();
+      renderModalPlatforms();
       setFetchStatus('hidden', '');
       const preview = document.getElementById('imgPreview');
       if (anime?.image) { preview.src = anime.image; preview.classList.add('visible'); }
@@ -2908,6 +4417,121 @@
       setTimeout(() => { backdrop.classList.remove('open'); editingId = null; }, 400);
     }
 
+    function openPlatformCreatorModal(label = null) {
+      const entry = label ? getCustomPlatformEntry(label) : null;
+      editingPlatformLabel = entry?.label || null;
+      const backdrop = document.getElementById('platformBackdrop');
+      backdrop.classList.add('open');
+      requestAnimationFrame(() => {
+        backdrop.classList.add('visible');
+        document.getElementById('platformModalTitle').textContent = editingPlatformLabel ? 'Editar plataforma' : 'Nova plataforma';
+        document.getElementById('platformSaveBtn').textContent = editingPlatformLabel ? 'Salvar plataforma' : 'Adicionar plataforma';
+        document.getElementById('platformDeleteBtn').style.display = editingPlatformLabel ? 'inline-flex' : 'none';
+        document.getElementById('platformNameInput').value = entry?.label || '';
+        document.getElementById('platformLogoInput').value = entry?.logo || '';
+        updatePlatformCreatorPreview();
+        document.getElementById('platformNameInput')?.focus();
+      });
+    }
+
+    function closePlatformCreatorModal() {
+      const backdrop = document.getElementById('platformBackdrop');
+      backdrop.classList.remove('visible');
+      if (document.activeElement) document.activeElement.blur();
+      setTimeout(() => { backdrop.classList.remove('open'); editingPlatformLabel = null; }, 400);
+    }
+
+    function handlePlatformBackdrop(e) {
+      if (e.target === document.getElementById('platformBackdrop')) closePlatformCreatorModal();
+    }
+
+    function openPlatformPickerModal() {
+      const list = document.getElementById('platformPickerList');
+      const customs = getCustomPlatforms();
+      list.innerHTML = customs.length
+        ? customs.map(c => `
+          <button class="platform-toggle" onclick="selectPlatformToEdit('${escJs(c.label)}')">
+            ${getPlatformIconMarkup(c.label)}
+            ${escHtml(c.label)}
+          </button>`).join('')
+        : '<div class="platform-picker-empty">Nenhuma plataforma personalizada cadastrada.</div>';
+      const backdrop = document.getElementById('platformPickerBackdrop');
+      backdrop.classList.add('open');
+      requestAnimationFrame(() => backdrop.classList.add('visible'));
+    }
+
+    function closePlatformPickerModal() {
+      const backdrop = document.getElementById('platformPickerBackdrop');
+      backdrop.classList.remove('visible');
+      if (document.activeElement) document.activeElement.blur();
+      setTimeout(() => backdrop.classList.remove('open'), 400);
+    }
+
+    function handlePlatformPickerBackdrop(e) {
+      if (e.target === document.getElementById('platformPickerBackdrop')) closePlatformPickerModal();
+    }
+
+    function selectPlatformToEdit(label) {
+      closePlatformPickerModal();
+      setTimeout(() => openPlatformCreatorModal(label), 120);
+    }
+
+    function renderPlatformCreatorPreview() {
+      const preview = document.getElementById('platformPreview');
+      if (!preview) return;
+      const name = document.getElementById('platformNameInput')?.value.trim() || '';
+      const logo = document.getElementById('platformLogoInput')?.value.trim() || '';
+      const label = name || 'Nova plataforma';
+      const initials = getPlatformInitials(name || 'NP');
+      const hasLogo = !!logo;
+      preview.innerHTML = `
+        <div class="platform-preview-badge" style="--platform-color:${getPlatformColor(label)}">
+          ${hasLogo ? `<img src="${escHtml(logo)}" alt="${escHtml(label)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="platform-fallback" style="display:none">${escHtml(initials || 'NP')}</span>` : `<span>${escHtml(initials || 'NP')}</span>`}
+        </div>
+      `;
+    }
+
+    function updatePlatformCreatorPreview() {
+      renderPlatformCreatorPreview();
+    }
+
+    function savePlatformFromModal() {
+      const name = document.getElementById('platformNameInput')?.value.trim();
+      const logo = document.getElementById('platformLogoInput')?.value.trim();
+      if (!name) return showToast('Digite o nome da plataforma.');
+      if (editingPlatformLabel) {
+        const entry = updateCustomPlatform(editingPlatformLabel, name, logo);
+        if (!entry) return showToast('Plataforma já existe.');
+        renderModalPlatforms();
+        renderAll();
+        showToast('Plataforma atualizada.');
+        closePlatformCreatorModal();
+        return;
+      }
+      const existing = getCustomPlatformEntry(name);
+      if (existing) {
+        showToast('Plataforma já existe.');
+        return;
+      }
+      const entry = addCustomPlatform(name, logo);
+      if (!entry) return showToast('Plataforma já existe.');
+      modalPlatforms.add(entry.label);
+      renderModalPlatforms();
+      showToast('Plataforma adicionada.');
+      closePlatformCreatorModal();
+    }
+
+    function deletePlatformFromModal() {
+      if (!editingPlatformLabel) return;
+      if (!confirm('Excluir esta plataforma personalizada?')) return;
+      deleteCustomPlatform(editingPlatformLabel);
+      renderModalPlatforms();
+      renderAll();
+      showToast('Plataforma excluída.');
+      closePlatformCreatorModal();
+    }
+
     function openSettings() {
       updateSettingsUI();
       setGistFetchStatus('hidden', '');
@@ -2922,9 +4546,13 @@
       setTimeout(() => backdrop.classList.remove('open'), 400);
     }
 
-    function handleBackdropClick(e) { if (e.target === document.getElementById('modalBackdrop')) closeModal(); }
+    function handleBackdropClick(e) {
+      if (e.target === document.getElementById('modalBackdrop')) closeModal();
+    }
     function handleSettingsBackdrop(e) { if (e.target === document.getElementById('settingsBackdrop')) closeSettings(); }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSettings(); closeDeviceConflictModal(); } });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeModal(); closeSettings(); closePlatformCreatorModal(); closePlatformPickerModal(); closeDeviceConflictModal(); }
+    });
 
     // ── BUSCA DE IMAGEM ──
     function setFetchStatus(type, msg) {
@@ -2954,6 +4582,24 @@
           setFetchStatus('success', 'Capa encontrada.');
           const p = document.getElementById('imgPreview');
           p.src = fetchedImageUrl; p.classList.add('visible');
+          // Salva gêneros já da busca inicial (sem custo extra)
+          modalGenres = (item.genres || []).map(g => g.name);
+          renderModalGenres();
+          // Busca streaming em background
+          try {
+            await new Promise(r => setTimeout(r, 450));
+            const streamRes = await fetch(`https://api.jikan.moe/v4/anime/${item.mal_id}/streaming`);
+            if (streamRes.ok) {
+              const streamData = await streamRes.json();
+              const seen = new Set();
+              modalPlatforms = new Set();
+              (streamData.data || []).forEach(sp => {
+                const norm = normalizePlatform(sp.name);
+                if (!seen.has(norm.label)) { seen.add(norm.label); modalPlatforms.add(norm.label); }
+              });
+              renderModalPlatforms();
+            }
+          } catch { /* silencioso */ }
         } else { setFetchStatus('error', 'Capa não encontrada.'); }
       } catch { setFetchStatus('error', 'Erro ao buscar.'); }
     }
@@ -3025,6 +4671,8 @@
       modal.addEventListener('touchcancel', onEnd);
     }
     makeModalDraggable('modalBackdrop', closeModal);
+    makeModalDraggable('platformBackdrop', closePlatformCreatorModal);
+    makeModalDraggable('platformPickerBackdrop', closePlatformPickerModal);
     makeModalDraggable('settingsBackdrop', closeSettings);
     makeModalDraggable('deviceConflictBackdrop', () => resolveDeviceConflict(false));
 
@@ -3041,7 +4689,238 @@
       setTimeout(warm, 500);
       startSmartMonitor();
     });
+    // ── METADATA FETCH ──
+    async function fetchAnimeMetadata(title) {
+      const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(title)}&limit=1&sfw`);
+      if (!res.ok) throw new Error('Jikan error');
+      const data = await res.json();
+      const item = data.data?.[0];
+      if (!item) return null;
+      const malId = item.mal_id;
+      const genres = (item.genres || []).map(g => g.name);
+      await new Promise(r => setTimeout(r, 450)); // rate-limit gap
+      const streamRes = await fetch(`https://api.jikan.moe/v4/anime/${malId}/streaming`);
+      const streamData = streamRes.ok ? await streamRes.json() : { data: [] };
+      const seen = new Set();
+      const platforms = [];
+      (streamData.data || []).forEach(p => {
+        const norm = normalizePlatform(p.name);
+        if (norm.slug && !seen.has(norm.label)) { seen.add(norm.label); platforms.push(norm.label); }
+      });
+      return { malId, genres, platforms };
+    }
 
+    // ── BACKFILL ──
+    async function backfillMetadata() {
+      if (backfillRunning || !navigator.onLine) return;
+      const targets = animes.filter(a => !a.deleted && a.genres === undefined);
+      if (targets.length === 0) return;
+      backfillRunning = true;
+      updateBackfillBanner(0, targets.length);
+      for (let i = 0; i < targets.length; i++) {
+        const anime = animes.find(a => a.id === targets[i].id);
+        if (!anime) continue;
+        try {
+          const meta = await fetchAnimeMetadata(anime.title);
+          anime.malId = meta?.malId ?? null;
+          anime.genres = meta?.genres ?? [];
+          anime.platforms = meta?.platforms ?? [];
+        } catch {
+          anime.genres = []; anime.platforms = [];
+        }
+        anime.updatedAt = now();
+        updateBackfillBanner(i + 1, targets.length);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(animes));
+        if (i < targets.length - 1) await new Promise(r => setTimeout(r, 700));
+      }
+      backfillRunning = false;
+      document.getElementById('backfillBanner').classList.remove('visible');
+      scheduleGistSync();
+      renderAll();
+      showToast('Metadados atualizados.');
+    }
+
+    async function startManualBackfill() {
+      // força rebusca de todos (incluindo os que já têm mas estão vazios)
+      animes.forEach(a => { if (!a.deleted) delete a.genres; });
+      closeSettings();
+      await backfillMetadata();
+    }
+
+    function updateBackfillBanner(done, total) {
+      const banner = document.getElementById('backfillBanner');
+      banner.classList.add('visible');
+      document.getElementById('backfillText').textContent = `Buscando metadados… ${done}/${total}`;
+      document.getElementById('backfillProgressBar').style.width = total > 0 ? `${Math.round(done / total * 100)}%` : '0%';
+    }
+
+    // ── FILTER UI ──
+    function getTabMeta(tab) {
+      const items = animes.filter(a => a.status === tab && !a.deleted);
+      const genres = new Set(), platforms = new Set();
+      items.forEach(a => {
+        (a.genres || []).forEach(g => genres.add(g));
+        (a.platforms || []).forEach(p => platforms.add(p));
+      });
+      return { genres: [...genres].sort(), platforms };
+    }
+
+    function renderFilterBar(tab) {
+      const bar = document.getElementById(`filter-bar-${tab}`);
+      if (!bar) return;
+      const { genres, platforms } = getTabMeta(tab);
+      if (!genres.length && !platforms.length) { bar.classList.remove('has-filters'); bar.innerHTML = ''; return; }
+      bar.classList.add('has-filters');
+      const hasActive = activeGenreFilters.size > 0 || activePlatformFilters.size > 0;
+      bar.innerHTML = `
+    ${genres.length ? `<div class="filter-group">
+      <span class="filter-group-label">Gênero</span>
+      ${genres.map(g => `<span class="filter-pill${activeGenreFilters.has(g) ? ' active' : ''}" aria-pressed="${activeGenreFilters.has(g)}" onclick="toggleGenreFilter('${escHtml(g)}')">${escHtml(g)}</span>`).join('')}
+    </div>` : ''}
+    ${platforms.length ? `<div class="filter-group">
+      <span class="filter-group-label">Plataforma</span>
+      ${platforms.map(p => `<span class="filter-pill platform-choice${activePlatformFilters.has(p) ? ' active' : ''}" aria-pressed="${activePlatformFilters.has(p)}" onclick="togglePlatformFilter('${escHtml(p)}')">${getPlatformIconMarkup(p)}<span>${escHtml(p)}</span></span>`).join('')}
+    </div>` : ''}
+    ${hasActive ? `<button class="filter-clear" onclick="clearFilters()">✕ Limpar filtros</button>` : ''}`;
+    }
+
+    function toggleGenreFilter(g) {
+      activeGenreFilters.has(g) ? activeGenreFilters.delete(g) : activeGenreFilters.add(g);
+      TABS_ORDER.forEach(t => {
+        renderFilterPanel(t);
+        renderFilterBar(t);
+      });
+      filterAnimes();
+    }
+    function togglePlatformFilter(p) {
+      activePlatformFilters.has(p) ? activePlatformFilters.delete(p) : activePlatformFilters.add(p);
+      TABS_ORDER.forEach(t => {
+        renderFilterPanel(t);
+        renderFilterBar(t);
+      });
+      filterAnimes();
+    }
+    function clearFilters() {
+      activeGenreFilters.clear(); activePlatformFilters.clear();
+      TABS_ORDER.forEach(t => {
+        renderFilterPanel(t);
+        renderFilterBar(t);
+      });
+      filterAnimes();
+    }
+
+    // ── MODAL METADATA ──
+    function renderModalGenres() {
+      const el = document.getElementById('modalGenreTags');
+      el.innerHTML = modalGenres.length
+        ? modalGenres.map(g => `<span class="modal-genre-tag">${escHtml(g)}</span>`).join('')
+        : '<span class="modal-genre-empty">Nenhum gênero encontrado</span>';
+    }
+
+    function updateModalPlatformSection() {
+      const section = document.getElementById('platformSection');
+      const header = section?.querySelector('.platform-section-header');
+      const badge = document.getElementById('platformCountBadge');
+      const hint = document.getElementById('platformSectionHint');
+      if (!section || !header || !badge || !hint) return;
+      const count = modalPlatforms.size;
+      section.classList.toggle('expanded', modalPlatformsExpanded);
+      header.setAttribute('aria-expanded', modalPlatformsExpanded ? 'true' : 'false');
+      badge.textContent = String(count);
+      badge.title = count === 1 ? '1 plataforma selecionada' : `${count} plataformas selecionadas`;
+      hint.textContent = modalPlatformsExpanded ? 'Recolher' : (count ? 'Toque para editar' : 'Toque para adicionar');
+    }
+
+    function togglePlatformSection() {
+      modalPlatformsExpanded = !modalPlatformsExpanded;
+      updateModalPlatformSection();
+    }
+
+    function renderModalPlatforms() {
+      const el = document.getElementById('platformToggles');
+      const customs = getCustomPlatforms();
+      el.innerHTML = [
+        ...KNOWN_PLATFORMS.map(p => `
+      <button class="platform-toggle${modalPlatforms.has(p.label) ? ' active' : ''}"
+              onclick="toggleModalPlatform('${p.label}')">
+        ${getPlatformIconMarkup(p.label)}
+        ${escHtml(p.label)}
+      </button>`),
+        ...customs.map(c => `
+      <button class="platform-toggle${modalPlatforms.has(c.label) ? ' active' : ''}"
+              onclick="handleCustomPlatformClick(event,'${escJs(c.label)}')"
+              oncontextmenu="event.preventDefault();openPlatformCreatorModal('${escJs(c.label)}')"
+              onpointerdown="startPlatformLongPress(event,'${escJs(c.label)}')"
+              onpointerup="endPlatformLongPress()"
+              onpointerleave="endPlatformLongPress()"
+              onpointercancel="endPlatformLongPress()">
+        ${getPlatformIconMarkup(c.label)}
+        ${escHtml(c.label)}
+      </button>`),
+        `<button class="platform-toggle platform-add-toggle" onclick="openPlatformCreatorModal()" title="Nova plataforma">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          <span>Nova</span>
+        </button>`,
+        `<button class="platform-toggle platform-edit-toggle" onclick="openPlatformPickerModal()" title="Editar plataforma">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+          </svg>
+          <span>Editar</span>
+        </button>`,
+      ].join('');
+      updateModalPlatformSection();
+    }
+
+    function toggleModalPlatform(label) {
+      modalPlatforms.has(label) ? modalPlatforms.delete(label) : modalPlatforms.add(label);
+      renderModalPlatforms();
+    }
+
+    function handleCustomPlatformClick(event, label) {
+      if (platformLongPressTriggered) {
+        event?.preventDefault();
+        event?.stopPropagation();
+        platformLongPressTriggered = false;
+        return;
+      }
+      toggleModalPlatform(label);
+    }
+
+    function startPlatformLongPress(event, label) {
+      clearTimeout(platformLongPressTimer);
+      platformLongPressTriggered = false;
+      platformLongPressTimer = setTimeout(() => {
+        platformLongPressTriggered = true;
+        if (navigator.vibrate) navigator.vibrate(20);
+        openPlatformCreatorModal(label);
+      }, 550);
+    }
+
+    function endPlatformLongPress() {
+      clearTimeout(platformLongPressTimer);
+    }
+
+    async function refreshModalMeta() {
+      const name = document.getElementById('inputName').value.trim();
+      if (!name) return showToast('Digite o nome do anime primeiro.');
+      const btn = document.getElementById('metaRefreshBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width:11px;height:11px;border-width:1.5px;flex-shrink:0"></div> Buscando...';
+      try {
+        const meta = await fetchAnimeMetadata(name);
+        if (meta) {
+          modalGenres = meta.genres;
+          modalPlatforms = new Set(meta.platforms);
+          renderModalGenres(); renderModalPlatforms();
+        } else { showToast('Anime não encontrado na API.'); }
+      } catch { showToast('Erro ao buscar metadados.'); }
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Buscar`;
+    }
     // ── INICIALIZAÇÃO ──
     setTimeout(() => document.getElementById('tab-' + activeTab).scrollIntoView(), 0);
     if (localStorage.getItem('header_collapsed') === '1') {
@@ -3051,6 +4930,8 @@
     renderAll();
     updateSettingsUI();
     initGistSync();
+    if (navigator.onLine) backfillMetadata();
+    window.addEventListener('online', () => backfillMetadata());
   </script>
 </body>
 
