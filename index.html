@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -1395,7 +1395,8 @@
     .status-assistir .card-body {
       background: transparent;
       justify-content: flex-end;
-      padding: 0;
+      background: var(--surface);
+      border-radius: 16px;
     }
 
     .content-ribbon {
@@ -2207,7 +2208,7 @@
       border-radius: 16px;
       margin: 6px 0 14px;
       border: 1px dashed var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
     }
 
     .platform-preview-badge {
@@ -2368,8 +2369,9 @@
 
       .card-genres-mobile {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 6px;
+        justify-content: center;
       }
 
       .genre-tag-mobile {
@@ -2384,6 +2386,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      .card-genres-mobile.genre-count-1,
+      .card-genres-mobile.genre-count-2 {
+        grid-template-columns: repeat(var(--genre-count), minmax(72px, max-content));
       }
 
       .filter-panel-inner {
@@ -3076,16 +3083,16 @@
       </div>
 
       <div class="form-group platform-section" id="platformSection">
-        <button class="platform-section-header" type="button" onclick="togglePlatformSection()"
-          aria-expanded="false" aria-controls="platformToggles">
+        <button class="platform-section-header" type="button" onclick="togglePlatformSection()" aria-expanded="false"
+          aria-controls="platformToggles">
           <span class="platform-section-title">
             <span class="form-label">Plataformas</span>
             <span class="platform-count-badge" id="platformCountBadge">0</span>
           </span>
           <span style="display:flex;align-items:center;gap:8px">
             <span class="platform-section-hint" id="platformSectionHint">Toque para editar</span>
-            <svg class="platform-section-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="platform-section-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </span>
@@ -3131,9 +3138,11 @@
         <div class="form-hint">Se não enviar logo, a plataforma usa iniciais como AN.</div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-danger" id="platformDeleteBtn" style="display:none;flex:0 1 auto" onclick="deletePlatformFromModal()">Excluir</button>
+        <button class="btn btn-danger" id="platformDeleteBtn" style="display:none;flex:0 1 auto"
+          onclick="deletePlatformFromModal()">Excluir</button>
         <button class="btn btn-ghost" onclick="closePlatformCreatorModal()">Cancelar</button>
-        <button class="btn btn-primary" id="platformSaveBtn" onclick="savePlatformFromModal()">Adicionar plataforma</button>
+        <button class="btn btn-primary" id="platformSaveBtn" onclick="savePlatformFromModal()">Adicionar
+          plataforma</button>
       </div>
     </div>
   </div>
@@ -3915,9 +3924,10 @@
       </div>` : '';
 
       // Genre tags (mobile, always visible in body)
-      const genresMobileHTML = (anime.genres && anime.genres.length)
-        ? `<div class="card-genres-mobile">
-        ${anime.genres.slice(0, 3).map(g => `<span class="genre-tag-mobile">${escHtml(g)}</span>`).join('')}
+      const mobileGenres = (anime.genres || []).slice(0, 3);
+      const genresMobileHTML = mobileGenres.length
+        ? `<div class="card-genres-mobile genre-count-${mobileGenres.length}" style="--genre-count:${mobileGenres.length}">
+        ${mobileGenres.map(g => `<span class="genre-tag-mobile">${escHtml(g)}</span>`).join('')}
       </div>` : '';
 
       const readonly = !isWatching ? ' readonly' : '';
