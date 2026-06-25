@@ -3837,6 +3837,22 @@
     }
 
     // ── SMART MERGE ──
+    function shouldCopyMetadataField(targetValue, sourceValue) {
+      if (sourceValue === undefined) return false;
+      if (targetValue === undefined) return true;
+      if (Array.isArray(targetValue) && Array.isArray(sourceValue)) return targetValue.length === 0 && sourceValue.length > 0;
+      return false;
+    }
+
+    function mergeAnimeMetadata(target, source) {
+      if (!target || !source) return target;
+      const merged = { ...target };
+      if (shouldCopyMetadataField(merged.genres, source.genres)) merged.genres = [...source.genres];
+      if (shouldCopyMetadataField(merged.platforms, source.platforms)) merged.platforms = [...source.platforms];
+      if (!merged.malId && source.malId) merged.malId = source.malId;
+      return merged;
+    }
+
     function smartMerge(localList, remoteList) {
       const map = new Map();
       localList.forEach(a => map.set(a.id, a));
@@ -3845,7 +3861,7 @@
         if (!local) { map.set(remote.id, remote); return; }
         const lt = new Date(local.updatedAt || local.addedAt || 0).getTime();
         const rt = new Date(remote.updatedAt || remote.addedAt || 0).getTime();
-        if (rt > lt) map.set(remote.id, remote);
+        map.set(remote.id, rt > lt ? mergeAnimeMetadata(remote, local) : mergeAnimeMetadata(local, remote));
       });
       const allowedMap = getAllowedPlatformMap();
       return Array.from(map.values()).map(a => sanitizeAnimePlatforms(a, allowedMap));
@@ -4352,15 +4368,20 @@
       });
       setSyncUI('ing', 'Reconectando...');
       await fullSync();
+      await backfillMetadata();
       startPolling();
     });
     window.addEventListener('offline', () => { updateSettingsUI(); stopPolling(); if (getToken()) setSyncUI('off', 'Offline'); });
 
     async function initGistSync() {
       const token = getToken();
-      if (!token) return;
+      if (!token) {
+        if (navigator.onLine) await backfillMetadata();
+        return;
+      }
       if (!navigator.onLine) { setSyncUI('off', 'Offline'); return; }
       await fullSync();
+      await backfillMetadata();
     }
 
     async function connectGist() {
@@ -4409,6 +4430,7 @@
         updateSettingsUI();
         setGistFetchStatus('hidden', '');
         closeSettings();
+        await backfillMetadata();
         startPolling();
       } catch (e) { setGistFetchStatus('error', `Erro: ${e.message}`); }
     }
@@ -4846,7 +4868,7 @@
     // ── BACKFILL ──
     async function backfillMetadata() {
       if (backfillRunning || !navigator.onLine) return;
-      const targets = animes.filter(a => !a.deleted && a.genres === undefined);
+      const targets = animes.filter(a => !a.deleted && (a.genres === undefined || a.platforms === undefined));
       if (targets.length === 0) return;
       backfillRunning = true;
       updateBackfillBanner(0, targets.length);
@@ -4875,7 +4897,7 @@
 
     async function startManualBackfill() {
       // força rebusca de todos (incluindo os que já têm mas estão vazios)
-      animes.forEach(a => { if (!a.deleted) delete a.genres; });
+      animes.forEach(a => { if (!a.deleted) { delete a.genres; delete a.platforms; } });
       closeSettings();
       await backfillMetadata();
     }
@@ -5063,8 +5085,6 @@
     renderAll();
     updateSettingsUI();
     initGistSync();
-    if (navigator.onLine) backfillMetadata();
-    window.addEventListener('online', () => backfillMetadata());
   </script>
 </body>
 
