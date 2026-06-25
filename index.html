@@ -1400,10 +1400,38 @@
     .sync-mini {
       display: none;
     }
-    .header-btns{
+
+    .header-btns {
       display: flex;
       gap: 11px;
     }
+
+    .status-acompanhando .status-select {
+
+      border-color: rgba(150, 150, 170, 0.5);
+      color: #aaaacc;
+    }
+
+    .status-assistir .status-select {
+      border-color: rgba(64, 128, 224, 0.5);
+      color: #80b0ff;
+    }
+
+    .status-esperando .status-select {
+      border-color: rgba(240, 192, 64, 0.5);
+      color: var(--yellow);
+    }
+
+    .status-concluido .status-select {
+      border-color: rgba(64, 224, 160, 0.5);
+      color: var(--green);
+    }
+
+    .status-dropado .status-select {
+      border-color: rgba(224, 64, 96, 0.5);
+      color: var(--red);
+    }
+
     /* ── MOBILE ── */
     @media (max-width: 600px) {
       header {
@@ -1411,6 +1439,18 @@
         align-items: stretch;
         padding: 11px 13px 0px;
         gap: 5px;
+      }
+
+      .card-body>.card-title {
+        order: 1;
+      }
+
+      .card-body>.card-counters {
+        order: 2;
+      }
+
+      .card-body>.status-select {
+        order: 3;
       }
 
       .sync-mini {
@@ -2359,19 +2399,19 @@
       const readonly = !isWatching ? ' readonly' : '';
       const seasonRow = !isBacklog && hasSeason ? `<div class="counter-row">
         
-    <span class="counter-label">${isWatching ? 'T' : 'Temporada'}</span>
+    <span class="counter-label">${isWatching ? 'T' : 'Temporadas'}</span>
     <button class="counter-btn" onclick="changeValue('${anime.id}','season',-1)">−</button>
     <input class="counter-input" type="number" value="${anime.season}" min="1" data-field="season" onchange="updateField('${anime.id}','season',this.value)"${readonly}>
     <button class="counter-btn" onclick="changeValue('${anime.id}','season',1)">+</button>
   </div>` : '';
       const chapterRow = !isBacklog && hasManga ? `<div class="counter-row">
-    <span class="counter-label">${isWatching ? 'Cap' : 'Capítulo (Mangá)'}</span>
+    <span class="counter-label">${isWatching ? 'Cap' : 'Capítulos (Mangá)'}</span>
     <button class="counter-btn" onclick="changeValue('${anime.id}','chapter',-1)">−</button>
     <input class="counter-input" type="number" value="${anime.chapter}" min="0" data-field="chapter" onchange="updateField('${anime.id}','chapter',this.value)"${readonly}>
     <button class="counter-btn" onclick="changeValue('${anime.id}','chapter',1)">+</button>
   </div>` : '';
       const episodeRow = !isBacklog ? `<div class="counter-row">
-    <span class="counter-label">${isWatching ? 'Ep' : 'Episódio'}</span>
+    <span class="counter-label">${isWatching ? 'Ep' : 'Episódios'}</span>
     <button class="counter-btn" onclick="changeValue('${anime.id}','episode',-1)">−</button>
     <input class="counter-input" type="number" value="${anime.episode}" min="0" data-field="episode" onchange="updateField('${anime.id}','episode',this.value)"${readonly}>
     <button class="counter-btn" onclick="changeValue('${anime.id}','episode',1)">+</button>
